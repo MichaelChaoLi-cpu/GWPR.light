@@ -8,6 +8,8 @@
 [![Travis build
 status](https://travis-ci.com/MichaelChaoLi-cpu/GWPR.light.svg?branch=master)](https://travis-ci.com/MichaelChaoLi-cpu/GWPR.light)
 [![R-CMD-check](https://github.com/MichaelChaoLi-cpu/GWPR.light/workflows/R-CMD-check/badge.svg)](https://github.com/MichaelChaoLi-cpu/GWPR.light/actions)
+[![AppVeyor build
+status](https://ci.appveyor.com/api/projects/status/github/MichaelChaoLi-cpu/GWPR.light?branch=master&svg=true)](https://ci.appveyor.com/project/MichaelChaoLi-cpu/GWPR.light)
 <!-- badges: end -->
 
 This package includes the function for the optimal bandwidth selection
