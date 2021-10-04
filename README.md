@@ -5,6 +5,9 @@
 
 <!-- badges: start -->
 
+[![Project Status: Active – The project has reached a stable, usable
+state and is being actively
+developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![Travis build
 status](https://travis-ci.com/MichaelChaoLi-cpu/GWPR.light.svg?branch=master)](https://travis-ci.com/MichaelChaoLi-cpu/GWPR.light)
 [![R-CMD-check](https://github.com/MichaelChaoLi-cpu/GWPR.light/workflows/R-CMD-check/badge.svg)](https://github.com/MichaelChaoLi-cpu/GWPR.light/actions)

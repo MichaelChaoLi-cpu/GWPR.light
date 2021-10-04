@@ -14,7 +14,7 @@ addons:
       - libudunits2-dev
 
 before_install:
-      - R -e 'source("https://install-github.me/r-lib/remotes")'
+      - R -e 'source("https://github.me/r-lib/remotes")'
 
 r_packages:
       - data.table
