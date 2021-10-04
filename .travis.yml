@@ -2,3 +2,14 @@
 
 language: R
 cache: packages
+sudo: false
+warnings_are_errors: true
+
+os:
+  - linux
+  - osx
+
+r:
+  - oldrel
+  - release
+  - devel
