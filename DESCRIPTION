@@ -2,7 +2,7 @@ Package: GWPR.light
 Type: Package
 Title: Geographically Weighted Panel Regression (GWPR)
 Version: 0.1.0
-Author: Chao Li, Shunsuke Managi
+Author: Chao Li (aut, cre), Shunsuke Managi (aut)
 Maintainer: Chao Li <chaoli0394@gmail.com>
 Description: This package includes the function for the optimal bandwidth selection in GWPR,
     the function for GWPR, the function for the local Hausman test, the function for the 
