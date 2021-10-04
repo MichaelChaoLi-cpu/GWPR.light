@@ -13,3 +13,4 @@ addons:
     packages:
       - libudunits2-dev
 
+before_install: R -e 'source("https://install-github.me/r-lib/remotes")'

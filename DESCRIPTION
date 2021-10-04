@@ -13,7 +13,9 @@ Description: This package includes the function for the optimal bandwidth select
     the function for GWPR, the function for the local Hausman test, the function for the 
     local F test for individual effects, the function for the local Lagrange Multiplier 
     Breusch-Pagan test, and the function for panel Moran's I test. The functions have been
-    optimized, which require the less memory in the calculation.
+    optimized, which require the less memory in the calculation. Functions are as follows:
+    bw.GWPR(), GWPR(), GWPR.moran.test(), GWPR.pFtest(), GWPR.phtest(), and GWPR.plmtest().
+    Data: California and TransAirPolCalif
 License: AGPL (>= 3)
 Encoding: UTF-8
 LazyData: true
