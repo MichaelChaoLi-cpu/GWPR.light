@@ -2,9 +2,9 @@
 
 language: R
 cache: packages
+sudo: required
+warnings_are_errors: false
 
 os:
   - linux
-  - osx
-  - windows
 
