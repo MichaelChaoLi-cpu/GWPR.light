@@ -13,4 +13,21 @@ addons:
     packages:
       - libudunits2-dev
 
-before_install: R -e 'source("https://install-github.me/r-lib/remotes")'
+before_install:
+      - R -e 'source("https://install-github.me/r-lib/remotes")'
+
+r_packages:
+      - data.table
+      - doParallel
+      - dplyr
+      - foreach
+      - GWmodel
+      - iterators
+      - lmtest
+      - parallel
+      - plm
+      - sp
+      - stats
+      - sf
+      - spdep
+      - spatialreg
