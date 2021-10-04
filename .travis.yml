@@ -8,3 +8,8 @@ warnings_are_errors: false
 os:
   - linux
 
+addons:
+  apt:
+    packages:
+      - libudunits2-dev
+
