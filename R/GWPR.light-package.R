@@ -16,7 +16,7 @@
 #' \item{LazyLoad:}{yes}
 #' }
 #'
-#' @author Chao Li <chaoli0394@gmail.com> [aut, cre] Shunsuke Managi <managi.s@gmail.com> [aut]
+#' @author Chao Li <chaoli0394@gmail.com> [aut, cre] Shunsuke Managi <managi@doc.kyushu-u.ac.jp> [aut]
 #'
 #' @docType package
 #' @name GWPR.light-package

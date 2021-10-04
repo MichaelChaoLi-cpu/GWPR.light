@@ -23,6 +23,6 @@ This package includes the function for the optimal bandwidth selection in GWPR,
 }
 }
 \author{
-Chao Li <chaoli0394@gmail.com> [aut, cre] Shunsuke Managi <managi.s@gmail.com> [aut]
+Chao Li <chaoli0394@gmail.com> [aut, cre] Shunsuke Managi <managi@doc.kyushu-u.ac.jp> [aut]
 }
 \keyword{package}

@@ -5,6 +5,9 @@
 
 <!-- badges: start -->
 
+[![Travis build
+status](https://travis-ci.com/MichaelChaoLi-cpu/GWPR.light.svg?branch=master)](https://travis-ci.com/MichaelChaoLi-cpu/GWPR.light)
+[![R-CMD-check](https://github.com/MichaelChaoLi-cpu/GWPR.light/workflows/R-CMD-check/badge.svg)](https://github.com/MichaelChaoLi-cpu/GWPR.light/actions)
 <!-- badges: end -->
 
 This package includes the function for the optimal bandwidth selection
@@ -16,7 +19,8 @@ require the less memory in the calculation.
 
 ## Author
 
-Chao Li <chaoli0394@gmail.com> Shunsuke Managi <managi.s@gmail.com>
+Chao Li <chaoli0394@gmail.com> Shunsuke Managi
+<managi@doc.kyushu-u.ac.jp>
 
 ## Maintainer
 
