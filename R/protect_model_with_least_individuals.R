@@ -14,11 +14,14 @@
 #' @import GWmodel
 #'
 #' @return A distance to gaurantee there is enought individuals in every subsample
+#' @noRd
 protect_model_with_least_individuals <- function(data, ID_list, index,
-                                                 kernel, p, longlat, bw_panel){
+                                                 kernel, p, longlat, bw_panel)
+{
   ID_list_single <- as.vector(ID_list[[1]])
   max_dist <- c()
-  for (ID_individual in ID_list_single) {
+  for (ID_individual in ID_list_single)
+  {
     subsample <- dplyr::mutate(data, aim = ifelse(id == ID_individual, 1, 0))
     subsample <- dplyr::arrange(subsample, desc(aim))
     dp_locat_subsample <- dplyr::select(subsample, X, Y)

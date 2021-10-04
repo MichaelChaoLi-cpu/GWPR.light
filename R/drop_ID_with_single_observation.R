@@ -7,7 +7,9 @@
 #'
 #' @return A data.frame that all the individuals have more than one observations
 #' @import dplyr
-drop_ID_with_single_observation <- function(data, ID_num){
+#' @noRd
+drop_ID_with_single_observation <- function(data, ID_num)
+{
   data <- dplyr::left_join(data, ID_num, by = "id")
   data <- dplyr::filter(data, Count != 1)
   data <- dplyr::select(data, -Count)

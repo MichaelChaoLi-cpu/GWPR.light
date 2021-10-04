@@ -1,0 +1,114 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# GWPR.light
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+This package includes the function for the optimal bandwidth selection in GWPR, the function for GWPR, the function for the local Hausman test, the function for the local F test for individual effects, the function for the local Lagrange Multiplier Breusch-Pagan test, and the function for panel Moran's I test. The functions have been optimized, which require the less memory in the calculation. 
+
+## Author 
+
+Chao Li <chaoli0394@gmail.com> Shunsuke Managi <managi.s@gmail.com>
+
+## Maintainer
+
+Chao Li <chaoli0394@gmail.com>
+
+
+## Installation
+
+You can install the released version of GWPR.light from [CRAN](https://CRAN.R-project.org) with:
+
+``` r
+install.packages("GWPR.light")
+```
+
+## Example
+
+This is a basic example which shows you how to solve a common problem:
+
+```{r example}
+library(GWPR.light)
+## basic example code
+library(tmap)
+## basic example code
+data(TransAirPolCalif)
+data(California)
+formula.GWPR <- pm25 ~ co2_mean + Developed_Open_Space_perc + Developed_Low_Intensity_perc +
+   Developed_Medium_Intensity_perc + Developed_High_Intensity_perc +
+   Open_Water_perc + Woody_Wetlands_perc + Emergent_Herbaceous_Wetlands_perc +
+   Deciduous_Forest_perc + Evergreen_Forest_perc + Mixed_Forest_perc +
+   Shrub_perc + Grassland_perc + Pasture_perc + Cultivated_Crops_perc +
+   pop_density + summer_tmmx + winter_tmmx + summer_rmax + winter_rmax
+```
+
+This is an example about GWPR.moran.test:
+```{r eg.GWPR.moran.test}
+pdata <- plm::pdata.frame(TransAirPolCalif, index = c("GEOID", "year"))
+moran.plm.model <- plm::plm(formula = formula.GWPR, data = pdata, model = "within")
+#summary(moran.plm.model)
+
+bw.AIC.F <- bw.GWPR(formula = formula.GWPR, data = TransAirPolCalif, index = c("GEOID", "year"), SDF = California,
+                     adaptive = F, p = 2, bigdata = F, effect = "individual",
+                     model = "within", approach = "AIC", kernel = "bisquare", longlat = F,
+                     doParallel = T, cluster.number = 4)
+
+# moran's I test
+GWPR.moran.test(moran.plm.model, SDF = California, bw = bw.AIC.F, kernel = "bisquare",
+                 adaptive = F, p = 2, longlat=F, alternative = "greater")
+# The statistic is significantly greater than 0. Therefore, the residuals are spatially clustered.
+```
+
+GWPR example:
+
+```{r eg.GWPR}
+result.F.AIC <- GWPR(bw = bw.AIC.F, formula = formula.GWPR, data = TransAirPolCalif, index = c("GEOID", "year"),
+                     SDF = California, adaptive = F, p = 2, effect = "individual", model = "within",
+                     kernel = "bisquare", longlat = F)
+summary(result.F.AIC$SDF$Local_R2)
+tm_shape(result.F.AIC$SDF) +
+  tm_polygons(col = "Local_R2", pal = "Reds",auto.palette.mapping = F,
+              style = 'cont')
+```
+
+Example of F test:
+```{r eg.GWPR.pFtest}
+GWPR.pFtest.resu.F <- GWPR.pFtest(formula = formula.GWPR, data = TransAirPolCalif, index = c("GEOID", "year"),
+                                  SDF = California, bw = bw.AIC.F, adaptive = F, p = 2, effect = "individual",
+                                  kernel = "bisquare", longlat = F)
+tm_shape(GWPR.pFtest.resu.F$SDF) +
+     tm_polygons(col = "p.value", breaks = c(0, 0.05, 1))
+```
+
+Example of Locally Breusch-Pagan Lagrange Multiplier Test:
+```{r eg.GWPR.plmtest}
+GWPR.plmtest.resu.F <- GWPR.plmtest(formula = formula.GWPR, data = TransAirPolCalif, index = c("GEOID", "year"),
+                                    SDF = California, bw = bw.AIC.F, adaptive = F, p = 2,
+                                    kernel = "bisquare", longlat = F)
+tm_shape(GWPR.plmtest.resu.F$SDF) +
+     tm_polygons(col = "p.value", breaks = c(0, 0.05, 1))
+```
+
+Example of Locally Hausman Test Based on GWPR
+```{r eg.GWPR.phtest}
+GWPR.phtest.resu.F <- GWPR.phtest(formula = formula.GWPR, data = TransAirPolCalif, index = c("GEOID", "year"),
+                                  SDF = California, bw = bw.AIC.F, adaptive = F, p = 2, effect = "individual",
+                                  kernel = "bisquare", longlat = F, random.method = "amemiya")
+tm_shape(GWPR.phtest.resu.F$SDF) +
+     tm_polygons(col = "p.value", breaks = c(0, 0.05, 1))
+```
+
