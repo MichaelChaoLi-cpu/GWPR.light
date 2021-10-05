@@ -40,12 +40,20 @@ You can install the released version of GWPR.light from
 install.packages("GWPR.light")
 ```
 
+## Details Introduction
+
+You can read our
+[vignettes](/vignettes/introduction_of_GWPR.Rmd)
+
 ## Example
 
 This is a basic example which shows you how to solve a common problem:
 
 ``` r
 library(GWPR.light)
+```
+
+``` r
 library(tmap)
 ## basic example code
 data(TransAirPolCalif)
