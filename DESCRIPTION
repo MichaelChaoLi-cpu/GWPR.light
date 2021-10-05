@@ -30,8 +30,10 @@ Imports:
     lmtest,
     parallel,
     plm,
+    rgeos,
     sp,
-    stats
+    stats,
+    tmap
 Depends: 
     R (>= 2.10)
 Suggests: 

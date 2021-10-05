@@ -29,7 +29,6 @@ As we have mentioned that, sometimes, the residuals cluster spatially, but the w
 [Ordinary least squares (OLS)](https://en.wikipedia.org/wiki/Ordinary_least_squares), assume that the residuals distribute randomly, even on the maps. We give an cross-sectional example using the data in the package "GWPR.light", since the cross-sectional example is easy to read.
 ```{r example_GWmodel, message=FALSE}
 library(GWPR.light)
-library(dplyr)
 library(sp)
 library(tmap)
 data("California")
@@ -40,8 +39,7 @@ formula.GWPR <- pm25 ~ co2_mean + Developed_Open_Space_perc + Developed_Low_Inte
    Deciduous_Forest_perc + Evergreen_Forest_perc + Mixed_Forest_perc +
    Shrub_perc + Grassland_perc + Pasture_perc + Cultivated_Crops_perc +
    pop_density + summer_tmmx + winter_tmmx + summer_rmax + winter_rmax
-TransAirPolCalif <- TransAirPolCalif %>%
-  filter(year == 2001)
+TransAirPolCalif <- dplyr::filter(TransAirPolCalif, year == 2001)
 lm.2001 <- lm(formula = formula.GWPR, TransAirPolCalif)
 ```
 ```{r}
@@ -52,8 +50,7 @@ head(resid.lm)
 ```
 ```{r cross_sectional_residual, fig.align='center', out.height= '80%', out.width='80%'}
 to_show <- sp::merge(California, resid.lm, by = "GEOID")
-tm_shape(to_show) +
-  tm_polygons(col = 'resid')
+tm_shape(to_show) + tm_polygons(col = 'resid')
 ```
   
 <strong>Note:</strong> This is just an example about the residuals spatially clustering. Maybe, not so clear to convince you, so we need use Moran's I test to statistically confirm this situation. We will discuss that part in the Function section. 
@@ -150,11 +147,11 @@ pdata <- plm::pdata.frame(TransAirPolCalif, index = c("GEOID", "year"))
 moran.plm.model <- plm::plm(formula = formula.GWPR, data = pdata, model = "within")
 summary(moran.plm.model)
 ```
-```{r, message=FALSE}
+```{r}
 bw.AIC.F <- bw.GWPR(formula = formula.GWPR, data = TransAirPolCalif, index = c("GEOID", "year"),
                     SDF = California, adaptive = F, p = 2, bigdata = F, effect = "individual",
                     model = "within", approach = "AIC", kernel = "bisquare", longlat = F,
-                    doParallel = T, cluster.number = 4)
+                    doParallel = T, cluster.number = 2)
 ```
 ```{r}
 GWPR.moran.test(moran.plm.model, SDF = California, bw = bw.AIC.F, kernel = "bisquare",
