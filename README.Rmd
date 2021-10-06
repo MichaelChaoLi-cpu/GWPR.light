@@ -42,7 +42,7 @@ install.packages("GWPR.light")
 ```
 
 ## Details Introduction
-You can read our [vignettes](/vignettes/introduction_of_GWPR.Rmd)
+You can read our [vignettes](/vignettes/introduction_of_GWPR.html)
 
 ## Example
 

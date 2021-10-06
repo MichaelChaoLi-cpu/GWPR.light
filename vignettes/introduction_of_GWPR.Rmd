@@ -215,7 +215,7 @@ $$\hat\beta = (X^TX)^{-1}X^Ty$$
 Now, it should be as follows:
 $$\hat\beta_i = (X^TW_iX)^{-1}X^TW_iy$$
 This $W_i$ is the spatial weights we mention in the beginning of this documents. Now, you know GWR based on OLS. All panel model is just a data transformation, then perform the model use almost the same process.
-$$Xt = 
+$$X' = 
 \begin{cases}
 X & \text{if model = pooling}\\
 X - \bar{X} & \text{if model = FEM}\\
@@ -224,7 +224,7 @@ X - \theta\bar{X} & \text{if model = REM}\\
 X_t - X_{t-1} & \text{if model = first difference}\\
 \end{cases}
 $$
-$$yt = 
+$$y' = 
 \begin{cases}
 y & \text{if model = pooling}\\
 y - \bar{y} & \text{if model = FEM}\\
@@ -233,6 +233,7 @@ y - \theta\bar{y} & \text{if model = REM}\\
 y_t - y_{t-1} & \text{if model = first difference}\\
 \end{cases}
 $$
+Where $X'$ is the data after transformation, $X$ is a matrix of original independent variables, $\bar{X}$ is the means of all independent variables during all periods.  
 Our GWPR() can solve first three type within the function. "between" and "first difference" can be easily performed, then use our GWPR() with (model = "pooling") to do.
 Here, we give an example about GWPR()
 ```{r eg.GWPR, fig.align='center', out.height= '80%', out.width='80%'}
