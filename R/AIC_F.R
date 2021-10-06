@@ -30,26 +30,27 @@ AIC_F <- function(bw, data_input, ID_list, formula, p, longlat, adaptive, kernel
                   random.method, huge_data_size)
 {
   AICscore_vector <- c()
+  wgt <- 0
   ID_list_single <- as.vector(ID_list[[1]])
   loop_times <- 1
   for (ID_individual in ID_list_single)
   {
-    subsample <- dplyr::mutate(data_input, aim = ifelse(id == ID_individual, 1, 0))
-    subsample <- dplyr::arrange(subsample, desc(aim))
-    dp_locat_subsample <- dplyr::select(subsample, X, Y)
+    data_input$aim[data_input$id == ID_individual] <- 1
+    data_input$aim[data_input$id != ID_individual] <- 0
+    subsample <- data_input
+    subsample <- subsample[order(-subsample$aim),]
+    dp_locat_subsample <- dplyr::select(subsample, 'X', 'Y')
     dp_locat_subsample <- as.matrix(dp_locat_subsample)
-    dMat <- GWmodel::gw.dist(dp.locat = dp_locat_subsample, rp.locat = dp_locat_subsample,
-                             focus = 1, p=p, longlat=longlat)
     dMat <- GWmodel::gw.dist(dp.locat = dp_locat_subsample, rp.locat = dp_locat_subsample,
                              focus = 1, p=p, longlat=longlat)
     weight <- GWmodel::gw.weight(as.numeric(dMat), bw=bw, kernel=kernel, adaptive=adaptive)
     subsample$wgt <- as.vector(weight)
-    subsample <- dplyr::filter(subsample, wgt > 0.01)
+    subsample <- subsample[(subsample$wgt > 0.01),]
     Psubsample <- plm::pdata.frame(subsample, index = index, drop.index = FALSE, row.names = FALSE,
                                    stringsAsFactors = default.stringsAsFactors())
     plm_subsample <- try(plm::plm(formula=formula, model=model, data=Psubsample,
                                   effect = effect, index=index, weights = wgt,
-                                  random.method = random.method), silent=TRUE)
+                                  random.method = random.method), silent = TRUE)
     if(!inherits(plm_subsample, "try-error"))
     {
       if(model == "within")

@@ -22,16 +22,19 @@ protect_model_with_least_individuals <- function(data, ID_list, index,
   max_dist <- c()
   for (ID_individual in ID_list_single)
   {
-    subsample <- dplyr::mutate(data, aim = ifelse(id == ID_individual, 1, 0))
-    subsample <- dplyr::arrange(subsample, desc(aim))
-    dp_locat_subsample <- dplyr::select(subsample, X, Y)
+    data$aim[data$id == ID_individual] <- 1
+    data$aim[data$id != ID_individual] <- 0
+    subsample <- data
+    subsample <- subsample[order(-subsample$aim),]
+    dp_locat_subsample <- dplyr::select(subsample, 'X', 'Y')
     dp_locat_subsample <- as.matrix(dp_locat_subsample)
     dMat <- GWmodel::gw.dist(dp.locat = dp_locat_subsample, rp.locat = dp_locat_subsample,
                              focus = 1, p=p, longlat=longlat)
     subsample$dist <- as.vector(dMat)
-    subsample <- dplyr::arrange(subsample, dist)
+    subsample <- subsample[order(subsample$dist),]
     id_subsample <- dplyr::select(subsample, "id")
-    id_subsample <- dplyr::distinct(id_subsample, id)
+    id_subsample <- id_subsample[!duplicated(id_subsample$id),]
+    id_subsample <- as.data.frame(id_subsample)
     id_subsample <- id_subsample[1:bw_panel,]
     id_subsample <- as.data.frame(id_subsample)
     colnames(id_subsample) <- "id"

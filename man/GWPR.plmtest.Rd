@@ -51,11 +51,13 @@ formula.GWPR <- pm25 ~ co2_mean + Developed_Open_Space_perc + Developed_Low_Inte
    Shrub_perc + Grassland_perc + Pasture_perc + Cultivated_Crops_perc +
    pop_density + summer_tmmx + winter_tmmx + summer_rmax + winter_rmax
 
-bw.AIC.F <- bw.GWPR(formula = formula.GWPR, data = TransAirPolCalif, index = c("GEOID", "year"), SDF = California,
+bw.AIC.F <- bw.GWPR(formula = formula.GWPR, data = TransAirPolCalif,
+                    index = c("GEOID", "year"), SDF = California,
                     adaptive = F, p = 2, bigdata = F, effect = "individual",
                     model = "within", approach = "AIC", kernel = "bisquare", longlat = F,
                     doParallel = T, cluster.number = 4)
-GWPR.plmtest.resu.F <- GWPR.plmtest(formula = formula.GWPR, data = TransAirPolCalif, index = c("GEOID", "year"),
+GWPR.plmtest.resu.F <- GWPR.plmtest(formula = formula.GWPR, data = TransAirPolCalif,
+                                    index = c("GEOID", "year"),
                                     SDF = California, bw = bw.AIC.F, adaptive = F, p = 2,
                                     kernel = "bisquare", longlat = F)
 library(tmap)

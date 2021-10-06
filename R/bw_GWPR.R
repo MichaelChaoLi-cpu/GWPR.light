@@ -62,7 +62,8 @@
 #'
 #' bw.CV.F
 #'
-#' bw.AIC.F <- bw.GWPR(formula = formula.GWPR, data = TransAirPolCalif, index = c("GEOID", "year"), SDF = California,
+#' bw.AIC.F <- bw.GWPR(formula = formula.GWPR, data = TransAirPolCalif, index = c("GEOID", "year"),
+#'                     SDF = California,
 #'                     adaptive = F, p = 2, bigdata = F, effect = "individual",
 #'                     model = "within", approach = "AIC", kernel = "bisquare", longlat = F,
 #'                     doParallel = T, cluster.number = 4)
@@ -104,12 +105,13 @@ bw.GWPR <- function(formula, data, index, SDF, adaptive = F, p = 2,bigdata = F, 
 
   # Assuming unbalanced panel, get individuals' ID and max record number of individuals
   ID <- dplyr::select(data, "id")
-  ID_num <- data.table::setDT(ID)[,list(Count=.N),names(ID)]
+  .N <- 0
+  ID_num <- data.table::setDT(ID)[,list(Count = .N),names(ID)]
   if(model == "within" )
   {
     data <- drop_ID_with_single_observation(data, ID_num)
     ID <- dplyr::select(data, "id")
-    ID_num <- data.table::setDT(ID)[,list(Count=.N),names(ID)]
+    ID_num <- data.table::setDT(ID)[,list(Count = .N),names(ID)]
   }
 
   # Judge the datasize of calculation

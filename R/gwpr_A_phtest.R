@@ -47,16 +47,19 @@ gwpr_A_phtest <- function(bw = bw, data, index, SDF, ID_list, random.method = ra
   ID_list_single <- as.vector(ID_list[[1]])
   output_result <- data.frame(Doubles = double(), Characters = character())
   loop_times <- 1
+  wgt <- 0
   for (ID_individual in ID_list_single)
   {
-    subsample <- dplyr::mutate(data, aim = ifelse(id == ID_individual, 1, 0))
-    subsample <- dplyr::arrange(subsample, desc(aim))
-    dp_locat_subsample <- dplyr::select(subsample, X, Y)
+    data$aim[data$id == ID_individual] <- 1
+    data$aim[data$id != ID_individual] <- 0
+    subsample <- data
+    subsample <- subsample[order(-subsample$aim),]
+    dp_locat_subsample <- dplyr::select(subsample, 'X', 'Y')
     dp_locat_subsample <- as.matrix(dp_locat_subsample)
     dMat <- GWmodel::gw.dist(dp.locat = dp_locat_subsample, rp.locat = dp_locat_subsample,
                              focus = 1, p=p, longlat=longlat)
     subsample$distance <- dMat[,1]
-    subsample <- dplyr::arrange(subsample, distance)
+    subsample <- subsample[order(subsample$distance),]
     in_subsample_id <- dplyr::select(subsample, index[1])
     in_subsample_id <- dplyr::distinct(in_subsample_id)
     in_subsample_id$yes <- 1
@@ -66,7 +69,7 @@ gwpr_A_phtest <- function(bw = bw, data, index, SDF, ID_list, random.method = ra
     bw_panel <- sum(bw_panel$usingCount, na.rm = T)
     weight <- GWmodel::gw.weight(as.numeric(dMat), bw=bw_panel, kernel=kernel, adaptive=adaptive)
     subsample$wgt <- weight[,1]
-    subsample <- dplyr::filter(subsample, wgt > 0)
+    subsample <- subsample[(subsample$wgt > 0),]
     Psubsample <- plm::pdata.frame(subsample, index = index, drop.index = FALSE, row.names = FALSE,
                                    stringsAsFactors = default.stringsAsFactors())
     plm_subsample_fem <- plm::plm(formula=formula, model="within", data=Psubsample,

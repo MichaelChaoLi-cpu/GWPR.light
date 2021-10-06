@@ -17,6 +17,8 @@
 #' @import GWmodel
 #' @importFrom sp merge coordinates
 #' @importFrom plm pdim index
+#' @importFrom methods is
+#' @importFrom stats pnorm
 #'
 #' @return A list of result:
 #' \describe{
@@ -50,7 +52,8 @@
 #' moran.plm.model <- plm::plm(formula = formula.GWPR, data = pdata, model = "within")
 #' summary(moran.plm.model)
 #'
-#' bw.AIC.F <- bw.GWPR(formula = formula.GWPR, data = TransAirPolCalif, index = c("GEOID", "year"), SDF = California,
+#' bw.AIC.F <- bw.GWPR(formula = formula.GWPR, data = TransAirPolCalif, index = c("GEOID", "year"),
+#'                     SDF = California,
 #'                     adaptive = F, p = 2, bigdata = F, effect = "individual",
 #'                     model = "within", approach = "AIC", kernel = "bisquare", longlat = F,
 #'                     doParallel = T, cluster.number = 4)
@@ -70,7 +73,7 @@ GWPR.moran.test <- function(plm_model, SDF, bw, adaptive = F, p = 2, kernel = "b
   {
     stop("Current version only accepts balanced panel regression.")
   }
-  if(!is(SDF, "Spatial"))
+  if(!methods::is(SDF, "Spatial"))
   {
     stop("SDF should be the spatial data frame based on \"sp\".")
   }
@@ -140,17 +143,17 @@ GWPR.moran.test <- function(plm_model, SDF, bw, adaptive = F, p = 2, kernel = "b
 
   if (alternative == "two.sided")
   {
-    PrI <- 2 * pnorm(abs(ZI), lower.tail=FALSE)
+    PrI <- 2 * stats::pnorm(abs(ZI), lower.tail=FALSE)
   }
   else
   {
     if (alternative == "greater")
     {
-      PrI <- pnorm(ZI, lower.tail=FALSE)
+      PrI <- stats::pnorm(ZI, lower.tail=FALSE)
     }
     else
     {
-      PrI <- pnorm(ZI)
+      PrI <- stats::pnorm(ZI)
     }
   }
 

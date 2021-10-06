@@ -54,13 +54,16 @@
 #'    Shrub_perc + Grassland_perc + Pasture_perc + Cultivated_Crops_perc +
 #'    pop_density + summer_tmmx + winter_tmmx + summer_rmax + winter_rmax
 #'
-#' bw.AIC.F <- bw.GWPR(formula = formula.GWPR, data = TransAirPolCalif, index = c("GEOID", "year"), SDF = California,
+#' bw.AIC.F <- bw.GWPR(formula = formula.GWPR, data = TransAirPolCalif, index = c("GEOID", "year"),
+#'                     SDF = California,
 #'                     adaptive = F, p = 2, bigdata = F, effect = "individual",
 #'                     model = "within", approach = "AIC", kernel = "bisquare", longlat = F,
 #'                     doParallel = T, cluster.number = 4)
 #'
-#' result.F.AIC <- GWPR(bw = bw.AIC.F, formula = formula.GWPR, data = TransAirPolCalif, index = c("GEOID", "year"),
-#'                      SDF = California, adaptive = F, p = 2, effect = "individual", model = "within",
+#' result.F.AIC <- GWPR(bw = bw.AIC.F, formula = formula.GWPR, data = TransAirPolCalif,
+#'                      index = c("GEOID", "year"),
+#'                      SDF = California, adaptive = F, p = 2, effect = "individual",
+#'                      model = "within",
 #'                      kernel = "bisquare", longlat = F)
 #' summary(result.F.AIC$SDF$Local_R2)
 #' library(tmap)
@@ -102,6 +105,7 @@ GWPR <- function(formula, data, index, SDF, bw = NULL, adaptive = F, p = 2,
   index[1] <- "id"
 
   # Assuming unbalanced panel, get individuals' ID and max record number of individuals
+  .N <- 0
   ID <- dplyr::select(data, index[1])
   ID_num <- data.table::setDT(ID)[,list(Count=.N),names(ID)]
   if(model == "within")

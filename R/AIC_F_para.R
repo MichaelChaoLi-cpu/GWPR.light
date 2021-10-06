@@ -29,25 +29,30 @@
 #'
 #' @references Fotheringham, A. Stewart, Chris Brunsdon, and Martin Charlton. Geographically weighted regression: the analysis of spatially varying relationships. John Wiley & Sons, 2003.
 #' @noRd
-AIC_F_para <- function(bw, data_input, ID_list = ID_num, formula, p, longlat, adaptive, kernel,
+AIC_F_para <- function(bw, data_input, ID_list, formula, p, longlat, adaptive, kernel,
                        model, index, effect,
                        random.method, cluster.number = cluster.number)
 {
   ID_list_single <- as.vector(ID_list[[1]])
-  loop_times <- 1
+  ID_individual <- 0
+  wgt <- 0
   cl <- parallel::makeCluster(cluster.number)
   doParallel::registerDoParallel(cl)
   AICscore_vector <- foreach(ID_individual = ID_list_single, .combine = c) %dopar%
   {
-    subsample <- dplyr::mutate(data_input, aim = ifelse(id == ID_individual, 1, 0))
-    subsample <- dplyr::arrange(subsample, desc(aim))
-    dp_locat_subsample <- dplyr::select(subsample, X, Y)
+    data_input$aim[data_input$id == ID_individual] <- 1
+    data_input$aim[data_input$id != ID_individual] <- 0
+    subsample <- data_input
+    subsample <- subsample[order(-subsample$aim),]
+    dp_locat_subsample <- dplyr::select(subsample, 'X', 'Y')
     dp_locat_subsample <- as.matrix(dp_locat_subsample)
+    dMat <- GWmodel::gw.dist(dp.locat = dp_locat_subsample, rp.locat = dp_locat_subsample,
+                             focus = 1, p=p, longlat=longlat)
     dMat <- GWmodel::gw.dist(dp.locat = dp_locat_subsample, rp.locat = dp_locat_subsample,
                              focus = 1, p=p, longlat=longlat)
     weight <- GWmodel::gw.weight(as.numeric(dMat), bw=bw, kernel=kernel, adaptive=adaptive)
     subsample$wgt <- as.vector(weight)
-    subsample <- dplyr::filter(subsample, wgt > 0.01)
+    subsample <- subsample[(subsample$wgt > 0.01),]
     Psubsample <- plm::pdata.frame(subsample, index = index, drop.index = FALSE, row.names = FALSE,
                                    stringsAsFactors = default.stringsAsFactors())
     plm_subsample <- try(plm::plm(formula=formula, model=model, data=Psubsample,
@@ -84,9 +89,7 @@ AIC_F_para <- function(bw, data_input, ID_list = ID_num, formula, p, longlat, ad
         tr_hatmat <- sum(diag(P))
         n <- nrow(Psubsample)
         AICscore <- 2*n*log(sd(plm_subsample$residuals)) + n*log(2*pi) +  n * (tr_hatmat + n) / (n - 2 - tr_hatmat)
-      }
-      else
-      {
+      } else {
         AICscore <- Inf
       }
     }

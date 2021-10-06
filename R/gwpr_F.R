@@ -55,17 +55,20 @@ gwpr_F <- function(bw = bw, data, SDF, ID_list,
   output_result <- data.frame(Doubles = double())
   y_yhat_resid <- data.frame(Doubles = double())
   loop_times <- 1
+  wgt <- 0
   for (ID_individual in ID_list_single)
   {
-    subsample <- dplyr::mutate(data, aim = ifelse(id == ID_individual, 1, 0))
-    subsample <- dplyr::arrange(subsample, desc(aim))
-    dp_locat_subsample <- dplyr::select(subsample, X, Y)
+    data$aim[data$id == ID_individual] <- 1
+    data$aim[data$id != ID_individual] <- 0
+    subsample <- data
+    subsample <- subsample[order(-subsample$aim),]
+    dp_locat_subsample <- dplyr::select(subsample, 'X', 'Y')
     dp_locat_subsample <- as.matrix(dp_locat_subsample)
     dMat <- GWmodel::gw.dist(dp.locat = dp_locat_subsample, rp.locat = dp_locat_subsample,
                              focus = 1, p=p, longlat=longlat)
     weight <- GWmodel::gw.weight(as.numeric(dMat), bw=bw, kernel=kernel, adaptive=adaptive)
     subsample$wgt <- as.vector(weight)
-    subsample <- dplyr::filter(subsample, wgt > 0)
+    subsample <- subsample[(subsample$wgt > 0),]
     Psubsample <- plm::pdata.frame(subsample, index = index, drop.index = FALSE, row.names = FALSE,
                                    stringsAsFactors = default.stringsAsFactors())
     plm_subsample <- plm::plm(formula=formula, model=model, data=Psubsample,

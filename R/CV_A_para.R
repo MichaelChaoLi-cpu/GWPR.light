@@ -28,29 +28,34 @@
 #'
 #' @references Fotheringham, A. Stewart, Chris Brunsdon, and Martin Charlton. Geographically weighted regression: the analysis of spatially varying relationships. John Wiley & Sons, 2003.
 #' @noRd
-CV_A_para <- function(bw, data, ID_list = ID_num, formula, p, longlat, adaptive, kernel,
+CV_A_para <- function(bw, data, ID_list, formula, p, longlat, adaptive, kernel,
                       model, index, effect,
                       random.method,  cluster.number = cluster.number)
 {
   ID_list_single <- as.vector(ID_list[[1]])
   varibale_name_in_equation <- all.vars(formula)
+  ID_individual <- 0
+  wgt <- 0
   cl <- parallel::makeCluster(cluster.number)
   doParallel::registerDoParallel(cl)
   CVscore_vector <- foreach(ID_individual = ID_list_single, .combine = c) %dopar%
   {
-    subsample <- dplyr::mutate(data, aim = ifelse(id == ID_individual, 1, 0))
-    subsample <- dplyr::arrange(subsample, desc(aim))
-    dp_locat_subsample <- dplyr::select(subsample, X, Y)
+    data$aim[data$id == ID_individual] <- 1
+    data$aim[data$id != ID_individual] <- 0
+    subsample <- data
+    subsample <- subsample[order(-subsample$aim),]
+    dp_locat_subsample <- dplyr::select(subsample, 'X', 'Y')
     dp_locat_subsample <- as.matrix(dp_locat_subsample)
     dMat <- GWmodel::gw.dist(dp.locat = dp_locat_subsample, rp.locat = dp_locat_subsample,
                              focus = 1, p=p, longlat=longlat)
     subsample$distance <- dMat[,1]
-    subsample <- dplyr::arrange(subsample, distance)
-    in_subsample_id <- dplyr::select(subsample, index[1])
-    in_subsample_id <- dplyr::distinct(in_subsample_id)
+    subsample <- subsample[order(subsample$distance),]
+    in_subsample_id <- dplyr::select(subsample, 'id')
+    in_subsample_id <- in_subsample_id[!duplicated(in_subsample_id$id),]
+    in_subsample_id <- as.data.frame(in_subsample_id)
     in_subsample_id$yes <- 1
     in_subsample_id <- in_subsample_id[1:bw, ]
-    bw_panel <- dplyr::left_join(ID_list, in_subsample_id, by = index[1])
+    bw_panel <- dplyr::left_join(ID_list, in_subsample_id, by = 'id')
     bw_panel$usingCount <- bw_panel$Count * bw_panel$yes
     bw_panel <- sum(bw_panel$usingCount, na.rm = T)
     weight <- GWmodel::gw.weight(as.numeric(dMat), bw=bw_panel, kernel=kernel, adaptive=adaptive)

@@ -54,20 +54,23 @@ gwpr_A <- function(bw, data, SDF, ID_list, formula, p, longlat, adaptive,
   output_result <- data.frame(Doubles = double())
   y_yhat_resid <- data.frame(Doubles = double())
   loop_times <- 1
+  wgt = 0
   for (ID_individual in ID_list_single)
   {
-    subsample <- dplyr::mutate(data, aim = ifelse(id == ID_individual, 1, 0))
-    subsample <- dplyr::arrange(subsample, desc(aim))
-    dp_locat_subsample <- dplyr::select(subsample, X, Y)
+    data_input$aim[data_input$id == ID_individual] <- 1
+    data_input$aim[data_input$id != ID_individual] <- 0
+    subsample <- data_input
+    subsample <- subsample[order(-subsample$aim),]
+    dp_locat_subsample <- dplyr::select(subsample, 'X', 'Y')
     dp_locat_subsample <- as.matrix(dp_locat_subsample)
     dMat <- GWmodel::gw.dist(dp.locat = dp_locat_subsample, rp.locat = dp_locat_subsample,
                              focus = 1, p=p, longlat=longlat)
     subsample$dist <- as.vector(dMat)
-    subsample <- dplyr::arrange(subsample, dist)
+    subsample <- subsample[order(subsample$dist),]
     id_subsample <- dplyr::select(subsample, "id")
-    id_subsample <- dplyr::distinct(id_subsample, id)
-    id_subsample <- id_subsample[1:bw,]
+    id_subsample <- id_subsample[!duplicated(id_subsample$id),]
     id_subsample <- as.data.frame(id_subsample)
+    id_subsample <- id_subsample[1:bw,]
     colnames(id_subsample) <- "id"
     id_subsample <- dplyr::mutate(id_subsample, flag = 1)
     subsample <- dplyr::inner_join(subsample, id_subsample, by = "id")

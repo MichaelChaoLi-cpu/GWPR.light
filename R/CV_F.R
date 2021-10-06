@@ -31,18 +31,21 @@ CV_F <- function(bw, data, ID_list, formula, p, longlat, adaptive, kernel,
   CVscore_vector <- c()
   ID_list_single <- as.vector(ID_list[[1]])
   loop_times <- 1
+  wgt <- 0
   varibale_name_in_equation <- all.vars(formula)
   for (ID_individual in ID_list_single)
   {
-    subsample <- dplyr::mutate(data, aim = ifelse(id == ID_individual, 1, 0))
-    subsample <- dplyr::arrange(subsample, desc(aim))
-    dp_locat_subsample <- dplyr::select(subsample, X, Y)
+    data$aim[data$id == ID_individual] <- 1
+    data$aim[data$id != ID_individual] <- 0
+    subsample <- data
+    subsample <- subsample[order(-subsample$aim),]
+    dp_locat_subsample <- dplyr::select(subsample, 'X', 'Y')
     dp_locat_subsample <- as.matrix(dp_locat_subsample)
     dMat <- GWmodel::gw.dist(dp.locat = dp_locat_subsample, rp.locat = dp_locat_subsample,
                              focus = 1, p=p, longlat=longlat)
     weight <- GWmodel::gw.weight(as.numeric(dMat), bw=bw, kernel=kernel, adaptive=adaptive)
     subsample$wgt <- as.vector(weight)
-    subsample <- dplyr::filter(subsample, wgt > 0.01)
+    subsample <- subsample[(subsample$wgt > 0.01),]
     Psubsample <- plm::pdata.frame(subsample, index = index, drop.index = FALSE, row.names = FALSE,
                                    stringsAsFactors = default.stringsAsFactors())
     plm_subsample <- try(plm::plm(formula=formula, model=model, data=Psubsample,

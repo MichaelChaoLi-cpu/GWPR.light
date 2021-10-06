@@ -28,25 +28,29 @@
 #'
 #' @references Fotheringham, A. Stewart, Chris Brunsdon, and Martin Charlton. Geographically weighted regression: the analysis of spatially varying relationships. John Wiley & Sons, 2003.
 #' @noRd
-CV_F_para <- function(bw, data, ID_list = ID_num, formula, p, longlat, adaptive, kernel,
+CV_F_para <- function(bw, data, ID_list, formula, p, longlat, adaptive, kernel,
                       model = model, index = index, effect = effect,
                       random.method = random.method, cluster.number = cluster.number)
 {
   ID_list_single <- as.vector(ID_list[[1]])
+  wgt <- 0
+  ID_individual <- 0
   varibale_name_in_equation <- all.vars(formula)
   cl <- parallel::makeCluster(cluster.number)
   doParallel::registerDoParallel(cl)
   CVscore_vector <- foreach(ID_individual = ID_list_single, .combine = c) %dopar%
   {
-    subsample <- dplyr::mutate(data, aim = ifelse(id == ID_individual, 1, 0))
-    subsample <- dplyr::arrange(subsample, desc(aim))
-    dp_locat_subsample <- dplyr::select(subsample, X, Y)
+    data$aim[data$id == ID_individual] <- 1
+    data$aim[data$id != ID_individual] <- 0
+    subsample <- data
+    subsample <- subsample[order(-subsample$aim),]
+    dp_locat_subsample <- dplyr::select(subsample, 'X', 'Y')
     dp_locat_subsample <- as.matrix(dp_locat_subsample)
     dMat <- GWmodel::gw.dist(dp.locat = dp_locat_subsample, rp.locat = dp_locat_subsample,
                              focus = 1, p=p, longlat=longlat)
     weight <- GWmodel::gw.weight(as.numeric(dMat), bw=bw, kernel=kernel, adaptive=adaptive)
     subsample$wgt <- as.vector(weight)
-    subsample <- dplyr::filter(subsample, wgt > 0.01)
+    subsample <- subsample[(subsample$wgt > 0.01),]
     Psubsample <- plm::pdata.frame(subsample, index = index, drop.index = FALSE, row.names = FALSE,
                                    stringsAsFactors = default.stringsAsFactors())
     plm_subsample <- try(plm::plm(formula=formula, model=model, data=Psubsample,

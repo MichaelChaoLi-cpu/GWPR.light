@@ -68,7 +68,8 @@ pdata <- plm::pdata.frame(TransAirPolCalif, index = c("GEOID", "year"))
 moran.plm.model <- plm::plm(formula = formula.GWPR, data = pdata, model = "within")
 summary(moran.plm.model)
 
-bw.AIC.F <- bw.GWPR(formula = formula.GWPR, data = TransAirPolCalif, index = c("GEOID", "year"), SDF = California,
+bw.AIC.F <- bw.GWPR(formula = formula.GWPR, data = TransAirPolCalif, index = c("GEOID", "year"),
+                    SDF = California,
                     adaptive = F, p = 2, bigdata = F, effect = "individual",
                     model = "within", approach = "AIC", kernel = "bisquare", longlat = F,
                     doParallel = T, cluster.number = 4)

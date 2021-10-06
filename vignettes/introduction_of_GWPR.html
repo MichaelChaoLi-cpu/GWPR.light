@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>The Introduction of GWPR: from the Scratch</title>
+
+<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
+// v0.0.1
+// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
+
+document.addEventListener('DOMContentLoaded', function() {
+  const codeList = document.getElementsByClassName("sourceCode");
+  for (var i = 0; i < codeList.length; i++) {
+    var linkList = codeList[i].getElementsByTagName('a');
+    for (var j = 0; j < linkList.length; j++) {
+      if (linkList[j].innerHTML === "") {
+        linkList[j].setAttribute('aria-hidden', 'true');
+      }
+    }
+  }
+});
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">The Introduction of GWPR: from the Scratch</h1>
+
+
+
+<div id="author" class="section level1">
+<h1>Author:</h1>
+<p>Chao Li <a href="mailto:chaoli0394@gmail.com" class="email">chaoli0394@gmail.com</a> Shunsuke Managi <a href="mailto:managi@doc.kyushu-u.ac.jp" class="email">managi@doc.kyushu-u.ac.jp</a></p>
+</div>
+<div id="overview" class="section level1">
+<h1>1.Overview</h1>
+<p>This is a basic introduction. If you have been familiar with <a href="https://www.bristol.ac.uk/media-library/sites/cmpo/migrated/documents/gwr.pdf">geographically weighted regressions (GWR)</a>, you can skip this part and directly go to the sections about the Functions. If not? Well, you are going to get a funny story.</p>
+<div id="what-is-geographically-weighted-panel-regression-gwpr" class="section level2">
+<h2>1.1 What is Geographically Weighted Panel Regression (GWPR)</h2>
+<p>Generally, this algorithm mainly solves the problem of residuals from panel regressions clustering spatially. Basically, the GWPR is a type of weighted regression, but the only difference between <a href="https://en.wikipedia.org/wiki/Weighted_least_squares">Weighted Least Square (WLS)</a> and GWPR is where the weights come from. In following sections, we will provide more information about the weights.</p>
+</div>
+<div id="why-we-need-to-use-gwpr" class="section level2">
+<h2>1.2 Why we need to use GWPR</h2>
+<p>As we have mentioned that, sometimes, the residuals cluster spatially, but the widely used method, <a href="https://en.wikipedia.org/wiki/Ordinary_least_squares">Ordinary least squares (OLS)</a>, assume that the residuals distribute randomly, even on the maps. We give an cross-sectional example using the data in the package “GWPR.light”, since the cross-sectional example is easy to read.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">library</span>(GWPR.light)</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="kw">library</span>(sp)</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="kw">library</span>(tmap)</span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="kw">data</span>(<span class="st">&quot;California&quot;</span>)</span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="kw">data</span>(<span class="st">&quot;TransAirPolCalif&quot;</span>)</span>
+<span id="cb1-6"><a href="#cb1-6"></a>formula.GWPR &lt;-<span class="st"> </span>pm25 <span class="op">~</span><span class="st"> </span>co2_mean <span class="op">+</span><span class="st"> </span>Developed_Open_Space_perc <span class="op">+</span><span class="st"> </span>Developed_Low_Intensity_perc <span class="op">+</span></span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="st">   </span>Developed_Medium_Intensity_perc <span class="op">+</span><span class="st"> </span>Developed_High_Intensity_perc <span class="op">+</span></span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="st">   </span>Open_Water_perc <span class="op">+</span><span class="st"> </span>Woody_Wetlands_perc <span class="op">+</span><span class="st"> </span>Emergent_Herbaceous_Wetlands_perc <span class="op">+</span></span>
+<span id="cb1-9"><a href="#cb1-9"></a><span class="st">   </span>Deciduous_Forest_perc <span class="op">+</span><span class="st"> </span>Evergreen_Forest_perc <span class="op">+</span><span class="st"> </span>Mixed_Forest_perc <span class="op">+</span></span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="st">   </span>Shrub_perc <span class="op">+</span><span class="st"> </span>Grassland_perc <span class="op">+</span><span class="st"> </span>Pasture_perc <span class="op">+</span><span class="st"> </span>Cultivated_Crops_perc <span class="op">+</span></span>
+<span id="cb1-11"><a href="#cb1-11"></a><span class="st">   </span>pop_density <span class="op">+</span><span class="st"> </span>summer_tmmx <span class="op">+</span><span class="st"> </span>winter_tmmx <span class="op">+</span><span class="st"> </span>summer_rmax <span class="op">+</span><span class="st"> </span>winter_rmax</span>
+<span id="cb1-12"><a href="#cb1-12"></a>TransAirPolCalif &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">filter</span>(TransAirPolCalif, year <span class="op">==</span><span class="st"> </span><span class="dv">2001</span>)</span>
+<span id="cb1-13"><a href="#cb1-13"></a>lm<span class="fl">.2001</span> &lt;-<span class="st"> </span><span class="kw">lm</span>(<span class="dt">formula =</span> formula.GWPR, TransAirPolCalif)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">summary</span>(lm<span class="fl">.2001</span>)</span>
+<span id="cb2-2"><a href="#cb2-2"></a><span class="co">#&gt; </span></span>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="co">#&gt; Call:</span></span>
+<span id="cb2-4"><a href="#cb2-4"></a><span class="co">#&gt; lm(formula = formula.GWPR, data = TransAirPolCalif)</span></span>
+<span id="cb2-5"><a href="#cb2-5"></a><span class="co">#&gt; </span></span>
+<span id="cb2-6"><a href="#cb2-6"></a><span class="co">#&gt; Residuals:</span></span>
+<span id="cb2-7"><a href="#cb2-7"></a><span class="co">#&gt;     Min      1Q  Median      3Q     Max </span></span>
+<span id="cb2-8"><a href="#cb2-8"></a><span class="co">#&gt; -4.8287 -0.7795 -0.0499  0.7059  3.9260 </span></span>
+<span id="cb2-9"><a href="#cb2-9"></a><span class="co">#&gt; </span></span>
+<span id="cb2-10"><a href="#cb2-10"></a><span class="co">#&gt; Coefficients:</span></span>
+<span id="cb2-11"><a href="#cb2-11"></a><span class="co">#&gt;                                     Estimate Std. Error t value Pr(&gt;|t|)    </span></span>
+<span id="cb2-12"><a href="#cb2-12"></a><span class="co">#&gt; (Intercept)                       -1.263e+02  6.333e+01  -1.995 0.053454 .  </span></span>
+<span id="cb2-13"><a href="#cb2-13"></a><span class="co">#&gt; co2_mean                           3.453e+00  1.441e+00   2.396 0.021733 *  </span></span>
+<span id="cb2-14"><a href="#cb2-14"></a><span class="co">#&gt; Developed_Open_Space_perc          2.308e-01  3.062e-01   0.754 0.455674    </span></span>
+<span id="cb2-15"><a href="#cb2-15"></a><span class="co">#&gt; Developed_Low_Intensity_perc       1.163e-01  7.643e-01   0.152 0.879920    </span></span>
+<span id="cb2-16"><a href="#cb2-16"></a><span class="co">#&gt; Developed_Medium_Intensity_perc    4.762e-01  7.783e-01   0.612 0.544383    </span></span>
+<span id="cb2-17"><a href="#cb2-17"></a><span class="co">#&gt; Developed_High_Intensity_perc     -2.806e+00  2.197e+00  -1.278 0.209329    </span></span>
+<span id="cb2-18"><a href="#cb2-18"></a><span class="co">#&gt; Open_Water_perc                   -1.361e-02  1.242e-01  -0.110 0.913294    </span></span>
+<span id="cb2-19"><a href="#cb2-19"></a><span class="co">#&gt; Woody_Wetlands_perc               -5.658e+00  1.520e+00  -3.723 0.000653 ***</span></span>
+<span id="cb2-20"><a href="#cb2-20"></a><span class="co">#&gt; Emergent_Herbaceous_Wetlands_perc  5.911e-04  1.915e-01   0.003 0.997553    </span></span>
+<span id="cb2-21"><a href="#cb2-21"></a><span class="co">#&gt; Deciduous_Forest_perc             -2.392e-01  3.316e-01  -0.721 0.475234    </span></span>
+<span id="cb2-22"><a href="#cb2-22"></a><span class="co">#&gt; Evergreen_Forest_perc              1.220e-01  8.920e-02   1.367 0.179836    </span></span>
+<span id="cb2-23"><a href="#cb2-23"></a><span class="co">#&gt; Mixed_Forest_perc                 -2.076e-01  1.279e-01  -1.623 0.113014    </span></span>
+<span id="cb2-24"><a href="#cb2-24"></a><span class="co">#&gt; Shrub_perc                         1.637e-01  8.684e-02   1.885 0.067341 .  </span></span>
+<span id="cb2-25"><a href="#cb2-25"></a><span class="co">#&gt; Grassland_perc                     1.182e-01  7.712e-02   1.532 0.133914    </span></span>
+<span id="cb2-26"><a href="#cb2-26"></a><span class="co">#&gt; Pasture_perc                       1.097e+00  5.122e-01   2.142 0.038867 *  </span></span>
+<span id="cb2-27"><a href="#cb2-27"></a><span class="co">#&gt; Cultivated_Crops_perc              1.782e-01  8.407e-02   2.120 0.040789 *  </span></span>
+<span id="cb2-28"><a href="#cb2-28"></a><span class="co">#&gt; pop_density                       -5.025e+00  3.157e+00  -1.592 0.119975    </span></span>
+<span id="cb2-29"><a href="#cb2-29"></a><span class="co">#&gt; summer_tmmx                       -5.369e-01  2.775e-01  -1.935 0.060675 .  </span></span>
+<span id="cb2-30"><a href="#cb2-30"></a><span class="co">#&gt; winter_tmmx                        1.039e+00  2.891e-01   3.592 0.000948 ***</span></span>
+<span id="cb2-31"><a href="#cb2-31"></a><span class="co">#&gt; summer_rmax                       -1.761e-01  6.803e-02  -2.589 0.013694 *  </span></span>
+<span id="cb2-32"><a href="#cb2-32"></a><span class="co">#&gt; winter_rmax                        5.998e-02  9.673e-02   0.620 0.538986    </span></span>
+<span id="cb2-33"><a href="#cb2-33"></a><span class="co">#&gt; ---</span></span>
+<span id="cb2-34"><a href="#cb2-34"></a><span class="co">#&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span></span>
+<span id="cb2-35"><a href="#cb2-35"></a><span class="co">#&gt; </span></span>
+<span id="cb2-36"><a href="#cb2-36"></a><span class="co">#&gt; Residual standard error: 1.769 on 37 degrees of freedom</span></span>
+<span id="cb2-37"><a href="#cb2-37"></a><span class="co">#&gt; Multiple R-squared:  0.8337, Adjusted R-squared:  0.7439 </span></span>
+<span id="cb2-38"><a href="#cb2-38"></a><span class="co">#&gt; F-statistic: 9.277 on 20 and 37 DF,  p-value: 4.693e-09</span></span>
+<span id="cb2-39"><a href="#cb2-39"></a>resid.lm &lt;-<span class="st"> </span><span class="kw">cbind</span>(lm<span class="fl">.2001</span><span class="op">$</span>residuals, TransAirPolCalif<span class="op">$</span>GEOID)</span>
+<span id="cb2-40"><a href="#cb2-40"></a><span class="kw">colnames</span>(resid.lm) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;resid&quot;</span>, <span class="st">&quot;GEOID&quot;</span>)</span>
+<span id="cb2-41"><a href="#cb2-41"></a><span class="kw">head</span>(resid.lm)</span>
+<span id="cb2-42"><a href="#cb2-42"></a><span class="co">#&gt;        resid GEOID</span></span>
+<span id="cb2-43"><a href="#cb2-43"></a><span class="co">#&gt; 1 -1.3829415  6091</span></span>
+<span id="cb2-44"><a href="#cb2-44"></a><span class="co">#&gt; 2 -2.5769982  6067</span></span>
+<span id="cb2-45"><a href="#cb2-45"></a><span class="co">#&gt; 3 -0.2371560  6083</span></span>
+<span id="cb2-46"><a href="#cb2-46"></a><span class="co">#&gt; 4  1.1396837  6009</span></span>
+<span id="cb2-47"><a href="#cb2-47"></a><span class="co">#&gt; 5 -0.7800447  6111</span></span>
+<span id="cb2-48"><a href="#cb2-48"></a><span class="co">#&gt; 6  0.6832170  6037</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>to_show &lt;-<span class="st"> </span>sp<span class="op">::</span><span class="kw">merge</span>(California, resid.lm, <span class="dt">by =</span> <span class="st">&quot;GEOID&quot;</span>)</span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="kw">tm_shape</span>(to_show) <span class="op">+</span><span class="st"> </span><span class="kw">tm_polygons</span>(<span class="dt">col =</span> <span class="st">&#39;resid&#39;</span>)</span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="co">#&gt; Warning in sp::proj4string(obj): CRS object has comment, which is lost in output</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="co">#&gt; Linking to GEOS 3.9.0, GDAL 3.2.1, PROJ 7.2.1</span></span>
+<span id="cb3-5"><a href="#cb3-5"></a><span class="co">#&gt; Variable(s) &quot;resid&quot; contains positive and negative values, so midpoint is set to 0. Set midpoint = NA to show the full spectrum of the color palette.</span></span></code></pre></div>
+<p><img src="data:image/png;base64,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" width="80%" height="80%" style="display: block; margin: auto;" /></p>
+<p><strong>Note:</strong> This is just an example about the residuals spatially clustering. Maybe, not so clear to convince you, so we need use Moran’s I test to statistically confirm this situation. We will discuss that part in the Function section.</p>
+</div>
+<div id="how-we-can-perform-gwpr" class="section level2">
+<h2>1.3 How we can perform GWPR</h2>
+<p>Before the package “GWPR.light” had been created, it was a little bit complicated. You need to know how to transform the raw data. Of course, among the well-known models, between panel regression, pooling regression, first difference and fixed effects model are not difficult to apply the data transformation. Then, the algorithm divides the whole sample into numerous subsamples according to a specific rules (we will discuss in the following section). The individual regressions of the subsamples are performed to estimate the local coefficients. However, the random effects model makes us have a headache. Theta <span class="math inline">\(\theta\)</span> is really hard to confirm. We do not know whether they change in each subsample. If we remove the individual effects based on the global <span class="math inline">\(\theta\)</span>, then it may reduce accuracy, though it works. If we try to remove the individual effects in each subsample manually, it is impossible unless you are willing to pay several months or more. So:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">library</span>(GWPR.light)</span></code></pre></div>
+</div>
+</div>
+<div id="functions" class="section level1">
+<h1>2 Functions</h1>
+<div id="bw.gwpr-who-is-your-neighborhoods" class="section level2">
+<h2>2.1 bw.GWPR(): who is your neighborhoods?</h2>
+<p>Who is the neighborhoods of the specific point is really hard to define. In the Beenstock’s and Fotheringham’s books(ref. 1 &amp; 2), if the distance (<span class="math inline">\(d\)</span>) between point A and point B is within a certain distance (<span class="math inline">\(h\)</span>), they could be deemed as the neighborhood of each other, because they have a spatial relationship (<span class="math inline">\(a\)</span>). The Equations are as follows: <span class="math display">\[a_{ik}=
+\begin{cases}
+1&amp; d_{ik} &lt; h\\
+0&amp; \text{otherwise}
+\end{cases}\]</span> where <span class="math inline">\(d_{ik}\)</span> is the distance between the locations of observations <span class="math inline">\(i\)</span> and <span class="math inline">\(k\)</span>. It is also possible to relate <span class="math inline">\(d_{ik}\)</span> to <span class="math inline">\(a_{ik}\)</span> with a continuous function. Currently, this equation is widely used: <span class="math display">\[a_{ik} = 
+\begin{cases}
+[1 - (d_{ik}/h)^2]^2 &amp; d_{ik} &lt; h\\
+0&amp; \text{otherwise}
+\end{cases}
+\]</span> In fact, numerous research that the closer the objects are, the more similar they are. Since the relationship have been normalized from 0 to 1. Therefore, here, we can say the weights (<span class="math inline">\(W\)</span>) of those relationships are the same: <span class="math display">\[W_{ik} = a_{ik}\]</span></p>
+<div id="choosing-h-the-kernel-bandwidth" class="section level3">
+<h3>2.1.1 Choosing <span class="math inline">\(h\)</span>: the kernel bandwidth</h3>
+<p>Before talking about this part, please look at our bw.GWPR() function to have an impression.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">bw.GWPR</span>(<span class="dt">formula =</span> formula, <span class="dt">data =</span> data, <span class="dt">index =</span> index, <span class="dt">SDF =</span> SDF,</span>
+<span id="cb5-2"><a href="#cb5-2"></a>        <span class="dt">adaptive =</span> F, <span class="dt">p =</span> <span class="dv">2</span>,<span class="dt">bigdata =</span> F, <span class="dt">upperratio =</span> <span class="fl">0.25</span>,</span>
+<span id="cb5-3"><a href="#cb5-3"></a>        <span class="dt">effect =</span> <span class="st">&quot;individual&quot;</span>, <span class="dt">model =</span> <span class="kw">c</span>(<span class="st">&quot;pooling&quot;</span>, <span class="st">&quot;within&quot;</span>, <span class="st">&quot;random&quot;</span>),</span>
+<span id="cb5-4"><a href="#cb5-4"></a>        <span class="dt">random.method =</span> <span class="st">&quot;swar&quot;</span>, <span class="dt">approach =</span> <span class="kw">c</span>(<span class="st">&quot;CV&quot;</span>,<span class="st">&quot;AIC&quot;</span>), <span class="dt">kernel =</span> <span class="st">&quot;bisquare&quot;</span>,</span>
+<span id="cb5-5"><a href="#cb5-5"></a>        <span class="dt">longlat =</span> F, <span class="dt">doParallel =</span> F, <span class="dt">cluster.number =</span> <span class="dv">2</span>, <span class="dt">human.set.range =</span> F,</span>
+<span id="cb5-6"><a href="#cb5-6"></a>        <span class="dt">h.upper =</span> <span class="ot">NULL</span>, <span class="dt">h.lower =</span> <span class="ot">NULL</span>)</span></code></pre></div>
+<p>There is a setting named “approach”, including two selections: one is “CV” and the other is “AIC”. They are two criteria to calibrate the bandwidth. In “CV” method, when the sum of squared errors arrives at the minimum, the bandwidth is optimal. Basically, the sum of squared errors is written as: <span class="math display">\[SS(h)  = \sum_i\{y_i - \hat{y_i}(h)\}^2\]</span> However, when <span class="math inline">\(h\)</span> varies, <span class="math inline">\(i\)</span> also changes. Possibly, this function is monotonically increasing.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>h =<span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="dv">10</span> <span class="co"># just an example, not truth.</span></span>
+<span id="cb6-2"><a href="#cb6-2"></a>SS =<span class="st"> </span>h<span class="op">^</span><span class="dv">2</span></span>
+<span id="cb6-3"><a href="#cb6-3"></a><span class="kw">plot</span>(h, SS, <span class="dt">col =</span> <span class="st">&quot;red&quot;</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASAAAAEgCAMAAAAjXV6yAAAAUVBMVEUAAAAAADoAAGYAOjoAOpAAZrY6AAA6ADo6AGY6kNtmAABmkJBmtv+QOgCQZgCQ2/+2ZgC2/7a2///bkDrb////AAD/tmb/25D//7b//9v///8ZHIKUAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAF5klEQVR4nO2dDXOjNhQAyfXObdyk59b1R+7//9AasHNOZbQQEBLH7kxznikj7LX09CQ/oPohUarcb6B0FAQoCFAQoCBAQYCCAAUBCgIUBCgIUBCgIEBBgIIABQEKAhQEKAhQEKAgQEGAggAFAQoCFAQoCFAQoCBAQYCCAAUBCgIUBCgIUBCgIEBBgIIABQEKAhQEKAhQEKAgQEGAggAFAQoCFAQoCFAQoCBAQYCCAAUBCgIUBCgIUBCgIEBBgIIABQEKAhQEKAhQEKAgQEGAggAFAQoCFAQoCFAQoCBgYkHVYsglaNrmEnA4HOp/FNTB4fqfgh5zuP2dWdDwoZ2JXIJSNTc5CiKMQYSzWD8UBCgIUBCgIEBBgIIABQEKAhIJenttl6Rf/pmkuYykEbSvntsXx9uLUc3lJImgt9d3Lfuv/45uLitJBJ23L7eXx45Btm5BS+xB18V7QKoYdO1Ci4lBt+2fgESz2HnbzmId/ac4QYe7vx8xD2ooRlCpm/azC9pV1bcmWXzpOKAwQXPHoHru2lXf6li0kCA97yzWTPPHp+8/FjTNd5EuUWxTRBPFR9iDiPcYdJdTj2guJ85igIkioCBAQYCCAAUBCgJWKqhr5RWyTkGda/eQVQrq3v0JURCgIGCVgoxBSMJZ7LSp93qqqtntGUypm/bdDBV02tSbhdVL+2KG8+ZmqKDdt/pPvY/avEp/3twMFNT8SvH2Wrvp2m2e+Ly5GSzo5fZbjoIeHdgIasNP13b8xOfNzWdi0L6ewdpxlv68uRkq6Pj0/byt+85u1Aj7dQXVKdDFz2kzaoDNLah/Xhiwikx6wMoiYA2ChqxNA2Zeagw/7wTMKmiJS41ZBfVcapRVaT9jDOq51Cit0n6+WazfUmOJddJdJFlqrLnSvtdSY8U9qOdSY3mV9p0kWmosrdK+mzVk0qOw0h5IKiiSbacUNCLrCUlUJ/2zp8w/zY/Jm0PS9KDr5JWlB41aeYUkGmJtKqCgCLtLNqmgGJcFa54gvYQY1HDa/OYsFuXttfNKBBPFmZtLh4IABQG/gKBJY3LA8gVNO6sHLF7QxHlhgIIABQGLF2QMQpzFsqIgwE17YHk9KG3ICVicoMSTVsDSBKVOewIUBCgIWJogYxDiLPaBmXWEFC5o7gEVUrag2UNyiIIABQGFCfp/TDYGfST04Sx2TwEjKiCroEcDaiWCel3tEwyo9QjqdbXPAx35Y3JAEkH9rtV41F+yx+SARGXAXVf73O9JlzigQjL2oBIHVEiqGNTrap/yBlRIsjppr/YZed7FkEnQiNPwIZM0MvQTK2jawz+LgsafRkGjD1HQHI0oaIJDRhz+WRQ0/jTrFrRcFAQoCFAQoCBAQYCCAAUBCgIUBCgIUBCgIGAGQU1JSMcPjXfs4jfgO22qCu4mv6+6n2/atvFH84P5oJsepxf09np5N3v6cJd3HRV0vPzf8zbaSH2jzGPM0HnbPoa5Pq63ofSCrndAhXvln7dRQW1ZQLSR9h6ikZsZH9u6prap3s9XmSsG0Ve2//pXTNDpd/zGSdCxem5qUvp9Ye/MJQietnAREI1Bxy9/bymQ4RBri3Za172frzKToM5ykJa620cF7evRQc/8wODbWGn7cu8gNI+gI8To5jHkUUFP/LXXnbS5NX/32yhVEPSfttfHBTVqojfc7xFbSh1ie8qC9teSlO6P336eaKju0TMKDdL7ePZ2I9qD2vLI6NfefvDoIccip/l4WPhJPJOuo9RdjeTDBvrFoOISxev4wXcES40jr1d2dMi1e+3LWmosHAUBCgIUBCgIUBCgIEBBgIIABQEKAhQEKAhQEKAgQEGAggAFAQoCFAQoCFAQoCBAQYCCAAUBCgJKF3R316s8KAhQEFC+oD83UD+flvIF1XX6/ct5Jqd8Qc9QvJmY8gW95A1ECgIUBCgIUBCgIKB0QdlREKAgQEGAggAFAQoCFAQoCFAQoCBAQYCCAAUBCgIUBCgIUBCgIEBBgIIABQEKAhQE/Af4fnRpnedgjQAAAABJRU5ErkJggg==" width="60%" height="60%" style="display: block; margin: auto;" /></p>
+<p>To solve this issue, the <span class="math inline">\(SS\)</span> function changes as follows (ref. 2): <span class="math display">\[CVSS(h) = \frac{n  \sum_i\{y_i - \hat{y_i}(h)\}^2} {(n-p+1)^2}\]</span> where <span class="math inline">\(n\)</span> is the numbers of observations in the subsample, <span class="math inline">\(p\)</span> is the number of the estimated parameters. Furthermore, the “AIC” criterion also has the same issue. It has changed in our calculation: <span class="math display">\[AIC(h) = 2nln(sd) + 2ln(2\pi) + \frac{n\times [tr(hat) + n]}{[n - 2 - tr(hat)]}\]</span> where <span class="math inline">\(sd\)</span> is the standard deviation of <span class="math inline">\(n\)</span>, and <span class="math inline">\(hat\)</span> is the hat matrix of the local regression with the subsample. <strong>Now, you get the fixed distance bandwidth!:)</strong></p>
+</div>
+<div id="adaptive-and-fixed-distance-bandwidth" class="section level3">
+<h3>2.1.2 Adaptive and Fixed Distance Bandwidth</h3>
+<p>Sometimes, some researches assume the numbers of neighborhoods is fixed. In other words, a specific point always has the <span class="math inline">\(n\)</span> neighborhoods, no matter how far they are. Here, we are going to use the adaptive distances bandwidth. The <span class="math inline">\(h\)</span> is not a fixed number, but depends on the furthest neighborhood. If you have this request, you need to select the “adaptive” as TRUE.</p>
+</div>
+<div id="bigdata-setting" class="section level3">
+<h3>2.1.3 “bigdata” Setting</h3>
+<p>Our calibration process normally start from the golden ratio of range. In this way, if your dataset is huge, in the beginning, the calculation is really time-consuming. However, according to our experience, the bandwidth is seldom large. Therefore, you could set “bigdata” as TRUE and reset upper boundary.</p>
+</div>
+<div id="human.set.range-setting" class="section level3">
+<h3>2.1.4 “human.set.range” Setting</h3>
+<p>If you have run this function for several times and you know the potential optimal range of bandwidth, you can set “human.set.range” as TRUE to cut down the calculation time. Then, you must also set h.upper and h.lower both. Otherwise, errors.</p>
+</div>
+<div id="model-setting" class="section level3">
+<h3>2.1.5 “model” Setting</h3>
+<p>Now, this version of “GWPR.light” can figure our fixed effects model (“within”), pooling regression (“pooling”), and random effects models (“random”), internally. However, if you perform the basic transformation, we can also perform first difference model and between model. For first difference model, you need to confirm your data is balanced panel. Then, please calculate the difference between two continuous period of each variable in every individual. Reset the “time” index, put them into the function and set the model = “pooling”. Here we go! For between model, you need to directly calculation the mean of each variables in every individual. Then, reset the “time” index, put them into the function and set the model = “pooling”. You got it. Unfortunately, the authors of this package still have statistic concern about Hausman-Toylar model, Maybe, in future verion, we will add it into the package. Thank you!</p>
+</div>
+</div>
+<div id="gwpr.moran.test-are-the-residuals-really-clustering" class="section level2">
+<h2>2.2 GWPR.moran.test(): are the residuals really clustering</h2>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="kw">tm_shape</span>(to_show) <span class="op">+</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a><span class="st">  </span><span class="kw">tm_polygons</span>(<span class="dt">col =</span> <span class="st">&#39;resid&#39;</span>)</span>
+<span id="cb7-3"><a href="#cb7-3"></a><span class="co">#&gt; Warning in sp::proj4string(obj): CRS object has comment, which is lost in output</span></span>
+<span id="cb7-4"><a href="#cb7-4"></a><span class="co">#&gt; Variable(s) &quot;resid&quot; contains positive and negative values, so midpoint is set to 0. Set midpoint = NA to show the full spectrum of the color palette.</span></span></code></pre></div>
+<p><img src="data:image/png;base64,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" width="80%" height="80%" style="display: block; margin: auto;" /></p>
+<p>You may be familiar with <a href="https://en.wikipedia.org/wiki/Moran%27s_I">Moran’s I</a>. If not, click it. This version only works with the balanced panel data. Here, we directly go with the math: <span class="math display">\[I=\frac{\sum_i\sum_kW_{ik}\hat{u}_i\hat{u}_k}{\sum_i\hat{u}_i^2}\]</span> where <span class="math inline">\(u_i\)</span> and <span class="math inline">\(u_k\)</span> are the residuals of individuals <span class="math inline">\(i\)</span> and <span class="math inline">\(k\)</span>. If <span class="math inline">\(u_i\)</span> and <span class="math inline">\(u_k\)</span> are perfectly positively correlated, the <span class="math inline">\(I\)</span> would 1. Reversely, if <span class="math inline">\(u_i\)</span> and <span class="math inline">\(u_k\)</span> are totally unrelated, the <span class="math inline">\(I\)</span> should be 0. bw.GWPR() must perform before this test. Otherwise, we do not know who is whose neighborhood. In the global panel model, Moran’s I may be calculated for each time period and averaged: <span class="math display">\[\bar{I} = \frac{1}{T}\sum_{t=1}^TI_t\]</span> where <span class="math inline">\(T\)</span> is the number of periods. Since the data is balanced panel, the expected value of <span class="math inline">\(\bar{I}\)</span> is: <span class="math display">\[E(\bar{I}) = -\frac{1}{N-1}\]</span> where <span class="math inline">\(N\)</span> is the number of observations. And the variance (<span class="math inline">\(V^2\)</span>) should be: <span class="math display">\[V^2 = \frac{N^2\sum_i\sum_kW_{ik}^2 + 3(\sum_i\sum_kW_{ik})^2 - N\sum_i(\sum_kW_{ik})^2}{T(N^2-1)(\sum_i\sum_kW_{ik})}\]</span> Now, to test for spatial autocorrelation in panel data the standardized panel average has a standard normal distribution: <span class="math display">\[\frac{\bar{I}}{V} \sim N(0,1)\]</span> Let us try, using the “GWPR.light::GWPR.moran.test()”</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="kw">data</span>(TransAirPolCalif)</span>
+<span id="cb8-2"><a href="#cb8-2"></a>pdata &lt;-<span class="st"> </span>plm<span class="op">::</span><span class="kw">pdata.frame</span>(TransAirPolCalif, <span class="dt">index =</span> <span class="kw">c</span>(<span class="st">&quot;GEOID&quot;</span>, <span class="st">&quot;year&quot;</span>))</span>
+<span id="cb8-3"><a href="#cb8-3"></a>moran.plm.model &lt;-<span class="st"> </span>plm<span class="op">::</span><span class="kw">plm</span>(<span class="dt">formula =</span> formula.GWPR, <span class="dt">data =</span> pdata, <span class="dt">model =</span> <span class="st">&quot;within&quot;</span>)</span>
+<span id="cb8-4"><a href="#cb8-4"></a><span class="kw">summary</span>(moran.plm.model)</span>
+<span id="cb8-5"><a href="#cb8-5"></a><span class="co">#&gt; Oneway (individual) effect Within Model</span></span>
+<span id="cb8-6"><a href="#cb8-6"></a><span class="co">#&gt; </span></span>
+<span id="cb8-7"><a href="#cb8-7"></a><span class="co">#&gt; Call:</span></span>
+<span id="cb8-8"><a href="#cb8-8"></a><span class="co">#&gt; plm::plm(formula = formula.GWPR, data = pdata, model = &quot;within&quot;)</span></span>
+<span id="cb8-9"><a href="#cb8-9"></a><span class="co">#&gt; </span></span>
+<span id="cb8-10"><a href="#cb8-10"></a><span class="co">#&gt; Balanced Panel: n = 58, T = 16, N = 928</span></span>
+<span id="cb8-11"><a href="#cb8-11"></a><span class="co">#&gt; </span></span>
+<span id="cb8-12"><a href="#cb8-12"></a><span class="co">#&gt; Residuals:</span></span>
+<span id="cb8-13"><a href="#cb8-13"></a><span class="co">#&gt;      Min.   1st Qu.    Median   3rd Qu.      Max. </span></span>
+<span id="cb8-14"><a href="#cb8-14"></a><span class="co">#&gt; -3.520818 -0.832644  0.030775  0.803133  7.400187 </span></span>
+<span id="cb8-15"><a href="#cb8-15"></a><span class="co">#&gt; </span></span>
+<span id="cb8-16"><a href="#cb8-16"></a><span class="co">#&gt; Coefficients:</span></span>
+<span id="cb8-17"><a href="#cb8-17"></a><span class="co">#&gt;                                     Estimate Std. Error t-value  Pr(&gt;|t|)    </span></span>
+<span id="cb8-18"><a href="#cb8-18"></a><span class="co">#&gt; co2_mean                           -0.197150   0.285413 -0.6908   0.48991    </span></span>
+<span id="cb8-19"><a href="#cb8-19"></a><span class="co">#&gt; Developed_Open_Space_perc         -11.065050   1.464988 -7.5530 1.098e-13 ***</span></span>
+<span id="cb8-20"><a href="#cb8-20"></a><span class="co">#&gt; Developed_Low_Intensity_perc       12.019656   2.676593  4.4907 8.080e-06 ***</span></span>
+<span id="cb8-21"><a href="#cb8-21"></a><span class="co">#&gt; Developed_Medium_Intensity_perc    -3.506090   1.747320 -2.0066   0.04511 *  </span></span>
+<span id="cb8-22"><a href="#cb8-22"></a><span class="co">#&gt; Developed_High_Intensity_perc      -5.936223   3.575489 -1.6603   0.09723 .  </span></span>
+<span id="cb8-23"><a href="#cb8-23"></a><span class="co">#&gt; Open_Water_perc                     0.261195   0.443967  0.5883   0.55647    </span></span>
+<span id="cb8-24"><a href="#cb8-24"></a><span class="co">#&gt; Woody_Wetlands_perc                 4.228563   9.430592  0.4484   0.65399    </span></span>
+<span id="cb8-25"><a href="#cb8-25"></a><span class="co">#&gt; Emergent_Herbaceous_Wetlands_perc  -0.293494   0.879748 -0.3336   0.73876    </span></span>
+<span id="cb8-26"><a href="#cb8-26"></a><span class="co">#&gt; Deciduous_Forest_perc               0.436086   2.633798  0.1656   0.86853    </span></span>
+<span id="cb8-27"><a href="#cb8-27"></a><span class="co">#&gt; Evergreen_Forest_perc               1.243448   0.885059  1.4049   0.16041    </span></span>
+<span id="cb8-28"><a href="#cb8-28"></a><span class="co">#&gt; Mixed_Forest_perc                   1.588540   0.906135  1.7531   0.07995 .  </span></span>
+<span id="cb8-29"><a href="#cb8-29"></a><span class="co">#&gt; Shrub_perc                          0.863292   0.880260  0.9807   0.32701    </span></span>
+<span id="cb8-30"><a href="#cb8-30"></a><span class="co">#&gt; Grassland_perc                      0.923024   0.877617  1.0517   0.29322    </span></span>
+<span id="cb8-31"><a href="#cb8-31"></a><span class="co">#&gt; Pasture_perc                        8.565031   1.798878  4.7613 2.260e-06 ***</span></span>
+<span id="cb8-32"><a href="#cb8-32"></a><span class="co">#&gt; Cultivated_Crops_perc               0.174965   0.893169  0.1959   0.84474    </span></span>
+<span id="cb8-33"><a href="#cb8-33"></a><span class="co">#&gt; pop_density                       -10.718520   5.097515 -2.1027   0.03579 *  </span></span>
+<span id="cb8-34"><a href="#cb8-34"></a><span class="co">#&gt; summer_tmmx                         0.494545   0.076187  6.4912 1.446e-10 ***</span></span>
+<span id="cb8-35"><a href="#cb8-35"></a><span class="co">#&gt; winter_tmmx                        -0.107307   0.047792 -2.2453   0.02501 *  </span></span>
+<span id="cb8-36"><a href="#cb8-36"></a><span class="co">#&gt; summer_rmax                        -0.020334   0.012311 -1.6517   0.09897 .  </span></span>
+<span id="cb8-37"><a href="#cb8-37"></a><span class="co">#&gt; winter_rmax                         0.050504   0.011643  4.3379 1.611e-05 ***</span></span>
+<span id="cb8-38"><a href="#cb8-38"></a><span class="co">#&gt; ---</span></span>
+<span id="cb8-39"><a href="#cb8-39"></a><span class="co">#&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span></span>
+<span id="cb8-40"><a href="#cb8-40"></a><span class="co">#&gt; </span></span>
+<span id="cb8-41"><a href="#cb8-41"></a><span class="co">#&gt; Total Sum of Squares:    2656.8</span></span>
+<span id="cb8-42"><a href="#cb8-42"></a><span class="co">#&gt; Residual Sum of Squares: 1361</span></span>
+<span id="cb8-43"><a href="#cb8-43"></a><span class="co">#&gt; R-Squared:      0.48772</span></span>
+<span id="cb8-44"><a href="#cb8-44"></a><span class="co">#&gt; Adj. R-Squared: 0.44132</span></span>
+<span id="cb8-45"><a href="#cb8-45"></a><span class="co">#&gt; F-statistic: 40.4627 on 20 and 850 DF, p-value: &lt; 2.22e-16</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>bw.AIC.F &lt;-<span class="st"> </span><span class="kw">bw.GWPR</span>(<span class="dt">formula =</span> formula.GWPR, <span class="dt">data =</span> TransAirPolCalif, <span class="dt">index =</span> <span class="kw">c</span>(<span class="st">&quot;GEOID&quot;</span>, <span class="st">&quot;year&quot;</span>),</span>
+<span id="cb9-2"><a href="#cb9-2"></a>                    <span class="dt">SDF =</span> California, <span class="dt">adaptive =</span> F, <span class="dt">p =</span> <span class="dv">2</span>, <span class="dt">bigdata =</span> F, <span class="dt">effect =</span> <span class="st">&quot;individual&quot;</span>,</span>
+<span id="cb9-3"><a href="#cb9-3"></a>                    <span class="dt">model =</span> <span class="st">&quot;within&quot;</span>, <span class="dt">approach =</span> <span class="st">&quot;AIC&quot;</span>, <span class="dt">kernel =</span> <span class="st">&quot;bisquare&quot;</span>, <span class="dt">longlat =</span> F,</span>
+<span id="cb9-4"><a href="#cb9-4"></a>                    <span class="dt">doParallel =</span> T, <span class="dt">cluster.number =</span> <span class="dv">2</span>)</span>
+<span id="cb9-5"><a href="#cb9-5"></a><span class="co">#&gt; To make sure every subsample have enough freedom, the minimun numbers of individuals is 2 </span></span>
+<span id="cb9-6"><a href="#cb9-6"></a><span class="co">#&gt; The upper boundary is 12.23978 , and the lower boudnary is 1.435436 </span></span>
+<span id="cb9-7"><a href="#cb9-7"></a><span class="co">#&gt; ..................................................................................</span></span>
+<span id="cb9-8"><a href="#cb9-8"></a><span class="co">#&gt; You use parallel process, so be careful about your memory usage. Cluster number: 2 </span></span>
+<span id="cb9-9"><a href="#cb9-9"></a><span class="co">#&gt; Fixed Bandwidth: 8.112889 AIC score: 2468.518 </span></span>
+<span id="cb9-10"><a href="#cb9-10"></a><span class="co">#&gt; Fixed Bandwidth: 5.562329 AIC score: 1993.051 </span></span>
+<span id="cb9-11"><a href="#cb9-11"></a><span class="co">#&gt; Fixed Bandwidth: 3.985996 AIC score: 1507.388 </span></span>
+<span id="cb9-12"><a href="#cb9-12"></a><span class="co">#&gt; Fixed Bandwidth: 3.011769 AIC score: 1098.755 </span></span>
+<span id="cb9-13"><a href="#cb9-13"></a><span class="co">#&gt; Fixed Bandwidth: 2.409663 AIC score: 802.8273 </span></span>
+<span id="cb9-14"><a href="#cb9-14"></a><span class="co">#&gt; Fixed Bandwidth: 2.037541 AIC score: 613.6641 </span></span>
+<span id="cb9-15"><a href="#cb9-15"></a><span class="co">#&gt; Fixed Bandwidth: 1.807557 AIC score: Inf </span></span>
+<span id="cb9-16"><a href="#cb9-16"></a><span class="co">#&gt; Fixed Bandwidth: 2.179679 AIC score: 680.1113 </span></span>
+<span id="cb9-17"><a href="#cb9-17"></a><span class="co">#&gt; Fixed Bandwidth: 1.949695 AIC score: Inf </span></span>
+<span id="cb9-18"><a href="#cb9-18"></a><span class="co">#&gt; Fixed Bandwidth: 2.091833 AIC score: 640.8903 </span></span>
+<span id="cb9-19"><a href="#cb9-19"></a><span class="co">#&gt; Fixed Bandwidth: 2.003987 AIC score: Inf </span></span>
+<span id="cb9-20"><a href="#cb9-20"></a><span class="co">#&gt; Fixed Bandwidth: 2.058279 AIC score: 623.5577 </span></span>
+<span id="cb9-21"><a href="#cb9-21"></a><span class="co">#&gt; Fixed Bandwidth: 2.024725 AIC score: 607.2684 </span></span>
+<span id="cb9-22"><a href="#cb9-22"></a><span class="co">#&gt; Fixed Bandwidth: 2.016804 AIC score: 604.0248 </span></span>
+<span id="cb9-23"><a href="#cb9-23"></a><span class="co">#&gt; Fixed Bandwidth: 2.011908 AIC score: 601.4765 </span></span>
+<span id="cb9-24"><a href="#cb9-24"></a><span class="co">#&gt; Fixed Bandwidth: 2.008883 AIC score: Inf </span></span>
+<span id="cb9-25"><a href="#cb9-25"></a><span class="co">#&gt; Fixed Bandwidth: 2.013778 AIC score: 602.001 </span></span>
+<span id="cb9-26"><a href="#cb9-26"></a><span class="co">#&gt; Fixed Bandwidth: 2.010752 AIC score: 601.1515 </span></span>
+<span id="cb9-27"><a href="#cb9-27"></a><span class="co">#&gt; Fixed Bandwidth: 2.010038 AIC score: Inf </span></span>
+<span id="cb9-28"><a href="#cb9-28"></a><span class="co">#&gt; Fixed Bandwidth: 2.011194 AIC score: 601.2757 </span></span>
+<span id="cb9-29"><a href="#cb9-29"></a><span class="co">#&gt; Fixed Bandwidth: 2.01048 AIC score: Inf </span></span>
+<span id="cb9-30"><a href="#cb9-30"></a><span class="co">#&gt; Fixed Bandwidth: 2.010921 AIC score: 601.199 </span></span>
+<span id="cb9-31"><a href="#cb9-31"></a><span class="co">#&gt; Fixed Bandwidth: 2.010648 AIC score: 601.1222 </span></span>
+<span id="cb9-32"><a href="#cb9-32"></a><span class="co">#&gt; Fixed Bandwidth: 2.010584 AIC score: 601.1041 </span></span>
+<span id="cb9-33"><a href="#cb9-33"></a><span class="co">#&gt; Fixed Bandwidth: 2.010544 AIC score: 601.0928 </span></span>
+<span id="cb9-34"><a href="#cb9-34"></a><span class="co">#&gt; Fixed Bandwidth: 2.010519 AIC score: Inf </span></span>
+<span id="cb9-35"><a href="#cb9-35"></a><span class="co">#&gt; Fixed Bandwidth: 2.010559 AIC score: 601.0971 </span></span>
+<span id="cb9-36"><a href="#cb9-36"></a><span class="co">#&gt; Fixed Bandwidth: 2.010535 AIC score: 601.0902 </span></span>
+<span id="cb9-37"><a href="#cb9-37"></a><span class="co">#&gt; Fixed Bandwidth: 2.010529 AIC score: 601.0886</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="kw">GWPR.moran.test</span>(moran.plm.model, <span class="dt">SDF =</span> California, <span class="dt">bw =</span> bw.AIC.F, <span class="dt">kernel =</span> <span class="st">&quot;bisquare&quot;</span>,</span>
+<span id="cb10-2"><a href="#cb10-2"></a>                 <span class="dt">adaptive =</span> F, <span class="dt">p =</span> <span class="dv">2</span>, <span class="dt">longlat=</span>F, <span class="dt">alternative =</span> <span class="st">&quot;greater&quot;</span>)</span>
+<span id="cb10-3"><a href="#cb10-3"></a><span class="co">#&gt; $statistic</span></span>
+<span id="cb10-4"><a href="#cb10-4"></a><span class="co">#&gt; [1] 3.174358</span></span>
+<span id="cb10-5"><a href="#cb10-5"></a><span class="co">#&gt; </span></span>
+<span id="cb10-6"><a href="#cb10-6"></a><span class="co">#&gt; $p.value</span></span>
+<span id="cb10-7"><a href="#cb10-7"></a><span class="co">#&gt; [1] 0.0007508427</span></span>
+<span id="cb10-8"><a href="#cb10-8"></a><span class="co">#&gt; </span></span>
+<span id="cb10-9"><a href="#cb10-9"></a><span class="co">#&gt; $Estimated.I</span></span>
+<span id="cb10-10"><a href="#cb10-10"></a><span class="co">#&gt; [1] 0.002129923</span></span>
+<span id="cb10-11"><a href="#cb10-11"></a><span class="co">#&gt; </span></span>
+<span id="cb10-12"><a href="#cb10-12"></a><span class="co">#&gt; $Excepted.I</span></span>
+<span id="cb10-13"><a href="#cb10-13"></a><span class="co">#&gt; [1] -0.01754386</span></span>
+<span id="cb10-14"><a href="#cb10-14"></a><span class="co">#&gt; </span></span>
+<span id="cb10-15"><a href="#cb10-15"></a><span class="co">#&gt; $V2</span></span>
+<span id="cb10-16"><a href="#cb10-16"></a><span class="co">#&gt; [1] 3.841174e-05</span></span>
+<span id="cb10-17"><a href="#cb10-17"></a><span class="co">#&gt; </span></span>
+<span id="cb10-18"><a href="#cb10-18"></a><span class="co">#&gt; $alternative</span></span>
+<span id="cb10-19"><a href="#cb10-19"></a><span class="co">#&gt; [1] &quot;greater&quot;</span></span></code></pre></div>
+<p>The statistic is significantly greater than 0. Therefore, the residuals are spatially clustered. Because the spatial relationship among residuals, using GWPR is reasonable. :)</p>
+</div>
+<div id="model-selection-which-model-is-better" class="section level2">
+<h2>2.3 Model Selection: which model is better?</h2>
+<p>If you know the models very well, including fixed effects model, random effects model, pooling regression, among others, you could skip this part. You know why you should use the model, and the tests, provided by the package, may only help you confirm your selection. However, for people are not very familiar with the panel model, we provide three local tests to help them select model. Which are <strong>GWPR.pFtest(), GWPR.phtest(), GWPR.plmtest()</strong> We give several examples here.</p>
+<div id="gwpr.pftest-locally-f-test" class="section level3">
+<h3>2.3.1 GWPR.pFtest(): Locally F test</h3>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>GWPR.pFtest.resu.F &lt;-<span class="st"> </span><span class="kw">GWPR.pFtest</span>(<span class="dt">formula =</span> formula.GWPR, <span class="dt">data =</span> TransAirPolCalif, <span class="dt">index =</span> <span class="kw">c</span>(<span class="st">&quot;GEOID&quot;</span>, <span class="st">&quot;year&quot;</span>),</span>
+<span id="cb11-2"><a href="#cb11-2"></a>                                  <span class="dt">SDF =</span> California, <span class="dt">bw =</span> bw.AIC.F, <span class="dt">adaptive =</span> F, <span class="dt">p =</span> <span class="dv">2</span>, <span class="dt">effect =</span> <span class="st">&quot;individual&quot;</span>,</span>
+<span id="cb11-3"><a href="#cb11-3"></a>                                  <span class="dt">kernel =</span> <span class="st">&quot;bisquare&quot;</span>, <span class="dt">longlat =</span> F)</span>
+<span id="cb11-4"><a href="#cb11-4"></a><span class="co">#&gt; **************************** F test in each subsample *********************************</span></span>
+<span id="cb11-5"><a href="#cb11-5"></a><span class="co">#&gt; Formula: pm25  =  co2_mean + Developed_Open_Space_perc + Developed_Low_Intensity_perc + Developed_Medium_Intensity_perc + Developed_High_Intensity_perc + Open_Water_perc + Woody_Wetlands_perc + Emergent_Herbaceous_Wetlands_perc + Deciduous_Forest_perc + Evergreen_Forest_perc + Mixed_Forest_perc + Shrub_perc + Grassland_perc + Pasture_perc + Cultivated_Crops_perc + pop_density + summer_tmmx + winter_tmmx + summer_rmax + winter_rmax  -- Individuals: 58 </span></span>
+<span id="cb11-6"><a href="#cb11-6"></a><span class="co">#&gt; Bandwidth: 2.010529  ----  Adaptive: FALSE </span></span>
+<span id="cb11-7"><a href="#cb11-7"></a><span class="co">#&gt; Model: Fixed Effects vs Pooling  ----  Effect: individual </span></span>
+<span id="cb11-8"><a href="#cb11-8"></a><span class="co">#&gt; If the p-value is lower than the specific level (0.01, 0.05, etc.), significant effects exist.</span></span>
+<span id="cb11-9"><a href="#cb11-9"></a><span class="kw">tm_shape</span>(GWPR.pFtest.resu.F<span class="op">$</span>SDF) <span class="op">+</span></span>
+<span id="cb11-10"><a href="#cb11-10"></a><span class="st">     </span><span class="kw">tm_polygons</span>(<span class="dt">col =</span> <span class="st">&quot;p.value&quot;</span>, <span class="dt">breaks =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="fl">0.05</span>, <span class="dv">1</span>))</span>
+<span id="cb11-11"><a href="#cb11-11"></a><span class="co">#&gt; Warning in sp::proj4string(obj): CRS object has comment, which is lost in output</span></span></code></pre></div>
+<p><img src="data:image/png;base64,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" width="80%" height="80%" style="display: block; margin: auto;" /></p>
+<p>If the p-value is lower than the specific level (0.01, 0.05, etc.), significant effects exist.</p>
+</div>
+<div id="gwpr.plmtest-locally-breusch-pagan-lagrange-multiplier-test" class="section level3">
+<h3>2.3.2 GWPR.plmtest(): Locally Breusch-Pagan Lagrange Multiplier test</h3>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>GWPR.plmtest.resu.F &lt;-<span class="st"> </span><span class="kw">GWPR.plmtest</span>(<span class="dt">formula =</span> formula.GWPR, <span class="dt">data =</span> TransAirPolCalif, <span class="dt">index =</span> <span class="kw">c</span>(<span class="st">&quot;GEOID&quot;</span>, <span class="st">&quot;year&quot;</span>),</span>
+<span id="cb12-2"><a href="#cb12-2"></a>                                    <span class="dt">SDF =</span> California, <span class="dt">bw =</span> bw.AIC.F, <span class="dt">adaptive =</span> F, <span class="dt">p =</span> <span class="dv">2</span>,</span>
+<span id="cb12-3"><a href="#cb12-3"></a>                                    <span class="dt">kernel =</span> <span class="st">&quot;bisquare&quot;</span>, <span class="dt">longlat =</span> F)</span>
+<span id="cb12-4"><a href="#cb12-4"></a><span class="co">#&gt; **************** Breusch-Pagan Lagrange Multiplier test in each subsample *******************</span></span>
+<span id="cb12-5"><a href="#cb12-5"></a><span class="co">#&gt; Formula: pm25  =  co2_mean + Developed_Open_Space_perc + Developed_Low_Intensity_perc + Developed_Medium_Intensity_perc + Developed_High_Intensity_perc + Open_Water_perc + Woody_Wetlands_perc + Emergent_Herbaceous_Wetlands_perc + Deciduous_Forest_perc + Evergreen_Forest_perc + Mixed_Forest_perc + Shrub_perc + Grassland_perc + Pasture_perc + Cultivated_Crops_perc + pop_density + summer_tmmx + winter_tmmx + summer_rmax + winter_rmax  -- Individuals: 58 </span></span>
+<span id="cb12-6"><a href="#cb12-6"></a><span class="co">#&gt; Bandwidth: 2.010529  ----  Adaptive: FALSE </span></span>
+<span id="cb12-7"><a href="#cb12-7"></a><span class="co">#&gt; Model: Pooling  ----  </span></span>
+<span id="cb12-8"><a href="#cb12-8"></a><span class="co">#&gt; If the p-value is lower than the specific level (0.01, 0.05, etc.), significant effects exist.</span></span>
+<span id="cb12-9"><a href="#cb12-9"></a><span class="kw">tm_shape</span>(GWPR.plmtest.resu.F<span class="op">$</span>SDF) <span class="op">+</span></span>
+<span id="cb12-10"><a href="#cb12-10"></a><span class="st">     </span><span class="kw">tm_polygons</span>(<span class="dt">col =</span> <span class="st">&quot;p.value&quot;</span>, <span class="dt">breaks =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="fl">0.05</span>, <span class="dv">1</span>))</span>
+<span id="cb12-11"><a href="#cb12-11"></a><span class="co">#&gt; Warning in sp::proj4string(obj): CRS object has comment, which is lost in output</span></span></code></pre></div>
+<p><img src="data:image/png;base64,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" width="80%" height="80%" style="display: block; margin: auto;" /></p>
+<p>If the p-value is lower than the specific level (0.01, 0.05, etc.), significant effects exist.</p>
+</div>
+<div id="gwpr.phtest-locally-hausman-test" class="section level3">
+<h3>2.3.3 GWPR.phtest(): Locally Hausman test</h3>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a>GWPR.phtest.resu.F &lt;-<span class="st"> </span><span class="kw">GWPR.phtest</span>(<span class="dt">formula =</span> formula.GWPR, <span class="dt">data =</span> TransAirPolCalif, <span class="dt">index =</span> <span class="kw">c</span>(<span class="st">&quot;GEOID&quot;</span>, <span class="st">&quot;year&quot;</span>),</span>
+<span id="cb13-2"><a href="#cb13-2"></a>                                  <span class="dt">SDF =</span> California, <span class="dt">bw =</span> bw.AIC.F, <span class="dt">adaptive =</span> F, <span class="dt">p =</span> <span class="dv">2</span>, <span class="dt">effect =</span> <span class="st">&quot;individual&quot;</span>,</span>
+<span id="cb13-3"><a href="#cb13-3"></a>                                  <span class="dt">kernel =</span> <span class="st">&quot;bisquare&quot;</span>, <span class="dt">longlat =</span> F, <span class="dt">random.method =</span> <span class="st">&quot;amemiya&quot;</span>)</span>
+<span id="cb13-4"><a href="#cb13-4"></a><span class="co">#&gt; ************************* Hausman Test in each subsample ***************************</span></span>
+<span id="cb13-5"><a href="#cb13-5"></a><span class="co">#&gt; Formula: pm25  =  co2_mean + Developed_Open_Space_perc + Developed_Low_Intensity_perc + Developed_Medium_Intensity_perc + Developed_High_Intensity_perc + Open_Water_perc + Woody_Wetlands_perc + Emergent_Herbaceous_Wetlands_perc + Deciduous_Forest_perc + Evergreen_Forest_perc + Mixed_Forest_perc + Shrub_perc + Grassland_perc + Pasture_perc + Cultivated_Crops_perc + pop_density + summer_tmmx + winter_tmmx + summer_rmax + winter_rmax  -- Individuals: 58 </span></span>
+<span id="cb13-6"><a href="#cb13-6"></a><span class="co">#&gt; Bandwidth: 2.010529  ----  Adaptive: FALSE </span></span>
+<span id="cb13-7"><a href="#cb13-7"></a><span class="co">#&gt; Model: Fixed Effects vs Random Effects  ----  Effect: individual  ----  Random Method: amemiya </span></span>
+<span id="cb13-8"><a href="#cb13-8"></a><span class="co">#&gt; If the p-value is lower than the specific level (0.01, 0.05, etc.), one model is inconsistent.</span></span>
+<span id="cb13-9"><a href="#cb13-9"></a><span class="kw">tm_shape</span>(GWPR.phtest.resu.F<span class="op">$</span>SDF) <span class="op">+</span></span>
+<span id="cb13-10"><a href="#cb13-10"></a><span class="st">     </span><span class="kw">tm_polygons</span>(<span class="dt">col =</span> <span class="st">&quot;p.value&quot;</span>, <span class="dt">breaks =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="fl">0.05</span>, <span class="dv">1</span>))</span>
+<span id="cb13-11"><a href="#cb13-11"></a><span class="co">#&gt; Warning in sp::proj4string(obj): CRS object has comment, which is lost in output</span></span></code></pre></div>
+<p><img src="data:image/png;base64,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" width="80%" height="80%" style="display: block; margin: auto;" /></p>
+<p>If the p-value is lower than the specific level (0.01, 0.05, etc.), one model is inconsistent. <strong>Note:</strong> Here, we use the “amemiya” random method. Normally, we should use “swar”, but need to change the bandwidth. Because it is just example so we do not do that.</p>
+</div>
+</div>
+<div id="gwpr-the-regression-process" class="section level2">
+<h2>2.4 GWPR(): the regression process</h2>
+<p>Now, we come to the most important funciton in this package, GWPR(). Let us look it at first.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="kw">GWPR</span>(<span class="dt">formula =</span> formula, <span class="dt">data =</span> data, <span class="dt">index =</span> index, <span class="dt">SDF =</span> SDF, <span class="dt">bw =</span> <span class="ot">NULL</span>, <span class="dt">adaptive =</span> F, <span class="dt">p =</span> <span class="dv">2</span>,</span>
+<span id="cb14-2"><a href="#cb14-2"></a>            <span class="dt">effect =</span> <span class="st">&quot;individual&quot;</span>, <span class="dt">model =</span> <span class="kw">c</span>(<span class="st">&quot;pooling&quot;</span>, <span class="st">&quot;within&quot;</span>, <span class="st">&quot;random&quot;</span>),</span>
+<span id="cb14-3"><a href="#cb14-3"></a>            <span class="dt">random.method =</span> <span class="st">&quot;swar&quot;</span>, <span class="dt">kernel =</span> <span class="st">&quot;bisquare&quot;</span>, <span class="dt">longlat =</span> F)</span></code></pre></div>
+<p>You might know more things about weight least square. Similarly, the GWR equation is as follows ()ref. 3: <span class="math display">\[y_i = \sum_jX_{ij}\beta_j(p_i)+\epsilon_i\]</span> Here <span class="math inline">\(p_i\)</span> is the geographical location of the <span class="math inline">\(i\)</span>th case. These <span class="math inline">\(\beta_j(p_i)\)</span> would themselves contain coefficients to be estimated. If without <span class="math inline">\((p_i)\)</span>, the <span class="math inline">\(\beta\)</span> should be estimated as follows: <span class="math display">\[\hat\beta = (X^TX)^{-1}X^Ty\]</span> Now, it should be as follows: <span class="math display">\[\hat\beta_i = (X^TW_iX)^{-1}X^TW_iy\]</span> This <span class="math inline">\(W_i\)</span> is the spatial weights we mention in the beginning of this documents. Now, you know GWR based on OLS. All panel model is just a data transformation, then perform the model use almost the same process. <span class="math display">\[X&#39; = 
+\begin{cases}
+X &amp; \text{if model = pooling}\\
+X - \bar{X} &amp; \text{if model = FEM}\\
+X - \theta\bar{X} &amp; \text{if model = REM}\\
+\bar{X} &amp; \text{if model = between}\\
+X_t - X_{t-1} &amp; \text{if model = first difference}\\
+\end{cases}
+\]</span> <span class="math display">\[y&#39; = 
+\begin{cases}
+y &amp; \text{if model = pooling}\\
+y - \bar{y} &amp; \text{if model = FEM}\\
+y - \theta\bar{y} &amp; \text{if model = REM}\\
+\bar{y} &amp; \text{if model = between}\\
+y_t - y_{t-1} &amp; \text{if model = first difference}\\
+\end{cases}
+\]</span> Where <span class="math inline">\(X&#39;\)</span> is the data after transformation, <span class="math inline">\(X\)</span> is a matrix of original independent variables, <span class="math inline">\(\bar{X}\)</span> is the means of all independent variables during all periods.<br />
+Our GWPR() can solve first three type within the function. “between” and “first difference” can be easily performed, then use our GWPR() with (model = “pooling”) to do. Here, we give an example about GWPR()</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a>result.F.AIC &lt;-<span class="st"> </span><span class="kw">GWPR</span>(<span class="dt">bw =</span> bw.AIC.F, <span class="dt">formula =</span> formula.GWPR, <span class="dt">data =</span> TransAirPolCalif, <span class="dt">index =</span> <span class="kw">c</span>(<span class="st">&quot;GEOID&quot;</span>, <span class="st">&quot;year&quot;</span>),</span>
+<span id="cb15-2"><a href="#cb15-2"></a>                     <span class="dt">SDF =</span> California, <span class="dt">adaptive =</span> F, <span class="dt">p =</span> <span class="dv">2</span>, <span class="dt">effect =</span> <span class="st">&quot;individual&quot;</span>, <span class="dt">model =</span> <span class="st">&quot;within&quot;</span>,</span>
+<span id="cb15-3"><a href="#cb15-3"></a>                     <span class="dt">kernel =</span> <span class="st">&quot;bisquare&quot;</span>, <span class="dt">longlat =</span> F)</span>
+<span id="cb15-4"><a href="#cb15-4"></a><span class="co">#&gt; ************************ GWPR Begin *************************</span></span>
+<span id="cb15-5"><a href="#cb15-5"></a><span class="co">#&gt; Formula: pm25  =  co2_mean + Developed_Open_Space_perc + Developed_Low_Intensity_perc + Developed_Medium_Intensity_perc + Developed_High_Intensity_perc + Open_Water_perc + Woody_Wetlands_perc + Emergent_Herbaceous_Wetlands_perc + Deciduous_Forest_perc + Evergreen_Forest_perc + Mixed_Forest_perc + Shrub_perc + Grassland_perc + Pasture_perc + Cultivated_Crops_perc + pop_density + summer_tmmx + winter_tmmx + summer_rmax + winter_rmax  -- Individuals: 58 </span></span>
+<span id="cb15-6"><a href="#cb15-6"></a><span class="co">#&gt; Bandwidth: 2.010529  ----  Adaptive: FALSE </span></span>
+<span id="cb15-7"><a href="#cb15-7"></a><span class="co">#&gt; Model: within  ----  Effect: individual </span></span>
+<span id="cb15-8"><a href="#cb15-8"></a><span class="co">#&gt; The R2 is : 0.8969606 </span></span>
+<span id="cb15-9"><a href="#cb15-9"></a><span class="co">#&gt; Note: in order to avoid mistakes, we forced a rename of the individuals&#39;ID as &quot;id&quot;.</span></span>
+<span id="cb15-10"><a href="#cb15-10"></a><span class="kw">summary</span>(result.F.AIC<span class="op">$</span>SDF<span class="op">$</span>Local_R2)</span>
+<span id="cb15-11"><a href="#cb15-11"></a><span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. </span></span>
+<span id="cb15-12"><a href="#cb15-12"></a><span class="co">#&gt;  0.2899  0.4272  0.4676  0.4928  0.5375  0.8467</span></span>
+<span id="cb15-13"><a href="#cb15-13"></a><span class="kw">tm_shape</span>(result.F.AIC<span class="op">$</span>SDF) <span class="op">+</span></span>
+<span id="cb15-14"><a href="#cb15-14"></a><span class="st">  </span><span class="kw">tm_polygons</span>(<span class="dt">col =</span> <span class="st">&quot;Local_R2&quot;</span>, <span class="dt">pal =</span> <span class="st">&quot;Reds&quot;</span>,<span class="dt">auto.palette.mapping =</span> F,</span>
+<span id="cb15-15"><a href="#cb15-15"></a>              <span class="dt">style =</span> <span class="st">&#39;cont&#39;</span>)</span>
+<span id="cb15-16"><a href="#cb15-16"></a><span class="co">#&gt; Warning: The argument auto.palette.mapping is deprecated. Please use midpoint</span></span>
+<span id="cb15-17"><a href="#cb15-17"></a><span class="co">#&gt; for numeric data and stretch.palette for categorical data to control the palette</span></span>
+<span id="cb15-18"><a href="#cb15-18"></a><span class="co">#&gt; mapping.</span></span>
+<span id="cb15-19"><a href="#cb15-19"></a><span class="co">#&gt; Warning in sp::proj4string(obj): CRS object has comment, which is lost in output</span></span></code></pre></div>
+<p><img src="data:image/png;base64,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" width="80%" height="80%" style="display: block; margin: auto;" /> Look, the <span class="math inline">\(R^2\)</span> is 0.8969606, while the panel liner regression is 0.48772. BAM!!! <strong>Note:</strong>Our model include SE and t-value of local coefficients, you can check the significance.</p>
+</div>
+</div>
+<div id="end" class="section level1">
+<h1>END</h1>
+<p>Thank for your cooperation, we are going to write an article about this package. After it is publsihed, we will update the reference of all. If you could cite our article we would really appreciate.</p>
+<div id="archive-in-github" class="section level2">
+<h2>Archive in GitHub:</h2>
+<p><a href="https://github.com/MichaelChaoLi-cpu/GWPR.light" class="uri">https://github.com/MichaelChaoLi-cpu/GWPR.light</a></p>
+</div>
+<div id="bugreports" class="section level2">
+<h2>BugReports:</h2>
+<p>If you find bugs or have other ideas, be free to contact us. <a href="https://github.com/MichaelChaoLi-cpu/GWPR.light/issues" class="uri">https://github.com/MichaelChaoLi-cpu/GWPR.light/issues</a></p>
+</div>
+</div>
+<div id="reference" class="section level1">
+<h1>Reference</h1>
+<ol style="list-style-type: decimal">
+<li>Beenstock, M., Felsenstein, D., 2019. The econometric analysis of non-stationary spatial panel data. Springer.</li>
+<li>Fotheringham, A., Brunsdon, C., Charlton, M., 2002. Geographically Weighted Regression: The Analysis of Spatially Varying Relationships. John Wiley &amp; Sons 13.</li>
+<li>Brunsdon, C., Fotheringham, S., Charlton, M., 1998. Geographically Weighted Regression. Journal of the Royal Statistical Society: Series D (The Statistician) 47, 431-443.</li>
+</ol>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

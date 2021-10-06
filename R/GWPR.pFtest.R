@@ -2,8 +2,8 @@
 #'
 #' @description This function perform F test in each regression based on different subsamples
 #'
-#' @usage GWPR.pFtest(formula, data, index, SDF, bw = NULL, adaptive = F, p = 2, effect = "individual",
-#'                    kernel = "bisquare", longlat = F)
+#' @usage GWPR.pFtest(formula, data, index, SDF, bw = NULL, adaptive = F, p = 2,
+#'                    effect = "individual", kernel = "bisquare", longlat = F)
 #'
 #' @param formula     The regression formula: : Y ~ X1 + ... + Xk
 #' @param data        A data.frame for the Panel data.
@@ -44,13 +44,15 @@
 #'    Shrub_perc + Grassland_perc + Pasture_perc + Cultivated_Crops_perc +
 #'    pop_density + summer_tmmx + winter_tmmx + summer_rmax + winter_rmax
 #'
-#' bw.AIC.F <- bw.GWPR(formula = formula.GWPR, data = TransAirPolCalif, index = c("GEOID", "year"), SDF = California,
+#' bw.AIC.F <- bw.GWPR(formula = formula.GWPR, data = TransAirPolCalif,
+#'                     index = c("GEOID", "year"), SDF = California,
 #'                     adaptive = F, p = 2, bigdata = F, effect = "individual",
 #'                     model = "within", approach = "AIC", kernel = "bisquare", longlat = F,
 #'                     doParallel = T, cluster.number = 4)
-#' GWPR.pFtest.resu.F <- GWPR.pFtest(formula = formula.GWPR, data = TransAirPolCalif, index = c("GEOID", "year"),
-#'                                   SDF = California, bw = bw.AIC.F, adaptive = F, p = 2, effect = "individual",
-#'                                   kernel = "bisquare", longlat = F)
+#' GWPR.pFtest.resu.F <- GWPR.pFtest(formula = formula.GWPR, data = TransAirPolCalif,
+#'                                   index = c("GEOID", "year"),
+#'                                   SDF = California, bw = bw.AIC.F, adaptive = F, p = 2,
+#'                                   effect = "individual", kernel = "bisquare", longlat = F)
 #' library(tmap)
 #' tm_shape(GWPR.pFtest.resu.F$SDF) +
 #'      tm_polygons(col = "p.value", breaks = c(0, 0.05, 1))
@@ -85,6 +87,7 @@ GWPR.pFtest <- function(formula, data, index, SDF, bw = NULL, adaptive = F, p = 
   model <- "within"
 
   # Assuming unbalanced panel, get individuals' ID and max record number of individuals
+  .N <- 0
   ID <- dplyr::select(data, index[1])
   ID_num <- data.table::setDT(ID)[,list(Count=.N),names(ID)]
   if(model == "within")
