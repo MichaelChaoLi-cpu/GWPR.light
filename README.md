@@ -49,7 +49,7 @@ install.packages("GWPR.light")
 ## Details Introduction
 
 You can read our
-[vignettes](https://github.com/MichaelChaoLi-cpu/GWPR.light/blob/master/vignettes/introduction_of_GWPR.html)
+[vignettes](/vignettes/introduction_of_GWPR.html)
 
 ## Example
 
