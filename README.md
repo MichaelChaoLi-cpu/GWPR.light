@@ -15,12 +15,7 @@ status](https://travis-ci.com/MichaelChaoLi-cpu/GWPR.light.svg?branch=master)](h
 status](https://ci.appveyor.com/api/projects/status/github/MichaelChaoLi-cpu/GWPR.light?branch=master&svg=true)](https://ci.appveyor.com/project/MichaelChaoLi-cpu/GWPR.light)
 <!-- badges: end -->
 
-This package are grounded in a branch of spatial statistics. Using
-geographically weights, the geographically weighted panel regression is
-try to solve the residuals from panel regression clustering spatially.
-To investigate whether the residuals cluster spatially, the Moran’s I
-test is also improved. Furthermore, three local statistic tests are
-contained to help the users select model. This package includes the
+This package includes the
 function for the optimal bandwidth selection in GWPR, the function for
 GWPR, the function for the local Hausman test, the function for the
 local F test for individual effects, the function for the local Lagrange
