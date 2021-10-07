@@ -8,8 +8,6 @@
 [![Project Status: Active – The project has reached a stable, usable
 state and is being actively
 developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![Travis build
-status](https://travis-ci.com/MichaelChaoLi-cpu/GWPR.light.svg?branch=master)](https://travis-ci.com/MichaelChaoLi-cpu/GWPR.light)
 [![R-CMD-check](https://github.com/MichaelChaoLi-cpu/GWPR.light/workflows/R-CMD-check/badge.svg)](https://github.com/MichaelChaoLi-cpu/GWPR.light/actions)
 [![AppVeyor build
 status](https://ci.appveyor.com/api/projects/status/github/MichaelChaoLi-cpu/GWPR.light?branch=master&svg=true)](https://ci.appveyor.com/project/MichaelChaoLi-cpu/GWPR.light)
@@ -48,7 +46,7 @@ install.packages("GWPR.light")
 
 ## Detailed Introduction
 
-You can read our [vignettes](/vignettes/introduction_of_GWPR.html)
+You can read our vignettes
 
 ## Example
 
