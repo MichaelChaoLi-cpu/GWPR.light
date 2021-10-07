@@ -26,15 +26,15 @@ Imports:
     parallel,
     plm,
     sp,
-    stats
+    stats,
+    lwgeom
 Depends: 
     R (>= 2.10)
 Suggests: 
     rmarkdown,
     knitr,
     rgeos,
-    tmap,
-    lwgeom
+    tmap
 VignetteBuilder: knitr
 URL: https://github.com/MichaelChaoLi-cpu/GWPR.light
 BugReports: https://github.com/MichaelChaoLi-cpu/GWPR.light/issues
