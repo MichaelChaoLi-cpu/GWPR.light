@@ -46,10 +46,9 @@ You can install the released version of GWPR.light from
 install.packages("GWPR.light")
 ```
 
-## Details Introduction
+## Detailed Introduction
 
-You can read our
-[vignettes](/vignettes/introduction_of_GWPR.html)
+You can read our [vignettes](/vignettes/introduction_of_GWPR.html)
 
 ## Example
 
