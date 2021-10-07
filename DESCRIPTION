@@ -26,8 +26,7 @@ Imports:
     parallel,
     plm,
     sp,
-    stats,
-    lwgeom
+    stats
 Depends: 
     R (>= 2.10)
 Suggests: 
