@@ -7,6 +7,7 @@ warnings_are_errors: false
 
 os:
   - linux
+  - osx
 
 addons:
   apt:
@@ -28,6 +29,3 @@ r_packages:
       - plm
       - sp
       - stats
-      - sf
-      - spdep
-      - spatialreg

@@ -33,7 +33,8 @@ Suggests:
     rmarkdown,
     knitr,
     rgeos,
-    tmap
+    tmap,
+    lwgeom
 VignetteBuilder: knitr
 URL: https://github.com/MichaelChaoLi-cpu/GWPR.light
 BugReports: https://github.com/MichaelChaoLi-cpu/GWPR.light/issues
