@@ -48,6 +48,7 @@ jobs:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
+          extra-packages: rcmdcheck
 
       - uses: r-lib/actions/check-r-package@v1
 
