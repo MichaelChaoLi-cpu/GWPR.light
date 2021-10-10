@@ -2,9 +2,9 @@
 #'
 #' @description This function implements GWPR
 #'
-#' @usage GWPR(formula, data, index, SDF, bw = NULL, adaptive = F, p = 2,
+#' @usage GWPR(formula, data, index, SDF, bw = NULL, adaptive = FALSE, p = 2,
 #'             effect = "individual", model = c("pooling", "within", "random"),
-#'             random.method = "swar", kernel = "bisquare", longlat = F)
+#'             random.method = "swar", kernel = "bisquare", longlat = FALSE)
 #'
 #' @param formula        The regression formula: : Y ~ X1 + ... + Xk
 #' @param data           A data.frame for the Panel data
@@ -44,7 +44,6 @@
 #' @references Fotheringham, A. Stewart, Chris Brunsdon, and Martin Charlton. Geographically weighted regression: the analysis of spatially varying relationships. John Wiley & Sons, 2003.
 #'
 #' @examples
-#' \dontrun{
 #' data(TransAirPolCalif)
 #' data(California)
 #' formula.GWPR <- pm25 ~ co2_mean + Developed_Open_Space_perc + Developed_Low_Intensity_perc +
@@ -54,26 +53,21 @@
 #'    Shrub_perc + Grassland_perc + Pasture_perc + Cultivated_Crops_perc +
 #'    pop_density + summer_tmmx + winter_tmmx + summer_rmax + winter_rmax
 #'
-#' bw.AIC.F <- bw.GWPR(formula = formula.GWPR, data = TransAirPolCalif, index = c("GEOID", "year"),
-#'                     SDF = California,
-#'                     adaptive = F, p = 2, bigdata = F, effect = "individual",
-#'                     model = "within", approach = "AIC", kernel = "bisquare", longlat = F,
-#'                     doParallel = T, cluster.number = 4)
+#' #precomputed bandwidth
+#' bw.AIC.Fix <- 2.010529
 #'
-#' result.F.AIC <- GWPR(bw = bw.AIC.F, formula = formula.GWPR, data = TransAirPolCalif,
-#'                      index = c("GEOID", "year"),
-#'                      SDF = California, adaptive = F, p = 2, effect = "individual",
-#'                      model = "within",
-#'                      kernel = "bisquare", longlat = F)
+#' result.F.AIC <- GWPR(bw = bw.AIC.Fix, formula = formula.GWPR, data = TransAirPolCalif,
+#'                      index = c("GEOID", "year"), SDF = California, adaptive = FALSE,
+#'                      p = 2, effect = "individual", model = "within",
+#'                      kernel = "bisquare", longlat = FALSE)
 #' summary(result.F.AIC$SDF$Local_R2)
 #' library(tmap)
 #' tm_shape(result.F.AIC$SDF) +
-#' tm_polygons(col = "Local_R2", pal = "Reds",auto.palette.mapping = F,
+#' tm_polygons(col = "Local_R2", pal = "Reds",auto.palette.mapping = FALSE,
 #'             style = 'cont')
-#' }
-GWPR <- function(formula, data, index, SDF, bw = NULL, adaptive = F, p = 2,
+GWPR <- function(formula, data, index, SDF, bw = NULL, adaptive = FALSE, p = 2,
                  effect = "individual", model = c("pooling", "within", "random"), random.method = "swar",
-                 kernel = "bisquare", longlat = F)
+                 kernel = "bisquare", longlat = FALSE)
 {
   if(length(index) != 2)
   {
@@ -118,14 +112,14 @@ GWPR <- function(formula, data, index, SDF, bw = NULL, adaptive = F, p = 2,
   # Judge the data size of calculation
   if (nrow(ID_num) > 1000)
   { # for test 40, real number should be 1000
-    cat("Dear my friend, thanks for your patience!. We pass the bandwidth\n",
-        "selection part. Now, regression! This should be faster. Thanks.\n",
-        ".............................................................\n")
-    huge_data_size <- T
+    message("Dear my friend, thanks for your patience!. We pass the bandwidth\n",
+            "selection part. Now, regression! This should be faster. Thanks.\n",
+            ".............................................................\n")
+    huge_data_size <- TRUE
   }
   else
   {
-    huge_data_size <- F
+    huge_data_size <- FALSE
   }
 
   # Panel SDF preparation
@@ -140,7 +134,7 @@ GWPR <- function(formula, data, index, SDF, bw = NULL, adaptive = F, p = 2,
 
   if(huge_data_size)
   {
-    cat("Data Prepared! Go!............................................\n")
+    message("Data Prepared! Go!............................................\n")
   }
 
   # GWPRegression
@@ -158,7 +152,7 @@ GWPR <- function(formula, data, index, SDF, bw = NULL, adaptive = F, p = 2,
                      model = model, index = index, kernel = kernel, effect = effect,
                      random.method = random.method, huge_data_size = huge_data_size)
   }
-  cat("The R2 is :", result$R2,"\n")
-  cat("Note: in order to avoid mistakes, we forced a rename of the individuals'ID as \"id\". \n")
+  message("The R2 is: ", result$R2,"\n")
+  message("Note: in order to avoid mistakes, we forced a rename of the individuals'ID as \"id\". \n")
   return(result)
 }

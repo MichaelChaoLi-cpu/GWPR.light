@@ -2,11 +2,12 @@
 #'
 #' @description A function for automatic bandwidth selection to calibrate a GWPR model
 #'
-#' @usage bw.GWPR(formula, data, index, SDF, adaptive = F, p = 2,bigdata = F, upperratio = 0.25,
-#'                effect = "individual", model = c("pooling", "within", "random"),
+#' @usage bw.GWPR(formula, data, index, SDF, adaptive = FALSE, p = 2, bigdata = FALSE,
+#'                upperratio = 0.25, effect = "individual",
+#'                model = c("pooling", "within", "random"),
 #'                random.method = "swar", approach = c("CV","AIC"), kernel = "bisquare",
-#'                longlat = F, doParallel = F, cluster.number = 2, human.set.range = F,
-#'                h.upper = NULL, h.lower = NULL)
+#'                longlat = FALSE, doParallel = FALSE, cluster.number = 2,
+#'                human.set.range = FALSE, h.upper = NULL, h.lower = NULL)
 #'
 #' @param formula            The regression formula: : Y ~ X1 + ... + Xk
 #' @param data               data.frame for the Panel data
@@ -14,7 +15,7 @@
 #' @param SDF                Spatial*DataFrame on which is based the data, with the "ID" in the index
 #' @param adaptive           If TRUE, adaptive distance bandwidth is used, otherwise, fixed distance bandwidth.
 #' @param p                  The power of the Minkowski distance, default is 2, i.e. the Euclidean distance
-#' @param bigdata            TRUE or FALSE, if the dataset exceeds 40,000, we strongly recommend set it true
+#' @param bigdata            TRUE or FALSE, if the dataset exceeds 40,000, we strongly recommend set it TRUE
 #' @param upperratio         Set the ratio between upper boundary of potential bandwidth range and the forthest distance of SDF, if bigdata = T. (default value: 0.25)
 #' @param effect             The effects introduced in the model, one of "individual" (default) , "time", "twoways", or "nested"
 #' @param model              Panel model transformation: (c("within", "random", "pooling"))
@@ -46,7 +47,7 @@
 #' @references Fotheringham, A. Stewart, Chris Brunsdon, and Martin Charlton. Geographically weighted regression: the analysis of spatially varying relationships. John Wiley & Sons, 2003.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' data(TransAirPolCalif)
 #' data(California)
 #' formula.GWPR <- pm25 ~ co2_mean + Developed_Open_Space_perc + Developed_Low_Intensity_perc +
@@ -56,23 +57,25 @@
 #'    Shrub_perc + Grassland_perc + Pasture_perc + Cultivated_Crops_perc +
 #'    pop_density + summer_tmmx + winter_tmmx + summer_rmax + winter_rmax
 #'
-#' bw.CV.F <- bw.GWPR(formula = formula.GWPR, data = TransAirPolCalif, index = c("GEOID", "year"),
-#'                    SDF = California, adaptive = F, p = 2, bigdata = F, effect = "individual",
-#'                    model = "within", approach = "CV", kernel = "bisquare", longlat = F)
+#' bw.CV.Fix <- bw.GWPR(formula = formula.GWPR, data = TransAirPolCalif,
+#'                      index = c("GEOID", "year"),
+#'                      SDF = California, adaptive = FALSE, p = 2, bigdata = FALSE,
+#'                      effect = "individual", model = "within", approach = "CV",
+#'                      kernel = "bisquare", longlat = FALSE)
 #'
-#' bw.CV.F
+#' bw.CV.Fix
 #'
-#' bw.AIC.F <- bw.GWPR(formula = formula.GWPR, data = TransAirPolCalif, index = c("GEOID", "year"),
-#'                     SDF = California,
-#'                     adaptive = F, p = 2, bigdata = F, effect = "individual",
-#'                     model = "within", approach = "AIC", kernel = "bisquare", longlat = F,
-#'                     doParallel = T, cluster.number = 4)
-#' bw.AIC.F
+#' bw.AIC.Fix <- bw.GWPR(formula = formula.GWPR, data = TransAirPolCalif,
+#'                       index = c("GEOID", "year"),
+#'                       SDF = California, adaptive = FALSE, p = 2, bigdata = FALSE,
+#'                       effect = "individual", model = "within", approach = "AIC",
+#'                       kernel = "bisquare", longlat = FALSE, doParallel = FALSE)
+#' bw.AIC.Fix
 #' }
-bw.GWPR <- function(formula, data, index, SDF, adaptive = F, p = 2,bigdata = F, upperratio = 0.25,
+bw.GWPR <- function(formula, data, index, SDF, adaptive = FALSE, p = 2,bigdata = FALSE, upperratio = 0.25,
                     effect = "individual", model = c("pooling", "within", "random"), random.method = "swar",
-                    approach = c("CV","AIC"), kernel = "bisquare", longlat = F, doParallel = F,
-                    cluster.number = 2, human.set.range = F, h.upper = NULL, h.lower = NULL)
+                    approach = c("CV","AIC"), kernel = "bisquare", longlat = FALSE, doParallel = FALSE,
+                    cluster.number = 2, human.set.range = FALSE, h.upper = NULL, h.lower = NULL)
 {
   if(length(index) != 2)
   {
@@ -117,16 +120,16 @@ bw.GWPR <- function(formula, data, index, SDF, adaptive = F, p = 2,bigdata = F, 
   # Judge the datasize of calculation
   if ((nrow(ID_num) > 1000) & !doParallel)
   {
-    cat("Dear my friend, more than 1,000 individuals in your dataset.\n",
+    message("Dear my friend, more than 1,000 individuals in your dataset.\n",
         "It would be time-consuming. We use \"-\" and \"|\" to remind you how\n",
         "we go. A \"-\" is equal to 2.5% in once score calculation. A \"|\" is\n",
         "25%. Do not feel nervous or boring! Your research is on the way!\n",
         ".............................................................\n")
-    huge_data_size <- T
+    huge_data_size <- TRUE
   }
   else
   {
-    huge_data_size <- F
+    huge_data_size <- FALSE
   }
 
   # Panel SDF preparation
@@ -141,11 +144,11 @@ bw.GWPR <- function(formula, data, index, SDF, adaptive = F, p = 2,bigdata = F, 
 
   if(human.set.range)
   {
-    cat("...............................................................................................\n")
-    cat("Now, the range of bandwidth selection is set by the user\n")
-    cat("We assume that the user is familiar with bandwidth selection, and uses this selection to reduce calculation time.\n")
-    cat("If not, please stop the current calculation, and set \"human.set.range\" as FALSE\n")
-    cat("...............................................................................................\n")
+    message("...............................................................................................\n",
+            "Now, the range of bandwidth selection is set by the user\n",
+            "We assume that the user is familiar with bandwidth selection, and uses this selection to reduce calculation time.\n",
+            "If not, please stop the current calculation, and set \"human.set.range\" as FALSE\n",
+            "...............................................................................................\n")
     if(is.null(h.lower))
     {
       stop("Need to set the lower boundary (h.lower)!")
@@ -166,7 +169,7 @@ bw.GWPR <- function(formula, data, index, SDF, adaptive = F, p = 2,bigdata = F, 
     # decide upper and lower boundary
     lower.freedom <- protect_model_with_enough_freedom(formula = formula, data = lvl1_data, ID_list = ID_num,
                                                        index = index, p = p, longlat = longlat)
-    cat("To make sure every subsample have enough freedom, the minimun numbers of individuals is",lower.freedom, "\n") #TestCode
+    message("To make sure every subsample have enough freedom, the minimun numbers of individuals is",lower.freedom, "\n")
     if(adaptive)
     {
       upper <- nrow(ID_num)
@@ -201,21 +204,21 @@ bw.GWPR <- function(formula, data, index, SDF, adaptive = F, p = 2,bigdata = F, 
 
     if(bigdata)
     {
-      cat("You set the \"bigdata\" is: ", bigdata, ". The ratio is: ", upperratio, "\n")
-      cat("Now the lower boundary of the bandwidth selection is ", lower, ", and upper boundary is ", upper,".\n")
-      cat("Note: if the optimal bandwidth is close to the upper boundary, you need to increase the ratio.\n")
-      cat("However, you should also know that the larger ratio requires more memory. Please, balance them and enjoy your research.\n")
+      message("You set the \"bigdata\" is: ", bigdata, ". The ratio is: ", upperratio, "\n",
+              "Now the lower boundary of the bandwidth selection is ", lower, ", and upper boundary is ", upper,".\n",
+              "Note: if the optimal bandwidth is close to the upper boundary, you need to increase the ratio.\n",
+              "However, you should also know that the larger ratio requires more memory. Please, balance them and enjoy your research.\n")
     }
     if(huge_data_size)
     {
-      cat("Data Prepared! Go!............................................\n")
+      message("Data Prepared! Go!............................................\n")
     }
   }
-  cat("The upper boundary is", upper,", and the lower boudnary is", lower,"\n")
+  message("The upper boundary is ", upper,", and the lower boudnary is ", lower,"\n")
   if(doParallel)
   {
-    cat("..................................................................................\n")
-    cat("You use parallel process, so be careful about your memory usage. Cluster number:", cluster.number,"\n")
+    message("..................................................................................\n")
+    message("You use parallel process, so be careful about your memory usage. Cluster number: ", cluster.number,"\n")
     if(cluster.number > parallel::detectCores())
     {
       stop("The cluster number exceeds the cores you have")

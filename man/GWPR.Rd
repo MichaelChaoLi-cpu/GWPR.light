@@ -4,9 +4,9 @@
 \alias{GWPR}
 \title{Geographically Weighted Panel Regression Model}
 \usage{
-GWPR(formula, data, index, SDF, bw = NULL, adaptive = F, p = 2,
+GWPR(formula, data, index, SDF, bw = NULL, adaptive = FALSE, p = 2,
             effect = "individual", model = c("pooling", "within", "random"),
-            random.method = "swar", kernel = "bisquare", longlat = F)
+            random.method = "swar", kernel = "bisquare", longlat = FALSE)
 }
 \arguments{
 \item{formula}{The regression formula: : Y ~ X1 + ... + Xk}
@@ -53,7 +53,6 @@ A list of result:
 This function implements GWPR
 }
 \examples{
-\dontrun{
 data(TransAirPolCalif)
 data(California)
 formula.GWPR <- pm25 ~ co2_mean + Developed_Open_Space_perc + Developed_Low_Intensity_perc +
@@ -63,23 +62,18 @@ formula.GWPR <- pm25 ~ co2_mean + Developed_Open_Space_perc + Developed_Low_Inte
    Shrub_perc + Grassland_perc + Pasture_perc + Cultivated_Crops_perc +
    pop_density + summer_tmmx + winter_tmmx + summer_rmax + winter_rmax
 
-bw.AIC.F <- bw.GWPR(formula = formula.GWPR, data = TransAirPolCalif, index = c("GEOID", "year"),
-                    SDF = California,
-                    adaptive = F, p = 2, bigdata = F, effect = "individual",
-                    model = "within", approach = "AIC", kernel = "bisquare", longlat = F,
-                    doParallel = T, cluster.number = 4)
+#precomputed bandwidth
+bw.AIC.Fix <- 2.010529
 
-result.F.AIC <- GWPR(bw = bw.AIC.F, formula = formula.GWPR, data = TransAirPolCalif,
-                     index = c("GEOID", "year"),
-                     SDF = California, adaptive = F, p = 2, effect = "individual",
-                     model = "within",
-                     kernel = "bisquare", longlat = F)
+result.F.AIC <- GWPR(bw = bw.AIC.Fix, formula = formula.GWPR, data = TransAirPolCalif,
+                     index = c("GEOID", "year"), SDF = California, adaptive = FALSE,
+                     p = 2, effect = "individual", model = "within",
+                     kernel = "bisquare", longlat = FALSE)
 summary(result.F.AIC$SDF$Local_R2)
 library(tmap)
 tm_shape(result.F.AIC$SDF) +
-tm_polygons(col = "Local_R2", pal = "Reds",auto.palette.mapping = F,
+tm_polygons(col = "Local_R2", pal = "Reds",auto.palette.mapping = FALSE,
             style = 'cont')
-}
 }
 \references{
 Fotheringham, A. Stewart, Chris Brunsdon, and Martin Charlton. Geographically weighted regression: the analysis of spatially varying relationships. John Wiley & Sons, 2003.

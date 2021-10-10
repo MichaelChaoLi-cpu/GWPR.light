@@ -4,16 +4,8 @@
 \alias{GWPR.moran.test}
 \title{Moran's I Test for Panel Regression}
 \usage{
-GWPR.moran.test(
-  plm_model,
-  SDF,
-  bw,
-  adaptive = F,
-  p = 2,
-  kernel = "bisquare",
-  longlat = F,
-  alternative = "greater"
-)
+GWPR.moran.test(plm_model, SDF, bw, adaptive = FALSE, p = 2,
+                       kernel = "bisquare", longlat = FALSE, alternative = "greater")
 }
 \arguments{
 \item{plm_model}{An object of class inheriting from "plm", see plm}
@@ -48,13 +40,13 @@ A list of result:
 }
 }
 \description{
-Moran's I Test for Panel Regression
+Moran's I test for spatial autocorrelation in residuals from
+             an estimated panel linear model (plm).
 }
 \note{
 : Current version of panel Moran's I test can only chech the balanced panel data.
 }
 \examples{
-\dontrun{
 data(TransAirPolCalif)
 data(California)
 formula.GWPR <- pm25 ~ co2_mean + Developed_Open_Space_perc + Developed_Low_Intensity_perc +
@@ -68,16 +60,12 @@ pdata <- plm::pdata.frame(TransAirPolCalif, index = c("GEOID", "year"))
 moran.plm.model <- plm::plm(formula = formula.GWPR, data = pdata, model = "within")
 summary(moran.plm.model)
 
-bw.AIC.F <- bw.GWPR(formula = formula.GWPR, data = TransAirPolCalif, index = c("GEOID", "year"),
-                    SDF = California,
-                    adaptive = F, p = 2, bigdata = F, effect = "individual",
-                    model = "within", approach = "AIC", kernel = "bisquare", longlat = F,
-                    doParallel = T, cluster.number = 4)
+#precomputed bandwidth
+bw.AIC.Fix <- 2.010529
 
 # moran's I test
-GWPR.moran.test(moran.plm.model, SDF = California, bw = bw.AIC.F, kernel = "bisquare",
-                 adaptive = F, p = 2, longlat=F, alternative = "greater")
-}
+GWPR.moran.test(moran.plm.model, SDF = California, bw = bw.AIC.Fix, kernel = "bisquare",
+                 adaptive = FALSE, p = 2, longlat = FALSE, alternative = "greater")
 }
 \references{
 Beenstock, M., Felsenstein, D., 2019. The econometric analysis of non-stationary spatial panel data. Springer.

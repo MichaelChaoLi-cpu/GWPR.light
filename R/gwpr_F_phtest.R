@@ -39,11 +39,11 @@ gwpr_F_phtest <- function(bw = bw, data , SDF, index, ID_list , random.method = 
                        kernel = kernel, adaptive = adaptive, p = p, longlat = longlat,
                        test.name = "Hausman Test",
                        result.explain = "If the p-value is lower than the specific level (0.01, 0.05, etc.), one model is inconsistent.")
-  cat("************************* Hausman Test in each subsample ***************************\n")
-  cat("Formula:", paste(as.character(formula)[2], " = ", as.character(formula)[3]), " -- Individuals:", nrow(ID_list), "\n")
-  cat("Bandwidth:", bw, " ---- ", "Adaptive:", adaptive, "\n")
-  cat("Model: Fixed Effects vs Random Effects"," ---- ", "Effect:", effect, " ---- ", "Random Method:", random.method, "\n")
-  cat("If the p-value is lower than the specific level (0.01, 0.05, etc.), one model is inconsistent.\n")
+  message("************************* Hausman Test in each subsample ***************************\n",
+          "Formula: ", paste(as.character(formula)[2], " = ", as.character(formula)[3]), " -- Individuals: ", nrow(ID_list), "\n",
+          "Bandwidth: ", bw, " ---- ", "Adaptive: ", adaptive, "\n",
+          "Model: Fixed Effects vs Random Effects"," ---- ", "Effect: ", effect, " ---- ", "Random Method: ", random.method, "\n",
+          "If the p-value is lower than the specific level (0.01, 0.05, etc.), one model is inconsistent.\n")
   ID_list_single <- as.vector(ID_list[[1]])
   output_result <- data.frame(Doubles = double(), Characters = character())
   loop_times <- 1

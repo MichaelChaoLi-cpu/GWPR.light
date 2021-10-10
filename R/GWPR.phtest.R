@@ -1,5 +1,9 @@
 #' Locally Hausman Test based on GWPR
 #'
+#' @usage GWPR.phtest(formula, data, index, SDF, bw = NULL, adaptive = FALSE,
+#'                    p = 2, effect = "individual", random.method = "swar",
+#'                    kernel = "bisquare", longlat = FALSE)
+#'
 #' @param formula        The regression formula: : Y ~ X1 + ... + Xk
 #' @param data           A data.frame for the Panel data.
 #' @param index          A vector for the indexes : (c("ID", "Time")).
@@ -32,7 +36,7 @@
 #' @author Chao Li <chaoli0394@gmail.com> Shunsuke Managi <managi.s@gmail.com>
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' data(TransAirPolCalif)
 #' data(California)
 #' formula.GWPR <- pm25 ~ co2_mean + Developed_Open_Space_perc + Developed_Low_Intensity_perc +
@@ -42,21 +46,20 @@
 #'    Shrub_perc + Grassland_perc + Pasture_perc + Cultivated_Crops_perc +
 #'    pop_density + summer_tmmx + winter_tmmx + summer_rmax + winter_rmax
 #'
-#' bw.AIC.F <- bw.GWPR(formula = formula.GWPR, data = TransAirPolCalif,
-#'                     index = c("GEOID", "year"), SDF = California,
-#'                     adaptive = F, p = 2, bigdata = F, effect = "individual",
-#'                     model = "random", approach = "AIC", kernel = "bisquare", longlat = F,
-#'                     doParallel = T, cluster.number = 4)
+#' #precomputed bandwidth
+#' bw.AIC.Fix <- 7.508404
+#'
 #' GWPR.phtest.resu.F <- GWPR.phtest(formula = formula.GWPR, data = TransAirPolCalif,
-#'                                   index = c("GEOID", "year"),
-#'                                   SDF = California, bw = bw.AIC.F, adaptive = F, p = 2,
-#'                                   effect = "individual", kernel = "bisquare", longlat = F)
+#'                                   index = c("GEOID", "year"), SDF = California,
+#'                                   bw = bw.AIC.Fix, adaptive = FALSE, p = 2,
+#'                                   effect = "individual", kernel = "bisquare",
+#'                                   longlat = FALSE)
 #' library(tmap)
 #' tm_shape(GWPR.phtest.resu.F$SDF) +
 #'      tm_polygons(col = "p.value", breaks = c(0, 0.05, 1))
 #' }
-GWPR.phtest <- function(formula, data, index, SDF, bw = NULL, adaptive = F, p = 2, effect = "individual",
-                        random.method = "swar", kernel = "bisquare", longlat = F)
+GWPR.phtest <- function(formula, data, index, SDF, bw = NULL, adaptive = FALSE, p = 2, effect = "individual",
+                        random.method = "swar", kernel = "bisquare", longlat = FALSE)
 {
   if(length(index) != 2)
   {
@@ -77,9 +80,9 @@ GWPR.phtest <- function(formula, data, index, SDF, bw = NULL, adaptive = F, p = 
 
   if(random.method == "swar")
   {
-    cat("***************************************** Caution! **********************************************\n")
-    cat("Your random method is", random.method,". According to the \"plm\" package requirement, data sizes of each subsample should be larger\n")
-    cat("than the number of estimated parameters.\nOtherwise, errors. Therefore, we strongly recommend using bw.GWPR to get bandwidth.\n")
+    message("***************************************** Caution! **********************************************\n",
+            "Your random method is", random.method,". According to the \"plm\" package requirement, data sizes of each subsample should be larger\n",
+            "than the number of estimated parameters.\nOtherwise, errors. Therefore, we strongly recommend using bw.GWPR to get bandwidth.\n")
   }
   # Data preparation
   varibale_name_in_equation <- all.vars(formula)
@@ -105,14 +108,14 @@ GWPR.phtest <- function(formula, data, index, SDF, bw = NULL, adaptive = F, p = 
   # Judge the data size of calculation
   if (nrow(ID_num) > 1000)
   {
-    cat("Dear my friend, thanks for your patience!. We pass the bandwidth\n",
-        "selection part. Now, regression! This should be faster. Thanks.\n",
-        ".............................................................\n")
-    huge_data_size <- T
+    message("Dear my friend, thanks for your patience!. We pass the bandwidth\n",
+            "selection part. Now, regression! This should be faster. Thanks.\n",
+            "................................................................\n")
+    huge_data_size <- TRUE
   }
   else
   {
-    huge_data_size <- F
+    huge_data_size <- FALSE
   }
 
   # Panel SDF preparation
@@ -127,7 +130,7 @@ GWPR.phtest <- function(formula, data, index, SDF, bw = NULL, adaptive = F, p = 
 
   if(huge_data_size)
   {
-    cat("Data Prepared! Go!............................................\n")
+    message("Data Prepared! Go!............................................\n")
   }
 
   # GWPR test

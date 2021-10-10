@@ -44,10 +44,10 @@ gwpr_A <- function(bw, data, SDF, ID_list, formula, p, longlat, adaptive,
 {
   GW.arguments <- list(formula = formula, individual.number = nrow(ID_list), bw = bw,
                        kernel = kernel, adaptive = adaptive, p = p, longlat = longlat)
-  cat("************************ GWPR Begin *************************\n")
-  cat("Formula:", paste(as.character(formula)[2], " = ", as.character(formula)[3]), " -- Individuals:", nrow(ID_list), "\n")
-  cat("Bandwidth:", bw, " ---- ", "Adaptive:", adaptive, "\n")
-  cat("Model:", model, " ---- ", "Effect:", effect, "\n")
+  message("************************ GWPR Begin *************************\n",
+          "Formula: ", paste(as.character(formula)[2], " = ", as.character(formula)[3]), " -- Individuals: ", nrow(ID_list), "\n",
+          "Bandwidth: ", bw, " ---- ", "Adaptive: ", adaptive, "\n",
+          "Model: ", model, " ---- ", "Effect: ", effect, "\n")
   global_plm <- plm::plm(formula=formula, model=model, data=data,
                          effect = effect, index=index, random.method = random.method)
   ID_list_single <- as.vector(ID_list[[1]])

@@ -35,11 +35,11 @@ gwpr_A_plmtest <- function(bw = bw, data, SDF, index, ID_list,
                        kernel = kernel, adaptive = adaptive, p = p, longlat = longlat,
                        test.name = "Breusch-Pagan Lagrange Multiplier Test",
                        result.explain = "If the p-value is lower than the specific level (0.01, 0.05, etc.), significant effects exist.")
-  cat("**************** Breusch-Pagan Lagrange Multiplier test in each subsample *******************\n")
-  cat("Formula:", paste(as.character(formula)[2], " = ", as.character(formula)[3]), " -- Individuals:", nrow(ID_list), "\n")
-  cat("Bandwidth:", bw, " ---- ", "Adaptive:", adaptive, "\n")
-  cat("Model: Pooling"," ---- ", "\n")
-  cat("If the p-value is lower than the specific level (0.01, 0.05, etc.), significant effects exist.\n")
+  message("**************** Breusch-Pagan Lagrange Multiplier test in each subsample *******************\n",
+          "Formula: ", paste(as.character(formula)[2], " = ", as.character(formula)[3]), " -- Individuals: ", nrow(ID_list), "\n",
+          "Bandwidth: ", bw, " ---- ", "Adaptive: ", adaptive, "\n",
+          "Model: Pooling"," ---- ", "\n",
+          "If the p-value is lower than the specific level (0.01, 0.05, etc.), significant effects exist.\n")
   ID_list_single <- as.vector(ID_list[[1]])
   output_result <- data.frame(Doubles = double(), Characters = character())
   loop_times <- 1

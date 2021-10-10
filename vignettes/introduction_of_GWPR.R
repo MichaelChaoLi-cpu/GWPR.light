@@ -38,7 +38,7 @@ library(GWPR.light)
 #          adaptive = F, p = 2,bigdata = F, upperratio = 0.25,
 #          effect = "individual", model = c("pooling", "within", "random"),
 #          random.method = "swar", approach = c("CV","AIC"), kernel = "bisquare",
-#          longlat = F, doParallel = F, cluster.number = 2, human.set.range = F,
+#          longlat = F, doParallel = F, human.set.range = F,
 #          h.upper = NULL, h.lower = NULL)
 
 ## ---- out.height="60%", out.width="60%", fig.align="center"-------------------
@@ -60,7 +60,7 @@ summary(moran.plm.model)
 #  bw.AIC.F <- bw.GWPR(formula = formula.GWPR, data = TransAirPolCalif, index = c("GEOID", "year"),
 #                      SDF = California, adaptive = F, p = 2, bigdata = F, effect = "individual",
 #                      model = "within", approach = "AIC", kernel = "bisquare", longlat = F,
-#                      doParallel = T, cluster.number = 2)
+#                      doParallel = F)
 
 ## -----------------------------------------------------------------------------
 bw.AIC.F <- 2.010529 #precomputed results from #150:155

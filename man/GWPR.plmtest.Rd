@@ -4,8 +4,8 @@
 \alias{GWPR.plmtest}
 \title{Locally Breusch-Pagan Lagrange Multiplier Test Based on GWPR}
 \usage{
-GWPR.plmtest(formula, data, index, SDF, bw = NULL, adaptive = F, p = 2,
-                   kernel = "bisquare", longlat = F)
+GWPR.plmtest(formula, data, index, SDF, bw = NULL, adaptive = FALSE, p = 2,
+                   kernel = "bisquare", longlat = FALSE)
 }
 \arguments{
 \item{formula}{The regression formula: : Y ~ X1 + ... + Xk}
@@ -41,7 +41,6 @@ A list of result:
 This function perform Breusch-Pagan Lagrange Multiplier test in each regression based on different subsamples
 }
 \examples{
-\dontrun{
 data(TransAirPolCalif)
 data(California)
 formula.GWPR <- pm25 ~ co2_mean + Developed_Open_Space_perc + Developed_Low_Intensity_perc +
@@ -51,19 +50,16 @@ formula.GWPR <- pm25 ~ co2_mean + Developed_Open_Space_perc + Developed_Low_Inte
    Shrub_perc + Grassland_perc + Pasture_perc + Cultivated_Crops_perc +
    pop_density + summer_tmmx + winter_tmmx + summer_rmax + winter_rmax
 
-bw.AIC.F <- bw.GWPR(formula = formula.GWPR, data = TransAirPolCalif,
-                    index = c("GEOID", "year"), SDF = California,
-                    adaptive = F, p = 2, bigdata = F, effect = "individual",
-                    model = "within", approach = "AIC", kernel = "bisquare", longlat = F,
-                    doParallel = T, cluster.number = 4)
+#precomputed bandwidth
+bw.AIC.Fix <- 2.010529
+
 GWPR.plmtest.resu.F <- GWPR.plmtest(formula = formula.GWPR, data = TransAirPolCalif,
-                                    index = c("GEOID", "year"),
-                                    SDF = California, bw = bw.AIC.F, adaptive = F, p = 2,
-                                    kernel = "bisquare", longlat = F)
+                                    index = c("GEOID", "year"), SDF = California,
+                                    bw = bw.AIC.Fix, adaptive = FALSE, p = 2,
+                                    kernel = "bisquare", longlat = FALSE)
 library(tmap)
 tm_shape(GWPR.plmtest.resu.F$SDF) +
      tm_polygons(col = "p.value", breaks = c(0, 0.05, 1))
-}
 }
 \author{
 Chao Li <chaoli0394@gmail.com> Shunsuke Managi <managi.s@gmail.com>

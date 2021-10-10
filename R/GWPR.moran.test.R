@@ -1,5 +1,11 @@
 #' Moran's I Test for Panel Regression
 #'
+#' @description Moran's I test for spatial autocorrelation in residuals from
+#'              an estimated panel linear model (plm).
+#'
+#' @usage GWPR.moran.test(plm_model, SDF, bw, adaptive = FALSE, p = 2,
+#'                        kernel = "bisquare", longlat = FALSE, alternative = "greater")
+#'
 #' @param plm_model     An object of class inheriting from "plm", see plm
 #' @param SDF           Spatial*DataFrame on which is based the data, with the "ID" in the index
 #' @param bw            The optimal bandwidth, either adaptive or fixed distance
@@ -38,7 +44,6 @@
 #' @references Beenstock, M., Felsenstein, D., 2019. The econometric analysis of non-stationary spatial panel data. Springer.
 #'
 #' @examples
-#' \dontrun{
 #' data(TransAirPolCalif)
 #' data(California)
 #' formula.GWPR <- pm25 ~ co2_mean + Developed_Open_Space_perc + Developed_Low_Intensity_perc +
@@ -52,18 +57,14 @@
 #' moran.plm.model <- plm::plm(formula = formula.GWPR, data = pdata, model = "within")
 #' summary(moran.plm.model)
 #'
-#' bw.AIC.F <- bw.GWPR(formula = formula.GWPR, data = TransAirPolCalif, index = c("GEOID", "year"),
-#'                     SDF = California,
-#'                     adaptive = F, p = 2, bigdata = F, effect = "individual",
-#'                     model = "within", approach = "AIC", kernel = "bisquare", longlat = F,
-#'                     doParallel = T, cluster.number = 4)
+#' #precomputed bandwidth
+#' bw.AIC.Fix <- 2.010529
 #'
 #' # moran's I test
-#' GWPR.moran.test(moran.plm.model, SDF = California, bw = bw.AIC.F, kernel = "bisquare",
-#'                  adaptive = F, p = 2, longlat=F, alternative = "greater")
-#'}
-GWPR.moran.test <- function(plm_model, SDF, bw, adaptive = F, p = 2, kernel = "bisquare",
-                             longlat=F, alternative = "greater")
+#' GWPR.moran.test(moran.plm.model, SDF = California, bw = bw.AIC.Fix, kernel = "bisquare",
+#'                  adaptive = FALSE, p = 2, longlat = FALSE, alternative = "greater")
+GWPR.moran.test <- function(plm_model, SDF, bw, adaptive = FALSE, p = 2, kernel = "bisquare",
+                             longlat = FALSE, alternative = "greater")
 {
   if(class(plm_model)[1] != "plm")
   {
@@ -105,8 +106,6 @@ GWPR.moran.test <- function(plm_model, SDF, bw, adaptive = F, p = 2, kernel = "b
   diag(weight) <- 0
   weight <- weight/rowSums(weight)
 
-  #panel I
-  # Beenstock, M., Felsenstein, D., 2019. The econometric analysis of non-stationary spatial panel data. Springer.
   I.vector <- c()
   loop_time <- 1
   while(loop_time < (ncol(plm.resid)+1) )

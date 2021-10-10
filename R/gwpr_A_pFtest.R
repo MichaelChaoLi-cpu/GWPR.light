@@ -39,11 +39,11 @@ gwpr_A_pFtest <- function(bw = bw, data, SDF, index, ID_list, formula = formula,
                        kernel = kernel, adaptive = adaptive, p = p, longlat = longlat,
                        test.name = "F test for individual effects",
                        result.explain = "If the p-value is lower than the specific level (0.01, 0.05, etc.), significant effects exist.")
-  cat("**************************** F test in each subsample *********************************\n")
-  cat("Formula:", paste(as.character(formula)[2], " = ", as.character(formula)[3]), " -- Individuals:", nrow(ID_list), "\n")
-  cat("Bandwidth:", bw, " ---- ", "Adaptive:", adaptive, "\n")
-  cat("Model: Fixed Effects vs Pooling"," ---- ", "Effect:", effect, "\n")
-  cat("If the p-value is lower than the specific level (0.01, 0.05, etc.), significant effects exist.\n")
+  message("**************************** F test in each subsample *********************************\n",
+          "Formula: ", paste(as.character(formula)[2], " = ", as.character(formula)[3]), " -- Individuals: ", nrow(ID_list), "\n",
+          "Bandwidth:", bw, " ---- ", "Adaptive: ", adaptive, "\n",
+          "Model: Fixed Effects vs Pooling"," ---- ", "Effect: ", effect, "\n",
+          "If the p-value is lower than the specific level (0.01, 0.05, etc.), significant effects exist.\n")
   ID_list_single <- as.vector(ID_list[[1]])
   output_result <- data.frame(Doubles = double(), Characters = character())
   loop_times <- 1

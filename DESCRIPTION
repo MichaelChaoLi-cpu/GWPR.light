@@ -9,7 +9,7 @@ Authors@R: c(person("Chao", "Li", role = c("aut", "cre"),
                      comment = c(ORCID = "0000-0001-7883-1427")))
 Author: Chao Li [aut, cre] (<https://orcid.org/0000-0002-6854-4456>), Shunsuke Managi [aut] (<https://orcid.org/0000-0001-7883-1427>)
 Maintainer: Chao Li <chaoli0394@gmail.com>
-Description: Geographically weighted panel regression is grounded in a branch of spatial statistics. Using geographically weights, the geographically weighted panel regression is try to solve the residuals from panel regression clustering spatially. To investigate whether the residuals cluster spatially, the Moran's I test is also improved. Furthermore, three local statistic tests are contained to help the users select model.
+Description: Geographically weighted panel regression is grounded in a branch of spatial statistics. Using geographically weights, the geographically weighted panel regression is try to solve the residuals from panel regression clustering spatially. To investigate whether the residuals cluster spatially, the Moran's I test is also improved. Furthermore, three local statistic tests are contained to help the users select model. The major references are Fotheringham et al. (2003, ISBN:978-0-470-85525-6) and Beenstock and Felsenstein (2019, ISBN:978-3-030-03614-0).
 License: AGPL (>= 3)
 Encoding: UTF-8
 LazyData: true

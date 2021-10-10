@@ -4,11 +4,12 @@
 \alias{bw.GWPR}
 \title{Bandwidth selection for basic GWPR}
 \usage{
-bw.GWPR(formula, data, index, SDF, adaptive = F, p = 2,bigdata = F, upperratio = 0.25,
-               effect = "individual", model = c("pooling", "within", "random"),
+bw.GWPR(formula, data, index, SDF, adaptive = FALSE, p = 2, bigdata = FALSE,
+               upperratio = 0.25, effect = "individual",
+               model = c("pooling", "within", "random"),
                random.method = "swar", approach = c("CV","AIC"), kernel = "bisquare",
-               longlat = F, doParallel = F, cluster.number = 2, human.set.range = F,
-               h.upper = NULL, h.lower = NULL)
+               longlat = FALSE, doParallel = FALSE, cluster.number = 2,
+               human.set.range = FALSE, h.upper = NULL, h.lower = NULL)
 }
 \arguments{
 \item{formula}{The regression formula: : Y ~ X1 + ... + Xk}
@@ -23,7 +24,7 @@ bw.GWPR(formula, data, index, SDF, adaptive = F, p = 2,bigdata = F, upperratio =
 
 \item{p}{The power of the Minkowski distance, default is 2, i.e. the Euclidean distance}
 
-\item{bigdata}{TRUE or FALSE, if the dataset exceeds 40,000, we strongly recommend set it true}
+\item{bigdata}{TRUE or FALSE, if the dataset exceeds 40,000, we strongly recommend set it TRUE}
 
 \item{upperratio}{Set the ratio between upper boundary of potential bandwidth range and the forthest distance of SDF, if bigdata = T. (default value: 0.25)}
 
@@ -60,7 +61,7 @@ The optimal bandwidth
 A function for automatic bandwidth selection to calibrate a GWPR model
 }
 \examples{
-\dontrun{
+\donttest{
 data(TransAirPolCalif)
 data(California)
 formula.GWPR <- pm25 ~ co2_mean + Developed_Open_Space_perc + Developed_Low_Intensity_perc +
@@ -70,18 +71,20 @@ formula.GWPR <- pm25 ~ co2_mean + Developed_Open_Space_perc + Developed_Low_Inte
    Shrub_perc + Grassland_perc + Pasture_perc + Cultivated_Crops_perc +
    pop_density + summer_tmmx + winter_tmmx + summer_rmax + winter_rmax
 
-bw.CV.F <- bw.GWPR(formula = formula.GWPR, data = TransAirPolCalif, index = c("GEOID", "year"),
-                   SDF = California, adaptive = F, p = 2, bigdata = F, effect = "individual",
-                   model = "within", approach = "CV", kernel = "bisquare", longlat = F)
+bw.CV.Fix <- bw.GWPR(formula = formula.GWPR, data = TransAirPolCalif,
+                     index = c("GEOID", "year"),
+                     SDF = California, adaptive = FALSE, p = 2, bigdata = FALSE,
+                     effect = "individual", model = "within", approach = "CV",
+                     kernel = "bisquare", longlat = FALSE)
 
-bw.CV.F
+bw.CV.Fix
 
-bw.AIC.F <- bw.GWPR(formula = formula.GWPR, data = TransAirPolCalif, index = c("GEOID", "year"),
-                    SDF = California,
-                    adaptive = F, p = 2, bigdata = F, effect = "individual",
-                    model = "within", approach = "AIC", kernel = "bisquare", longlat = F,
-                    doParallel = T, cluster.number = 4)
-bw.AIC.F
+bw.AIC.Fix <- bw.GWPR(formula = formula.GWPR, data = TransAirPolCalif,
+                      index = c("GEOID", "year"),
+                      SDF = California, adaptive = FALSE, p = 2, bigdata = FALSE,
+                      effect = "individual", model = "within", approach = "AIC",
+                      kernel = "bisquare", longlat = FALSE, doParallel = FALSE)
+bw.AIC.Fix
 }
 }
 \references{

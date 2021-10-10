@@ -88,7 +88,7 @@ bw.GWPR(formula = formula, data = data, index = index, SDF = SDF,
         adaptive = F, p = 2,bigdata = F, upperratio = 0.25,
         effect = "individual", model = c("pooling", "within", "random"),
         random.method = "swar", approach = c("CV","AIC"), kernel = "bisquare",
-        longlat = F, doParallel = F, cluster.number = 2, human.set.range = F,
+        longlat = F, doParallel = F, human.set.range = F,
         h.upper = NULL, h.lower = NULL)
 ```
 
@@ -151,7 +151,7 @@ summary(moran.plm.model)
 bw.AIC.F <- bw.GWPR(formula = formula.GWPR, data = TransAirPolCalif, index = c("GEOID", "year"),
                     SDF = California, adaptive = F, p = 2, bigdata = F, effect = "individual",
                     model = "within", approach = "AIC", kernel = "bisquare", longlat = F,
-                    doParallel = T, cluster.number = 2)
+                    doParallel = F)
 ```
 ```{r}
 bw.AIC.F <- 2.010529 #precomputed results from #150:155
@@ -246,7 +246,7 @@ tm_shape(result.F.AIC$SDF) +
   tm_polygons(col = "Local_R2", pal = "Reds",auto.palette.mapping = F,
               style = 'cont')
 ```
-Look, the $R^2$ is 0.8969606, while the panel liner regression is 0.48772. BAM!!! 
+Look, the $R^2$ is 0.8969606, while the panel liner regression is 0.48772. BAM!!!   
 <strong>Note:</strong>Our model include SE and t-value of local coefficients, you can check the significance.
 
 # END
