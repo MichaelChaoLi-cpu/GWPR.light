@@ -48,9 +48,9 @@ CV_F <- function(bw, data, ID_list, formula, p, longlat, adaptive, kernel,
     subsample <- subsample[(subsample$wgt > 0.01),]
     Psubsample <- plm::pdata.frame(subsample, index = index, drop.index = FALSE, row.names = FALSE,
                                    stringsAsFactors = default.stringsAsFactors())
-    plm_subsample <- try(plm::plm(formula=formula, model=model, data=Psubsample,
-                                  effect = effect, index=index, weights = wgt,
-                                  random.method = random.method), silent=TRUE)
+    plm_subsample <- try(plm::plm(formula=formula, model = model, data = Psubsample,
+                                  effect = effect, index = index, weights = wgt,
+                                  random.method = random.method), silent = TRUE)
     if(!inherits(plm_subsample, "try-error"))
     {
       CVscore <- nrow(subsample) * sum(plm_subsample$residuals^2) /

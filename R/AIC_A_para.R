@@ -40,9 +40,9 @@ AIC_A_para <- function(bw, data_input, ID_list, formula, p, longlat, adaptive, k
   doParallel::registerDoParallel(cl)
   AICscore_vector <- foreach::foreach(ID_individual = ID_list_single, .combine = c) %dopar%
   {
-    data_input$aim[data_input$id == ID_individual] <- 1
-    data_input$aim[data_input$id != ID_individual] <- 0
     subsample <- data_input
+    subsample$aim[subsample$id == ID_individual] <- 1
+    subsample$aim[subsample$id != ID_individual] <- 0
     subsample <- subsample[order(-subsample$aim),]
     dp_locat_subsample <- dplyr::select(subsample, 'X', 'Y')
     dp_locat_subsample <- as.matrix(dp_locat_subsample)
@@ -54,6 +54,7 @@ AIC_A_para <- function(bw, data_input, ID_list, formula, p, longlat, adaptive, k
     id_subsample <- id_subsample[!duplicated(id_subsample$id),]
     id_subsample <- as.data.frame(id_subsample)
     id_subsample <- id_subsample[1:bw,]
+    id_subsample <- as.data.frame(id_subsample)
     colnames(id_subsample) <- "id"
     id_subsample <- dplyr::mutate(id_subsample, flag = 1)
     subsample <- dplyr::inner_join(subsample, id_subsample, by = "id")

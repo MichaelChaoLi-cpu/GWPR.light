@@ -49,6 +49,7 @@ AIC_A <- function(bw, data_input, ID_list, formula, p, longlat, adaptive, kernel
       id_subsample <- id_subsample[!duplicated(id_subsample$id),]
       id_subsample <- as.data.frame(id_subsample)
       id_subsample <- id_subsample[1:bw,]
+      id_subsample <- as.data.frame(id_subsample)
       colnames(id_subsample) <- "id"
       id_subsample <- dplyr::mutate(id_subsample, flag = 1)
       subsample <- dplyr::inner_join(subsample, id_subsample, by = "id")

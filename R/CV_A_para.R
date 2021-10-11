@@ -48,19 +48,19 @@ CV_A_para <- function(bw, data, ID_list, formula, p, longlat, adaptive, kernel,
     dp_locat_subsample <- as.matrix(dp_locat_subsample)
     dMat <- GWmodel::gw.dist(dp.locat = dp_locat_subsample, rp.locat = dp_locat_subsample,
                              focus = 1, p=p, longlat=longlat)
-    subsample$distance <- dMat[,1]
-    subsample <- subsample[order(subsample$distance),]
-    in_subsample_id <- dplyr::select(subsample, 'id')
-    in_subsample_id <- in_subsample_id[!duplicated(in_subsample_id$id),]
-    in_subsample_id <- as.data.frame(in_subsample_id)
-    in_subsample_id$yes <- 1
-    in_subsample_id <- in_subsample_id[1:bw, ]
-    bw_panel <- dplyr::left_join(ID_list, in_subsample_id, by = 'id')
-    bw_panel$usingCount <- bw_panel$Count * bw_panel$yes
-    bw_panel <- sum(bw_panel$usingCount, na.rm = T)
-    weight <- GWmodel::gw.weight(as.numeric(dMat), bw=bw_panel, kernel=kernel, adaptive=adaptive)
+    subsample$dist <- as.vector(dMat)
+    subsample <- subsample[order(subsample$dist),]
+    id_subsample <- dplyr::select(subsample, "id")
+    id_subsample <- id_subsample[!duplicated(id_subsample$id),]
+    id_subsample <- as.data.frame(id_subsample)
+    id_subsample <- id_subsample[1:bw,]
+    id_subsample <- as.data.frame(id_subsample)
+    colnames(id_subsample) <- "id"
+    id_subsample$flag <- 1
+    subsample <- dplyr::inner_join(subsample, id_subsample, by = "id")
+    bw_to_total <- nrow(subsample)
+    weight <- GWmodel::gw.weight(as.numeric(subsample$dist), bw=bw_to_total, kernel=kernel, adaptive=adaptive)
     subsample$wgt <- as.vector(weight)
-    subsample <- dplyr::filter(subsample, wgt > 0)
     Psubsample <- plm::pdata.frame(subsample, index = index, drop.index = FALSE, row.names = FALSE,
                                    stringsAsFactors = default.stringsAsFactors())
     plm_subsample <- plm::plm(formula=formula, model=model, data=Psubsample,

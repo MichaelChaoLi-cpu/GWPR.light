@@ -121,8 +121,8 @@ bw.GWPR <- function(formula, data, index, SDF, adaptive = FALSE, p = 2,bigdata =
   if ((nrow(ID_num) > 1000) & !doParallel)
   {
     message("Dear my friend, more than 1,000 individuals in your dataset.\n",
-        "It would be time-consuming. We use \"-\" and \"|\" to remind you how\n",
-        "we go. A \"-\" is equal to 2.5% in once score calculation. A \"|\" is\n",
+        "It would be time-consuming. We use \"-\" and \"|\" to inform you where\n",
+        "we are. A \"-\" is equal to 2.5% in once score calculation. A \"|\" is\n",
         "25%. Do not feel nervous or boring! Your research is on the way!\n",
         ".............................................................\n")
     huge_data_size <- TRUE
@@ -146,7 +146,7 @@ bw.GWPR <- function(formula, data, index, SDF, adaptive = FALSE, p = 2,bigdata =
   {
     message("...............................................................................................\n",
             "Now, the range of bandwidth selection is set by the user\n",
-            "We assume that the user is familiar with bandwidth selection, and uses this selection to reduce calculation time.\n",
+            "We assume that the user is familiar with bandwidth selection, and uses this setting to reduce calculation time.\n",
             "If not, please stop the current calculation, and set \"human.set.range\" as FALSE\n",
             "...............................................................................................\n")
     if(is.null(h.lower))
@@ -169,7 +169,7 @@ bw.GWPR <- function(formula, data, index, SDF, adaptive = FALSE, p = 2,bigdata =
     # decide upper and lower boundary
     lower.freedom <- protect_model_with_enough_freedom(formula = formula, data = lvl1_data, ID_list = ID_num,
                                                        index = index, p = p, longlat = longlat)
-    message("To make sure every subsample have enough freedom, the minimun numbers of individuals is",lower.freedom, "\n")
+    message("To make sure every subsample have enough freedom, the minimun numbers of individuals is ",lower.freedom, "\n")
     if(adaptive)
     {
       upper <- nrow(ID_num)
