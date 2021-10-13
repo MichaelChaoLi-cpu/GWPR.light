@@ -11,6 +11,10 @@ developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.re
 [![R-CMD-check](https://github.com/MichaelChaoLi-cpu/GWPR.light/workflows/R-CMD-check/badge.svg)](https://github.com/MichaelChaoLi-cpu/GWPR.light/actions)
 [![AppVeyor build
 status](https://ci.appveyor.com/api/projects/status/github/MichaelChaoLi-cpu/GWPR.light?branch=master&svg=true)](https://ci.appveyor.com/project/MichaelChaoLi-cpu/GWPR.light)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/GWPR.light)](https://CRAN.R-project.org/package=GWPR.light)
+[![Lifecycle:
+stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 <!-- badges: end -->
 
 This package is grounded in a branch of spatial statistics. Using
@@ -80,10 +84,10 @@ bw.AIC.F <- bw.GWPR(formula = formula.GWPR, data = TransAirPolCalif, index = c("
                      adaptive = F, p = 2, bigdata = F, effect = "individual",
                      model = "within", approach = "AIC", kernel = "bisquare", longlat = F,
                      doParallel = T, cluster.number = 4)
-#> To make sure every subsample have enough freedom, the minimun numbers of individuals is 2 
-#> The upper boundary is 12.23978 , and the lower boudnary is 1.435436 
+#> To make sure every subsample have enough freedom, the minimun numbers of individuals is 2
+#> The upper boundary is 12.2397827722445, and the lower boudnary is 1.4354355959204
 #> ..................................................................................
-#> You use parallel process, so be careful about your memory usage. Cluster number: 4 
+#> You use parallel process, so be careful about your memory usage. Cluster number: 4
 #> Fixed Bandwidth: 8.112889 AIC score: 2468.518 
 #> Fixed Bandwidth: 5.562329 AIC score: 1993.051 
 #> Fixed Bandwidth: 3.985996 AIC score: 1507.388 
@@ -144,10 +148,10 @@ result.F.AIC <- GWPR(bw = bw.AIC.F, formula = formula.GWPR, data = TransAirPolCa
                      SDF = California, adaptive = F, p = 2, effect = "individual", model = "within",
                      kernel = "bisquare", longlat = F)
 #> ************************ GWPR Begin *************************
-#> Formula: pm25  =  co2_mean + Developed_Open_Space_perc + Developed_Low_Intensity_perc + Developed_Medium_Intensity_perc + Developed_High_Intensity_perc + Open_Water_perc + Woody_Wetlands_perc + Emergent_Herbaceous_Wetlands_perc + Deciduous_Forest_perc + Evergreen_Forest_perc + Mixed_Forest_perc + Shrub_perc + Grassland_perc + Pasture_perc + Cultivated_Crops_perc + pop_density + summer_tmmx + winter_tmmx + summer_rmax + winter_rmax  -- Individuals: 58 
-#> Bandwidth: 2.010529  ----  Adaptive: FALSE 
-#> Model: within  ----  Effect: individual 
-#> The R2 is : 0.8969606 
+#> Formula: pm25  =  co2_mean + Developed_Open_Space_perc + Developed_Low_Intensity_perc + Developed_Medium_Intensity_perc + Developed_High_Intensity_perc + Open_Water_perc + Woody_Wetlands_perc + Emergent_Herbaceous_Wetlands_perc + Deciduous_Forest_perc + Evergreen_Forest_perc + Mixed_Forest_perc + Shrub_perc + Grassland_perc + Pasture_perc + Cultivated_Crops_perc + pop_density + summer_tmmx + winter_tmmx + summer_rmax + winter_rmax -- Individuals: 58
+#> Bandwidth: 2.01052881685978 ---- Adaptive: FALSE
+#> Model: within ---- Effect: individual
+#> The R2 is: 0.896960603213274
 #> Note: in order to avoid mistakes, we forced a rename of the individuals'ID as "id".
 summary(result.F.AIC$SDF$Local_R2)
 #>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
@@ -171,9 +175,9 @@ GWPR.pFtest.resu.F <- GWPR.pFtest(formula = formula.GWPR, data = TransAirPolCali
                                   SDF = California, bw = bw.AIC.F, adaptive = F, p = 2, effect = "individual",
                                   kernel = "bisquare", longlat = F)
 #> **************************** F test in each subsample *********************************
-#> Formula: pm25  =  co2_mean + Developed_Open_Space_perc + Developed_Low_Intensity_perc + Developed_Medium_Intensity_perc + Developed_High_Intensity_perc + Open_Water_perc + Woody_Wetlands_perc + Emergent_Herbaceous_Wetlands_perc + Deciduous_Forest_perc + Evergreen_Forest_perc + Mixed_Forest_perc + Shrub_perc + Grassland_perc + Pasture_perc + Cultivated_Crops_perc + pop_density + summer_tmmx + winter_tmmx + summer_rmax + winter_rmax  -- Individuals: 58 
-#> Bandwidth: 2.010529  ----  Adaptive: FALSE 
-#> Model: Fixed Effects vs Pooling  ----  Effect: individual 
+#> Formula: pm25  =  co2_mean + Developed_Open_Space_perc + Developed_Low_Intensity_perc + Developed_Medium_Intensity_perc + Developed_High_Intensity_perc + Open_Water_perc + Woody_Wetlands_perc + Emergent_Herbaceous_Wetlands_perc + Deciduous_Forest_perc + Evergreen_Forest_perc + Mixed_Forest_perc + Shrub_perc + Grassland_perc + Pasture_perc + Cultivated_Crops_perc + pop_density + summer_tmmx + winter_tmmx + summer_rmax + winter_rmax -- Individuals: 58
+#> Bandwidth:2.01052881685978 ---- Adaptive: FALSE
+#> Model: Fixed Effects vs Pooling ---- Effect: individual
 #> If the p-value is lower than the specific level (0.01, 0.05, etc.), significant effects exist.
 tm_shape(GWPR.pFtest.resu.F$SDF) +
      tm_polygons(col = "p.value", breaks = c(0, 0.05, 1))
@@ -189,9 +193,9 @@ GWPR.plmtest.resu.F <- GWPR.plmtest(formula = formula.GWPR, data = TransAirPolCa
                                     SDF = California, bw = bw.AIC.F, adaptive = F, p = 2,
                                     kernel = "bisquare", longlat = F)
 #> **************** Breusch-Pagan Lagrange Multiplier test in each subsample *******************
-#> Formula: pm25  =  co2_mean + Developed_Open_Space_perc + Developed_Low_Intensity_perc + Developed_Medium_Intensity_perc + Developed_High_Intensity_perc + Open_Water_perc + Woody_Wetlands_perc + Emergent_Herbaceous_Wetlands_perc + Deciduous_Forest_perc + Evergreen_Forest_perc + Mixed_Forest_perc + Shrub_perc + Grassland_perc + Pasture_perc + Cultivated_Crops_perc + pop_density + summer_tmmx + winter_tmmx + summer_rmax + winter_rmax  -- Individuals: 58 
-#> Bandwidth: 2.010529  ----  Adaptive: FALSE 
-#> Model: Pooling  ----  
+#> Formula: pm25  =  co2_mean + Developed_Open_Space_perc + Developed_Low_Intensity_perc + Developed_Medium_Intensity_perc + Developed_High_Intensity_perc + Open_Water_perc + Woody_Wetlands_perc + Emergent_Herbaceous_Wetlands_perc + Deciduous_Forest_perc + Evergreen_Forest_perc + Mixed_Forest_perc + Shrub_perc + Grassland_perc + Pasture_perc + Cultivated_Crops_perc + pop_density + summer_tmmx + winter_tmmx + summer_rmax + winter_rmax -- Individuals: 58
+#> Bandwidth: 2.01052881685978 ---- Adaptive: FALSE
+#> Model: Pooling ---- 
 #> If the p-value is lower than the specific level (0.01, 0.05, etc.), significant effects exist.
 tm_shape(GWPR.plmtest.resu.F$SDF) +
      tm_polygons(col = "p.value", breaks = c(0, 0.05, 1))
@@ -207,9 +211,9 @@ GWPR.phtest.resu.F <- GWPR.phtest(formula = formula.GWPR, data = TransAirPolCali
                                   SDF = California, bw = bw.AIC.F, adaptive = F, p = 2, effect = "individual",
                                   kernel = "bisquare", longlat = F, random.method = "amemiya")
 #> ************************* Hausman Test in each subsample ***************************
-#> Formula: pm25  =  co2_mean + Developed_Open_Space_perc + Developed_Low_Intensity_perc + Developed_Medium_Intensity_perc + Developed_High_Intensity_perc + Open_Water_perc + Woody_Wetlands_perc + Emergent_Herbaceous_Wetlands_perc + Deciduous_Forest_perc + Evergreen_Forest_perc + Mixed_Forest_perc + Shrub_perc + Grassland_perc + Pasture_perc + Cultivated_Crops_perc + pop_density + summer_tmmx + winter_tmmx + summer_rmax + winter_rmax  -- Individuals: 58 
-#> Bandwidth: 2.010529  ----  Adaptive: FALSE 
-#> Model: Fixed Effects vs Random Effects  ----  Effect: individual  ----  Random Method: amemiya 
+#> Formula: pm25  =  co2_mean + Developed_Open_Space_perc + Developed_Low_Intensity_perc + Developed_Medium_Intensity_perc + Developed_High_Intensity_perc + Open_Water_perc + Woody_Wetlands_perc + Emergent_Herbaceous_Wetlands_perc + Deciduous_Forest_perc + Evergreen_Forest_perc + Mixed_Forest_perc + Shrub_perc + Grassland_perc + Pasture_perc + Cultivated_Crops_perc + pop_density + summer_tmmx + winter_tmmx + summer_rmax + winter_rmax -- Individuals: 58
+#> Bandwidth: 2.01052881685978 ---- Adaptive: FALSE
+#> Model: Fixed Effects vs Random Effects ---- Effect: individual ---- Random Method: amemiya
 #> If the p-value is lower than the specific level (0.01, 0.05, etc.), one model is inconsistent.
 tm_shape(GWPR.phtest.resu.F$SDF) +
      tm_polygons(col = "p.value", breaks = c(0, 0.05, 1))
