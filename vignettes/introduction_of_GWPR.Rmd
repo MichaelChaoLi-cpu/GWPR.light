@@ -106,7 +106,7 @@ $$CVSS(h) = \frac{n  \sum_i\{y_i - \hat{y_i}(h)\}^2} {(n-p+1)^2}$$
 where $n$ is the numbers of observations in the subsample, $p$ is the number of the estimated parameters.
 Furthermore, the "AIC" criterion also has the same issue. It has changed in our calculation:
 $$AIC(h) = 2nln(sd) + 2ln(2\pi) + \frac{n\times [tr(hat) + n]}{[n - 2 - tr(hat)]}$$
-where $sd$ is the standard deviation of $n$, and $hat$ is the hat matrix of the local regression with the subsample.
+where $sd$ is the standard deviation of residuals, and $hat$ is the hat matrix of the local regression with the subsample.
 <strong>Now, you get the fixed distance bandwidth!:)</strong>
 
 ### 2.1.2 Adaptive and Fixed Distance Bandwidth
