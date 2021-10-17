@@ -86,7 +86,6 @@ gwpr_A <- function(bw, data, SDF, ID_list, formula, p, longlat, adaptive,
     coefMat <- lmtest::coeftest(plm_subsample)
     local_r2 <- plm::r.squared(plm_subsample)
     result_line <- c(ID_individual, coefMat[,1], coefMat[,2], coefMat[,3], local_r2)
-    result_line <- c(ID_individual, coefMat[,1], local_r2)
     output_result <- rbind(output_result, result_line)
     dataset_add_resid <- cbind(Psubsample, plm_subsample$residuals)
     dataset_add_resid <- as.data.frame(dataset_add_resid)
