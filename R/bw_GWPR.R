@@ -30,8 +30,8 @@
 #' @param doParallel         If TRUE, "cluster": multi-process technique with the parallel package would be used.
 #' @param cluster.number     The number of the clusters that user wants to use
 #' @param human.set.range    If TRUE, the range of bandwidth selection could be set by the user
-#' @param h.upper            The lower boundary of potential bandwidth range.
-#' @param h.lower            The upper boundary of potential bandwidth range.
+#' @param h.upper            The upper boundary of potential bandwidth range.
+#' @param h.lower            The lower boundary of potential bandwidth range.
 #'
 #' @return The optimal bandwidth
 #'

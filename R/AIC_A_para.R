@@ -86,10 +86,21 @@ AIC_A_para <- function(bw, data_input, ID_list, formula, p, longlat, adaptive, k
     {
       X$intercept <- 1
     }
-    X_mean <- aggregate(X[,indep_varibale_name_in_equation], by = list(X[,'id']), mean)
-    colnames(X_mean)[1] <- "id"
-    X_mean <- dplyr::left_join(dplyr::select(X, "id"), X_mean, by = "id")
-    X_trans <- (dplyr::select(X, -"id")) - (dplyr::select(X_mean, -"id")) * theta
+    if((model == "random")|(model == "pooling"))
+    {
+      X$intercept <- 1
+    }
+    if (model == "pooling")
+    {
+      X_trans <- (dplyr::select(X, -"id"))
+    }
+    else
+    {
+      X_mean <- stats::aggregate(X[,indep_varibale_name_in_equation], by = list(X[,'id']), mean)
+      colnames(X_mean)[1] <- "id"
+      X_mean <- dplyr::left_join(dplyr::select(X, "id"), X_mean, by = "id")
+      X_trans <- (dplyr::select(X, -"id")) - (dplyr::select(X_mean, -"id")) * theta
+    }
     X_trans <- as.matrix(X_trans)
     W <- as.vector(Psubsample$wgt)
     P <- try(X_trans %*%  solve(t(X_trans) %*% (W * X_trans)) %*% t(X_trans) * W, silent=TRUE)

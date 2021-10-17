@@ -57,9 +57,9 @@ gwpr_A <- function(bw, data, SDF, ID_list, formula, p, longlat, adaptive,
   wgt = 0
   for (ID_individual in ID_list_single)
   {
-    data_input$aim[data_input$id == ID_individual] <- 1
-    data_input$aim[data_input$id != ID_individual] <- 0
-    subsample <- data_input
+    data$aim[data$id == ID_individual] <- 1
+    data$aim[data$id != ID_individual] <- 0
+    subsample <- data
     subsample <- subsample[order(-subsample$aim),]
     dp_locat_subsample <- dplyr::select(subsample, 'X', 'Y')
     dp_locat_subsample <- as.matrix(dp_locat_subsample)
@@ -71,6 +71,7 @@ gwpr_A <- function(bw, data, SDF, ID_list, formula, p, longlat, adaptive,
     id_subsample <- id_subsample[!duplicated(id_subsample$id),]
     id_subsample <- as.data.frame(id_subsample)
     id_subsample <- id_subsample[1:bw,]
+    id_subsample <- as.data.frame(id_subsample)
     colnames(id_subsample) <- "id"
     id_subsample <- dplyr::mutate(id_subsample, flag = 1)
     subsample <- dplyr::inner_join(subsample, id_subsample, by = "id")
@@ -85,6 +86,7 @@ gwpr_A <- function(bw, data, SDF, ID_list, formula, p, longlat, adaptive,
     coefMat <- lmtest::coeftest(plm_subsample)
     local_r2 <- plm::r.squared(plm_subsample)
     result_line <- c(ID_individual, coefMat[,1], coefMat[,2], coefMat[,3], local_r2)
+    result_line <- c(ID_individual, coefMat[,1], local_r2)
     output_result <- rbind(output_result, result_line)
     dataset_add_resid <- cbind(Psubsample, plm_subsample$residuals)
     dataset_add_resid <- as.data.frame(dataset_add_resid)

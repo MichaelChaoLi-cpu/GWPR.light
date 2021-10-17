@@ -50,9 +50,9 @@ boxcar: wgt=1 if dist < bw, wgt=0 otherwise}
 
 \item{human.set.range}{If TRUE, the range of bandwidth selection could be set by the user}
 
-\item{h.upper}{The lower boundary of potential bandwidth range.}
+\item{h.upper}{The upper boundary of potential bandwidth range.}
 
-\item{h.lower}{The upper boundary of potential bandwidth range.}
+\item{h.lower}{The lower boundary of potential bandwidth range.}
 }
 \value{
 The optimal bandwidth
