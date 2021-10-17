@@ -70,6 +70,10 @@ AIC_F <- function(bw, data_input, ID_list, formula, p, longlat, adaptive, kernel
       X <- as.matrix(Psubsample[,indep_varibale_name_in_equation])
       X <- as.data.frame(Psubsample[,c("id", indep_varibale_name_in_equation)])
       X$id <- as.character(X$id)
+      if((model == "random")|(model == "pooling"))
+      {
+        X$intercept <- 1
+      }
       X_mean <- stats::aggregate(X[,indep_varibale_name_in_equation], by = list(X[,'id']), mean)
       colnames(X_mean)[1] <- "id"
       X_mean <- dplyr::left_join(dplyr::select(X, "id"), X_mean, by = "id")
