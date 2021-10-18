@@ -13,7 +13,7 @@ GWPR(formula, data, index, SDF, bw = NULL, adaptive = FALSE, p = 2,
 
 \item{data}{A data.frame for the Panel data}
 
-\item{index}{A vector for the indexes : (c("ID", "Time"))}
+\item{index}{A vector of the two indexes: (c("ID", "Time"))}
 
 \item{SDF}{Spatial*DataFrame on which is based the data, with the "ID" in the index}
 
@@ -79,5 +79,5 @@ tm_polygons(col = "Local_R2", pal = "Reds",auto.palette.mapping = FALSE,
 Fotheringham, A. Stewart, Chris Brunsdon, and Martin Charlton. Geographically weighted regression: the analysis of spatially varying relationships. John Wiley & Sons, 2003.
 }
 \author{
-Chao Li <chaoli0394@gmail.com> Shunsuke Managi <managi.s@gmail.com>
+Chao Li <chaoli0394@gmail.com> Shunsuke Managi
 }

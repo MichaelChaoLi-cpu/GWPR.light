@@ -11,7 +11,7 @@
 #'
 #' @param formula            The regression formula: : Y ~ X1 + ... + Xk
 #' @param data               data.frame for the Panel data
-#' @param index              A vector for the indexes : (c("ID", "Time"))
+#' @param index              A vector of the two indexes: (c("ID", "Time"))
 #' @param SDF                Spatial*DataFrame on which is based the data, with the "ID" in the index
 #' @param adaptive           If TRUE, adaptive distance bandwidth is used, otherwise, fixed distance bandwidth.
 #' @param p                  The power of the Minkowski distance, default is 2, i.e. the Euclidean distance
@@ -30,8 +30,8 @@
 #' @param doParallel         If TRUE, "cluster": multi-process technique with the parallel package would be used.
 #' @param cluster.number     The number of the clusters that user wants to use
 #' @param human.set.range    If TRUE, the range of bandwidth selection could be set by the user
-#' @param h.upper            The upper boundary of potential bandwidth range.
-#' @param h.lower            The lower boundary of potential bandwidth range.
+#' @param h.upper            The upper boundary of the potential bandwidth range.
+#' @param h.lower            The lower boundary of the potential bandwidth range.
 #'
 #' @return The optimal bandwidth
 #'
@@ -42,7 +42,7 @@
 #' @importFrom sp coordinates bbox
 #' @import parallel
 #'
-#' @author Chao Li <chaoli0394@gmail.com> Shunsuke Managi <managi.s@gmail.com>
+#' @author Chao Li <chaoli0394@gmail.com> Shunsuke Managi
 #'
 #' @references Fotheringham, A. Stewart, Chris Brunsdon, and Martin Charlton. Geographically weighted regression: the analysis of spatially varying relationships. John Wiley & Sons, 2003.
 #'
@@ -169,7 +169,7 @@ bw.GWPR <- function(formula, data, index, SDF, adaptive = FALSE, p = 2,bigdata =
     # decide upper and lower boundary
     lower.freedom <- protect_model_with_enough_freedom(formula = formula, data = lvl1_data, ID_list = ID_num,
                                                        index = index, p = p, longlat = longlat)
-    message("To make sure every subsample have enough freedom, the minimun numbers of individuals is ",lower.freedom, "\n")
+    message("To make sure every subsample have enough freedom, the minimum number of individuals is ",lower.freedom, "\n")
     if(adaptive)
     {
       upper <- nrow(ID_num)
@@ -214,7 +214,7 @@ bw.GWPR <- function(formula, data, index, SDF, adaptive = FALSE, p = 2,bigdata =
       message("Data Prepared! Go!............................................\n")
     }
   }
-  message("The upper boundary is ", upper,", and the lower boudnary is ", lower,"\n")
+  message("The upper boundary is ", upper,", and the lower boundary is ", lower,"\n")
   if(doParallel)
   {
     message("..................................................................................\n")

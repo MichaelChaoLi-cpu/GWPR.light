@@ -71,5 +71,5 @@ GWPR.moran.test(moran.plm.model, SDF = California, bw = bw.AIC.Fix, kernel = "bi
 Beenstock, M., Felsenstein, D., 2019. The econometric analysis of non-stationary spatial panel data. Springer.
 }
 \author{
-Chao Li <chaoli0394@gmail.com> Shunsuke Managi <managi.s@gmail.com>
+Chao Li <chaoli0394@gmail.com> Shunsuke Managi
 }

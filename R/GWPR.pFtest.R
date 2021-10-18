@@ -1,4 +1,4 @@
-#' Locally F Test based on GWPR
+#' Locally F Test Based on GWPR
 #'
 #' @description This function perform F test in each regression based on different subsamples
 #'
@@ -7,7 +7,7 @@
 #'
 #' @param formula     The regression formula: : Y ~ X1 + ... + Xk
 #' @param data        A data.frame for the Panel data.
-#' @param index       A vector for the indexes : (c("ID", "Time")).
+#' @param index       A vector of the two indexes: (c("ID", "Time")).
 #' @param SDF         Spatial*DataFrame on which is based the data, with the "ID" in the index.
 #' @param bw          The optimal bandwidth, either adaptive or fixed distance.
 #' @param adaptive    If TRUE, adaptive distance bandwidth is used, otherwise, fixed distance bandwidth.
@@ -31,7 +31,7 @@
 #' }
 #' @export
 #'
-#' @author Chao Li <chaoli0394@gmail.com> Shunsuke Managi <managi.s@gmail.com>
+#' @author Chao Li <chaoli0394@gmail.com> Shunsuke Managi
 #'
 #' @examples
 #' data(TransAirPolCalif)

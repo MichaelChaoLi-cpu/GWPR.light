@@ -2,7 +2,7 @@
 % Please edit documentation in R/GWPR.phtest.R
 \name{GWPR.phtest}
 \alias{GWPR.phtest}
-\title{Locally Hausman Test based on GWPR}
+\title{Locally Hausman Test Based on GWPR}
 \usage{
 GWPR.phtest(formula, data, index, SDF, bw = NULL, adaptive = FALSE,
                    p = 2, effect = "individual", random.method = "swar",
@@ -13,7 +13,7 @@ GWPR.phtest(formula, data, index, SDF, bw = NULL, adaptive = FALSE,
 
 \item{data}{A data.frame for the Panel data.}
 
-\item{index}{A vector for the indexes : (c("ID", "Time")).}
+\item{index}{A vector of the two indexes: (c("ID", "Time")).}
 
 \item{SDF}{Spatial*DataFrame on which is based the data, with the "ID" in the index.}
 
@@ -43,7 +43,7 @@ A list of result:
 }
 }
 \description{
-Locally Hausman Test based on GWPR
+Locally Hausman Test Based on GWPR
 }
 \note{
 If the random method is "swar", to perform this test, bandwidth selection must guarantee that enough individuals in the subsamples. Using bw.GWPR function can avoid mistake.
@@ -73,5 +73,5 @@ tm_shape(GWPR.phtest.resu.F$SDF) +
 }
 }
 \author{
-Chao Li <chaoli0394@gmail.com> Shunsuke Managi <managi.s@gmail.com>
+Chao Li <chaoli0394@gmail.com> Shunsuke Managi
 }

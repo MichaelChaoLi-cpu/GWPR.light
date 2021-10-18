@@ -2,7 +2,7 @@
 % Please edit documentation in R/GWPR.pFtest.R
 \name{GWPR.pFtest}
 \alias{GWPR.pFtest}
-\title{Locally F Test based on GWPR}
+\title{Locally F Test Based on GWPR}
 \usage{
 GWPR.pFtest(formula, data, index, SDF, bw = NULL, adaptive = FALSE, p = 2,
                    effect = "individual", kernel = "bisquare", longlat = FALSE)
@@ -12,7 +12,7 @@ GWPR.pFtest(formula, data, index, SDF, bw = NULL, adaptive = FALSE, p = 2,
 
 \item{data}{A data.frame for the Panel data.}
 
-\item{index}{A vector for the indexes : (c("ID", "Time")).}
+\item{index}{A vector of the two indexes: (c("ID", "Time")).}
 
 \item{SDF}{Spatial*DataFrame on which is based the data, with the "ID" in the index.}
 
@@ -65,5 +65,5 @@ tm_shape(GWPR.pFtest.resu.F$SDF) +
      tm_polygons(col = "p.value", breaks = c(0, 0.05, 1))
 }
 \author{
-Chao Li <chaoli0394@gmail.com> Shunsuke Managi <managi.s@gmail.com>
+Chao Li <chaoli0394@gmail.com> Shunsuke Managi
 }

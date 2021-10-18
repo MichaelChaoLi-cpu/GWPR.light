@@ -30,7 +30,7 @@
 #' }
 #' @export
 #'
-#' @author Chao Li <chaoli0394@gmail.com> Shunsuke Managi <managi.s@gmail.com>
+#' @author Chao Li <chaoli0394@gmail.com> Shunsuke Managi
 #'
 #' @examples
 #' data(TransAirPolCalif)

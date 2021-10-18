@@ -16,7 +16,7 @@ bw.GWPR(formula, data, index, SDF, adaptive = FALSE, p = 2, bigdata = FALSE,
 
 \item{data}{data.frame for the Panel data}
 
-\item{index}{A vector for the indexes : (c("ID", "Time"))}
+\item{index}{A vector of the two indexes: (c("ID", "Time"))}
 
 \item{SDF}{Spatial*DataFrame on which is based the data, with the "ID" in the index}
 
@@ -50,9 +50,9 @@ boxcar: wgt=1 if dist < bw, wgt=0 otherwise}
 
 \item{human.set.range}{If TRUE, the range of bandwidth selection could be set by the user}
 
-\item{h.upper}{The upper boundary of potential bandwidth range.}
+\item{h.upper}{The upper boundary of the potential bandwidth range.}
 
-\item{h.lower}{The lower boundary of potential bandwidth range.}
+\item{h.lower}{The lower boundary of the potential bandwidth range.}
 }
 \value{
 The optimal bandwidth
@@ -91,5 +91,5 @@ bw.AIC.Fix
 Fotheringham, A. Stewart, Chris Brunsdon, and Martin Charlton. Geographically weighted regression: the analysis of spatially varying relationships. John Wiley & Sons, 2003.
 }
 \author{
-Chao Li <chaoli0394@gmail.com> Shunsuke Managi <managi.s@gmail.com>
+Chao Li <chaoli0394@gmail.com> Shunsuke Managi
 }

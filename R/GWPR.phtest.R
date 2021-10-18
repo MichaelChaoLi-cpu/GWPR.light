@@ -1,4 +1,4 @@
-#' Locally Hausman Test based on GWPR
+#' Locally Hausman Test Based on GWPR
 #'
 #' @usage GWPR.phtest(formula, data, index, SDF, bw = NULL, adaptive = FALSE,
 #'                    p = 2, effect = "individual", random.method = "swar",
@@ -6,7 +6,7 @@
 #'
 #' @param formula        The regression formula: : Y ~ X1 + ... + Xk
 #' @param data           A data.frame for the Panel data.
-#' @param index          A vector for the indexes : (c("ID", "Time")).
+#' @param index          A vector of the two indexes: (c("ID", "Time")).
 #' @param SDF            Spatial*DataFrame on which is based the data, with the "ID" in the index.
 #' @param bw             The optimal bandwidth, either adaptive or fixed distance.
 #' @param adaptive       If TRUE, adaptive distance bandwidth is used, otherwise, fixed distance bandwidth.
@@ -33,7 +33,7 @@
 #'
 #' @note If the random method is "swar", to perform this test, bandwidth selection must guarantee that enough individuals in the subsamples. Using bw.GWPR function can avoid mistake.
 #'
-#' @author Chao Li <chaoli0394@gmail.com> Shunsuke Managi <managi.s@gmail.com>
+#' @author Chao Li <chaoli0394@gmail.com> Shunsuke Managi
 #'
 #' @examples
 #' \donttest{

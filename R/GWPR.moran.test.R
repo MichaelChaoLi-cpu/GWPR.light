@@ -39,7 +39,7 @@
 #'
 #' @note: Current version of panel Moran's I test can only chech the balanced panel data.
 #'
-#' @author Chao Li <chaoli0394@gmail.com> Shunsuke Managi <managi.s@gmail.com>
+#' @author Chao Li <chaoli0394@gmail.com> Shunsuke Managi
 #'
 #' @references Beenstock, M., Felsenstein, D., 2019. The econometric analysis of non-stationary spatial panel data. Springer.
 #'

@@ -62,5 +62,5 @@ tm_shape(GWPR.plmtest.resu.F$SDF) +
      tm_polygons(col = "p.value", breaks = c(0, 0.05, 1))
 }
 \author{
-Chao Li <chaoli0394@gmail.com> Shunsuke Managi <managi.s@gmail.com>
+Chao Li <chaoli0394@gmail.com> Shunsuke Managi
 }

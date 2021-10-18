@@ -1,7 +1,7 @@
 Package: GWPR.light
 Type: Package
 Title: Geographically Weighted Panel Regression
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: c(person("Chao", "Li", role = c("aut", "cre"),
                      email = "chaoli0394@gmail.com", 
                      comment = c(ORCID = "0000-0002-6854-4456")),
