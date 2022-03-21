@@ -111,7 +111,7 @@ AIC_A <- function(bw, data_input, ID_list, formula, p, longlat, adaptive, kernel
       ### 0.2.0
       if(!inherits(P, "try-error"))
       {
-        sub_tr_hatmat <- sum(diag(P))
+        sub_tr_hatmat <- diag(P)
         sub_tr_hatmat.aim <- sub_tr_hatmat[1:aim_number]
         sub_resid <- plm_subsample$residuals
         sub_resid.aim <- sub_resid[1:aim_number]

@@ -38,7 +38,7 @@ AIC_F_para <- function(bw, data_input, ID_list, formula, p, longlat, adaptive, k
   wgt <- 0
   cl <- parallel::makeCluster(cluster.number)
   doParallel::registerDoParallel(cl)
-  AICscore_vector <- foreach(ID_individual = ID_list_single, .combine = c) %dopar%
+  result_list <- foreach(ID_individual = ID_list_single, .combine = rbind) %dopar%
   {
     data_input$aim[data_input$id == ID_individual] <- 1
     data_input$aim[data_input$id != ID_individual] <- 0
@@ -105,7 +105,7 @@ AIC_F_para <- function(bw, data_input, ID_list, formula, p, longlat, adaptive, k
       ### 0.2.0
       if(!inherits(P, "try-error"))
       {
-        sub_tr_hatmat <- sum(diag(P))
+        sub_tr_hatmat <- diag(P)
         sub_tr_hatmat.aim <- sub_tr_hatmat[1:aim_number]
         sub_resid <- plm_subsample$residuals
         sub_resid.aim <- sub_resid[1:aim_number]
@@ -117,7 +117,6 @@ AIC_F_para <- function(bw, data_input, ID_list, formula, p, longlat, adaptive, k
       }
       sub_result_list <- cbind(sub_tr_hatmat.aim, sub_resid.aim)
       sub_result_list <- as.data.frame(sub_result_list)
-      colnames(sub_result_list) <- c("tr_hat","sub_resid")
       ### 0.2.0
       ### 0.1.1
       #if(!inherits(P, "try-error"))
@@ -141,8 +140,8 @@ AIC_F_para <- function(bw, data_input, ID_list, formula, p, longlat, adaptive, k
       ###0.2.0
       sub_tr_hatmat.aim <- Inf
       sub_resid.aim <- Inf
-      residualsVector <- append(residualsVector, sub_resid.aim)
-      tr_hatmatVector <- append(tr_hatmatVector, sub_tr_hatmat.aim)
+      sub_result_list <- cbind(sub_tr_hatmat.aim, sub_resid.aim)
+      sub_result_list <- as.data.frame(sub_result_list)
     }
   }
   parallel::stopCluster(cl)
@@ -152,8 +151,8 @@ AIC_F_para <- function(bw, data_input, ID_list, formula, p, longlat, adaptive, k
   ### 0.1.1
   ### 0.2.0
   n <- nrow(data_input)
-  tr_hatmat <- sum(tr_hatmatVector)
-  AICscore <- 2*n*log(sd(residualsVector)) + n*log(2*pi) +  n * (tr_hatmat + n) / (n - 2 - tr_hatmat)
+  tr_hatmat <- sum(result_list[,1])
+  AICscore <- 2*n*log(sd(result_list[,2])) + n*log(2*pi) +  n * (tr_hatmat + n) / (n - 2 - tr_hatmat)
   cat("Fixed Bandwidth:", bw, "AIC score:", AICscore, "\n")
   ### 0.2.0
   return(AICscore)

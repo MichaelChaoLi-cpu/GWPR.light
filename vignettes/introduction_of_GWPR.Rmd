@@ -103,10 +103,10 @@ plot(h, SS, col = "red")
 
 To solve this issue, the $SS$ function changes as follows (ref. 2):
 $$CVSS(h) = \frac{n  \sum_i\{y_i - \hat{y_i}(h)\}^2} {(n-p+1)^2}$$
-where $n$ is the numbers of observations in the subsample, $p$ is the number of the estimated parameters.
+where $n$ is the numbers of observations, $p$ is the number of the estimated parameters.
 Furthermore, the "AIC" criterion also has the same issue. It has changed in our calculation:
 $$AIC(h) = 2nln(sd) + 2ln(2\pi) + \frac{n\times [tr(hat) + n]}{[n - 2 - tr(hat)]}$$
-where $sd$ is the standard deviation of residuals, and $hat$ is the hat matrix of the local regression with the subsample.
+where $sd$ is the standard deviation of residuals, and $hat$ is the hat matrix.
 <strong>Now, you get the fixed distance bandwidth!:)</strong>
 
 ### 2.1.2 Adaptive and Fixed Distance Bandwidth
@@ -118,7 +118,11 @@ Our calibration process normally start from the golden ratio of range. In this w
 ### 2.1.4 "human.set.range" Setting
 If you have run this function for several times and you know the potential optimal range of bandwidth, you can set "human.set.range" as TRUE to cut down the calculation time. Then, you must also set h.upper and h.lower both. Otherwise, errors.
 
-### 2.1.5 "model" Setting
+### 2.1.5 "gradientIncrement" Setting
+**Note:** This setting is super important.  
+In some remote sensing research, we find the relationship between bandwidth and CV or AIC score is not U-shape. So, we recommend to use gradient increment selection to calibrate the optimal bandwidth. The user need to set the upper boundary of the gradient increment selection (GI.upper), the lower boundary (GI.lower), and the step length of the increment (GI.step). If it is an analysis on grid data, we recommend the GI.step is the spatial resolution.  
+  
+### 2.1.6 "model" Setting
 Now, this version of "GWPR.light" can figure our fixed effects model ("within"), pooling regression ("pooling"), and random effects models ("random"), internally. However, if you perform the basic transformation, we can also perform first difference model and between model. 
 For first difference model, you need to confirm your data is balanced panel. Then, please calculate the difference between two continuous period of each variable in every individual. Reset the "time" index, put them into the function and set the model = "pooling". Here we go!
 For between model, you need to directly calculation the mean of each variables in every individual. Then, reset the "time" index, put them into the function and set the model = "pooling". You got it.

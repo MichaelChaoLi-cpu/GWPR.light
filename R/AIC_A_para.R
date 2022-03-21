@@ -110,7 +110,7 @@ AIC_A_para <- function(bw, data_input, ID_list, formula, p, longlat, adaptive, k
     ### 0.2.0
     if(!inherits(P, "try-error"))
     {
-      sub_tr_hatmat <- sum(diag(P))
+      sub_tr_hatmat <- diag(P)
       sub_tr_hatmat.aim <- sub_tr_hatmat[1:aim_number]
       sub_resid <- plm_subsample$residuals
       sub_resid.aim <- sub_resid[1:aim_number]
@@ -122,7 +122,6 @@ AIC_A_para <- function(bw, data_input, ID_list, formula, p, longlat, adaptive, k
     }
     sub_result_list <- cbind(sub_tr_hatmat.aim, sub_resid.aim)
     sub_result_list <- as.data.frame(sub_result_list)
-    colnames(sub_result_list) <- c("tr_hat","sub_resid")
     ### 0.2.0
     ### 0.1.1
     #if(!inherits(P, "try-error"))
@@ -146,8 +145,8 @@ AIC_A_para <- function(bw, data_input, ID_list, formula, p, longlat, adaptive, k
 
   ### 0.2.0
   n <- nrow(data_input)
-  tr_hatmat <- sum(result_list$tr_hat)
-  AICscore <- 2*n*log(sd(result_list$sub_resid)) + n*log(2*pi) +  n * (tr_hatmat + n) / (n - 2 - tr_hatmat)
+  tr_hatmat <- sum(result_list[,1])
+  AICscore <- 2*n*log(sd(result_list[,2])) + n*log(2*pi) +  n * (tr_hatmat + n) / (n - 2 - tr_hatmat)
   cat("Adaptive Bandwidth:", bw, "AIC score:", AICscore, "\n")
   ### 0.2.0
   return(AICscore)

@@ -56,13 +56,13 @@ boxcar: wgt=1 if dist < bw, wgt=0 otherwise}
 
 \item{h.lower}{The lower boundary of the potential bandwidth range for golden selection.}
 
+\item{gradientIncrement}{The bandwidth selection become gradient increment, if TRUE}
+
 \item{GI.step}{The step length of the increment.}
 
 \item{GI.upper}{The upper boundary of the gradient increment selection.}
 
 \item{GI.lower}{The lower boundary of the gradient increment selection.}
-
-\item{grandientIncrement}{The bandwidth selection become gradient increment, if TRUE}
 }
 \value{
 The optimal bandwidth
@@ -85,7 +85,9 @@ bw.CV.Fix <- bw.GWPR(formula = formula.GWPR, data = TransAirPolCalif,
                      index = c("GEOID", "year"),
                      SDF = California, adaptive = FALSE, p = 2, bigdata = FALSE,
                      effect = "individual", model = "within", approach = "CV",
-                     kernel = "bisquare", longlat = FALSE)
+                     kernel = "bisquare", longlat = FALSE,
+                     gradientIncrement = TRUE, GI.step = 0.5, GI.upper = 5,
+                     GI.lower = 1.5)
 
 bw.CV.Fix
 

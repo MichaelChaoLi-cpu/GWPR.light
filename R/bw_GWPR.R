@@ -67,7 +67,9 @@
 #'                      index = c("GEOID", "year"),
 #'                      SDF = California, adaptive = FALSE, p = 2, bigdata = FALSE,
 #'                      effect = "individual", model = "within", approach = "CV",
-#'                      kernel = "bisquare", longlat = FALSE)
+#'                      kernel = "bisquare", longlat = FALSE,
+#'                      gradientIncrement = TRUE, GI.step = 0.5, GI.upper = 5,
+#'                      GI.lower = 1.5)
 #'
 #' bw.CV.Fix
 #'
@@ -262,8 +264,6 @@ bw.GWPR <- function(formula, data, index, SDF, adaptive = FALSE, p = 2, bigdata 
       {
         stop("Please input upper, lower boundaries (GI.upper and GI.lower) and step length (GI.step) of GI")
       }
-      message("Since GI method is used, so the GI.upper is the real upper boundary: ",
-              GI.upper, " lower boundary: ", GI.lower," step length: ", GI.step)
       BandwidthVector <- c()
       ScoreVector <- c()
       if (adaptive)
@@ -289,7 +289,7 @@ bw.GWPR <- function(formula, data, index, SDF, adaptive = FALSE, p = 2, bigdata 
           while (bw.now < GI.upper)
           {
             BandwidthVector <- append(BandwidthVector, bw.now)
-            Score <- AIC_A_para(bw = bw.now, data = lvl1_data, ID_list = ID_num,
+            Score <- AIC_A_para(bw = bw.now, data_input = lvl1_data, ID_list = ID_num,
                                formula = formula, p = p, longlat = longlat, adaptive = adaptive,
                                model = model, index = index, kernel = kernel, effect = effect,
                                random.method = random.method,  cluster.number = cluster.number)
@@ -322,7 +322,7 @@ bw.GWPR <- function(formula, data, index, SDF, adaptive = FALSE, p = 2, bigdata 
           while (bw.now < GI.upper)
           {
             BandwidthVector <- append(BandwidthVector, bw.now)
-            Score <- AIC_F_para(bw = bw.now, data = lvl1_data, ID_list = ID_num,
+            Score <- AIC_F_para(bw = bw.now, data_input = lvl1_data, ID_list = ID_num,
                                formula = formula, p = p, longlat = longlat, adaptive = adaptive,
                                model = model, index = index, kernel = kernel, effect = effect,
                                random.method = random.method,  cluster.number = cluster.number)
@@ -382,8 +382,6 @@ bw.GWPR <- function(formula, data, index, SDF, adaptive = FALSE, p = 2, bigdata 
       {
         stop("Please input upper, lower boundaries (GI.upper and GI.lower) and step length (GI.step) of GI")
       }
-      message("Since GI method is used, so the GI.upper is the real upper boundary: ",
-              GI.upper, " lower boundary: ", GI.lower," step length: ", GI.step)
       BandwidthVector <- c()
       ScoreVector <- c()
       if (adaptive)
@@ -409,7 +407,7 @@ bw.GWPR <- function(formula, data, index, SDF, adaptive = FALSE, p = 2, bigdata 
           while (bw.now < GI.upper)
           {
             BandwidthVector <- append(BandwidthVector, bw.now)
-            Score <- AIC_A(bw = bw.now, data = lvl1_data, ID_list = ID_num,
+            Score <- AIC_A(bw = bw.now, data_input = lvl1_data, ID_list = ID_num,
                           formula = formula, p = p, longlat = longlat, adaptive = adaptive,
                           model = model, index = index, kernel = kernel, effect = effect,
                           random.method = random.method, huge_data_size = huge_data_size)
@@ -442,7 +440,7 @@ bw.GWPR <- function(formula, data, index, SDF, adaptive = FALSE, p = 2, bigdata 
           while (bw.now < GI.upper)
           {
             BandwidthVector <- append(BandwidthVector, bw.now)
-            Score <- AIC_F(bw = bw.now, data = lvl1_data, ID_list = ID_num,
+            Score <- AIC_F(bw = bw.now, data_input = lvl1_data, ID_list = ID_num,
                           formula = formula, p = p, longlat = longlat, adaptive = adaptive,
                           model = model, index = index, kernel = kernel, effect = effect,
                           random.method = random.method, huge_data_size = huge_data_size)
