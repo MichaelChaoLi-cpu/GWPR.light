@@ -29,7 +29,7 @@
 #' @references Fotheringham, A. Stewart, Chris Brunsdon, and Martin Charlton. Geographically weighted regression: the analysis of spatially varying relationships. John Wiley & Sons, 2003.
 #' @noRd
 
-CV_A_para.step <- function(bw, data, ID_list, formula, p, longlat, adaptive, kernel,
+CV_A_para <- function(bw, data, ID_list, formula, p, longlat, adaptive, kernel,
                            model = model, index = index, effect = effect,
                            random.method = random.method, cluster.number = cluster.number)
 {

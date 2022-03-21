@@ -9,7 +9,9 @@ bw.GWPR(formula, data, index, SDF, adaptive = FALSE, p = 2, bigdata = FALSE,
                model = c("pooling", "within", "random"),
                random.method = "swar", approach = c("CV","AIC"), kernel = "bisquare",
                longlat = FALSE, doParallel = FALSE, cluster.number = 2,
-               human.set.range = FALSE, h.upper = NULL, h.lower = NULL)
+               human.set.range = FALSE, h.upper = NULL, h.lower = NULL,
+               gradientIncrement = FALSE, GI.step = NULL, GI.upper = NULL,
+               GI.lower = NULL)
 }
 \arguments{
 \item{formula}{The regression formula: : Y ~ X1 + ... + Xk}
@@ -48,19 +50,19 @@ boxcar: wgt=1 if dist < bw, wgt=0 otherwise}
 
 \item{cluster.number}{The number of the clusters that user wants to use}
 
-\item{human.set.range}{If TRUE, the range of bandwidth selection could be set by the user}
+\item{human.set.range}{If TRUE, the range of bandwidth selection for golden selection could be set by the user}
 
-\item{h.upper}{The upper boundary of the potential bandwidth range.}
+\item{h.upper}{The upper boundary of the potential bandwidth range for golden selection.}
 
-\item{h.lower}{The lower boundary of the potential bandwidth range.}
+\item{h.lower}{The lower boundary of the potential bandwidth range for golden selection.}
 
-\item{GI.step}{The step length of the increcement.}
+\item{GI.step}{The step length of the increment.}
 
-\item{GI.upper}{The upper boundary of the gradient increcement selection.}
+\item{GI.upper}{The upper boundary of the gradient increment selection.}
 
-\item{GI.lower}{The lower boundary of the gradient increcement selection.}
+\item{GI.lower}{The lower boundary of the gradient increment selection.}
 
-\item{grandientIncrecement}{The band width selection become gradient increcement, if TRUE}
+\item{grandientIncrement}{The bandwidth selection become gradient increment, if TRUE}
 }
 \value{
 The optimal bandwidth

@@ -7,7 +7,9 @@
 #'                model = c("pooling", "within", "random"),
 #'                random.method = "swar", approach = c("CV","AIC"), kernel = "bisquare",
 #'                longlat = FALSE, doParallel = FALSE, cluster.number = 2,
-#'                human.set.range = FALSE, h.upper = NULL, h.lower = NULL)
+#'                human.set.range = FALSE, h.upper = NULL, h.lower = NULL,
+#'                gradientIncrement = FALSE, GI.step = NULL, GI.upper = NULL,
+#'                GI.lower = NULL)
 #'
 #' @param formula            The regression formula: : Y ~ X1 + ... + Xk
 #' @param data               data.frame for the Panel data
@@ -32,7 +34,7 @@
 #' @param human.set.range    If TRUE, the range of bandwidth selection for golden selection could be set by the user
 #' @param h.upper            The upper boundary of the potential bandwidth range for golden selection.
 #' @param h.lower            The lower boundary of the potential bandwidth range for golden selection.
-#' @param grandientIncrecement The band width selection become gradient increment, if TRUE
+#' @param gradientIncrement  The bandwidth selection become gradient increment, if TRUE
 #' @param GI.step            The step length of the increment.
 #' @param GI.upper           The upper boundary of the gradient increment selection.
 #' @param GI.lower           The lower boundary of the gradient increment selection.
@@ -281,7 +283,10 @@ bw.GWPR <- function(formula, data, index, SDF, adaptive = FALSE, p = 2, bigdata 
           }
           BandwidthSocreTable <- cbind(BandwidthVector, ScoreVector)
         }
-        ### else
+        else
+        {
+          message("AIC is not coming")
+        }
       }
       else
       {
@@ -300,7 +305,10 @@ bw.GWPR <- function(formula, data, index, SDF, adaptive = FALSE, p = 2, bigdata 
           }
           BandwidthSocreTable <- cbind(BandwidthVector, ScoreVector)
         }
-        ### else
+        else
+        {
+          message("AIC is not coming")
+        }
       }
       bw <- BandwidthSocreTable
     }
