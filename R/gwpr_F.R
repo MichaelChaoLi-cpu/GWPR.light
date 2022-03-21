@@ -70,7 +70,7 @@ gwpr_F <- function(bw = bw, data, SDF, ID_list,
     subsample$wgt <- as.vector(weight)
     subsample <- subsample[(subsample$wgt > 0),]
     Psubsample <- plm::pdata.frame(subsample, index = index, drop.index = FALSE, row.names = FALSE,
-                                   stringsAsFactors = default.stringsAsFactors())
+                                   stringsAsFactors = FALSE)
     plm_subsample <- plm::plm(formula=formula, model=model, data=Psubsample,
                               effect = effect, index=index, weights = wgt,
                               random.method = random.method)

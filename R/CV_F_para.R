@@ -38,11 +38,16 @@ CV_F_para <- function(bw, data, ID_list, formula, p, longlat, adaptive, kernel,
   varibale_name_in_equation <- all.vars(formula)
   cl <- parallel::makeCluster(cluster.number)
   doParallel::registerDoParallel(cl)
-  CVscore_vector <- foreach(ID_individual = ID_list_single, .combine = c) %dopar%
+  #  v0.1.1 the loss function is based on local r2
+  # CVscore_vector <- foreach(ID_individual = ID_list_single, .combine = c) %dopar%
+  # v0.1.2
+  residualsVector <- foreach(ID_individual = ID_list_single, .combine = c) %dopar%
   {
     data$aim[data$id == ID_individual] <- 1
     data$aim[data$id != ID_individual] <- 0
     subsample <- data
+    #v0.1.2
+    numberOfAim <- nrow(subsample[subsample$aim == 1,])
     subsample <- subsample[order(-subsample$aim),]
     dp_locat_subsample <- dplyr::select(subsample, 'X', 'Y')
     dp_locat_subsample <- as.matrix(dp_locat_subsample)
@@ -52,22 +57,38 @@ CV_F_para <- function(bw, data, ID_list, formula, p, longlat, adaptive, kernel,
     subsample$wgt <- as.vector(weight)
     subsample <- subsample[(subsample$wgt > 0.01),]
     Psubsample <- plm::pdata.frame(subsample, index = index, drop.index = FALSE, row.names = FALSE,
-                                   stringsAsFactors = default.stringsAsFactors())
+                                   stringsAsFactors = FALSE)
     plm_subsample <- try(plm::plm(formula=formula, model=model, data=Psubsample,
                                   effect = effect, index=index, weights = wgt,
                                   random.method = random.method), silent = TRUE)
+    # v0.1.1
+#    if(!inherits(plm_subsample, "try-error"))
+#    {
+#      CVscore <- nrow(subsample) * sum(plm_subsample$residuals^2) /
+#        (nrow(subsample) - length(varibale_name_in_equation) + 1)^2
+#    }
+#    else
+#    {
+#      CVscore <- Inf
+#    }
+    #0.1.2
     if(!inherits(plm_subsample, "try-error"))
     {
-      CVscore <- nrow(subsample) * sum(plm_subsample$residuals^2) /
-        (nrow(subsample) - length(varibale_name_in_equation) + 1)^2
+      residualsLocalAim <-  plm_subsample$residuals[1:numberOfAim]
     }
     else
     {
-      CVscore <- Inf
+      residualsLocalAim <- Inf
     }
   }
   parallel::stopCluster(cl)
-  mean_CVscore <- mean(CVscore_vector)
-  cat("Fixed Bandwidth:", bw, "CV score:", mean_CVscore, "\n")
-  return(mean_CVscore)
+  #  v0.1.1 the loss function is based on local r2
+  #  mean_CVscore <- mean(CVscore_vector)
+  #  cat("Fixed Bandwidth:", bw, "CV score:", mean_CVscore, "\n")
+  #  return(mean_CVscore)
+  #v0.1.2
+  CVscore <- nrow(data) * sum(residualsVector^2) /
+    (nrow(data) - length(varibale_name_in_equation) + 1)^2
+  cat("Fixed Bandwidth:", bw, "CV score:", CVscore, "\n")
+  return(CVscore)
 }

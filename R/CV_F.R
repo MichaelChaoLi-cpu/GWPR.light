@@ -28,7 +28,10 @@ CV_F <- function(bw, data, ID_list, formula, p, longlat, adaptive, kernel,
                  model = model, index = index, effect = effect,
                  random.method = random.method, huge_data_size)
 {
-  CVscore_vector <- c()
+#  v0.1.1 the loss function is based on local r2
+#  CVscore_vector <- c()
+  #v0.1.2
+  residualsVector <- c()
   ID_list_single <- as.vector(ID_list[[1]])
   loop_times <- 1
   wgt <- 0
@@ -38,6 +41,8 @@ CV_F <- function(bw, data, ID_list, formula, p, longlat, adaptive, kernel,
     data$aim[data$id == ID_individual] <- 1
     data$aim[data$id != ID_individual] <- 0
     subsample <- data
+    #v0.1.2
+    numberOfAim <- nrow(subsample[subsample$aim == 1,])
     subsample <- subsample[order(-subsample$aim),]
     dp_locat_subsample <- dplyr::select(subsample, 'X', 'Y')
     dp_locat_subsample <- as.matrix(dp_locat_subsample)
@@ -47,27 +52,45 @@ CV_F <- function(bw, data, ID_list, formula, p, longlat, adaptive, kernel,
     subsample$wgt <- as.vector(weight)
     subsample <- subsample[(subsample$wgt > 0.01),]
     Psubsample <- plm::pdata.frame(subsample, index = index, drop.index = FALSE, row.names = FALSE,
-                                   stringsAsFactors = default.stringsAsFactors())
+                                   stringsAsFactors = FALSE)
     plm_subsample <- try(plm::plm(formula=formula, model = model, data = Psubsample,
                                   effect = effect, index = index, weights = wgt,
                                   random.method = random.method), silent = TRUE)
+    #0.1.2
     if(!inherits(plm_subsample, "try-error"))
     {
-      CVscore <- nrow(subsample) * sum(plm_subsample$residuals^2) /
-        (nrow(subsample) - length(varibale_name_in_equation) + 1)^2
+      residualsLocalAim <-  plm_subsample$residuals[1:numberOfAim]
     }
     else
     {
-      CVscore <- Inf
+      residualsLocalAim <- Inf
     }
-    CVscore_vector <- append(CVscore_vector, CVscore)
+    residualsVector <- append(residualsVector, residualsLocalAim)
+#    v0.1.1 the loss function is based on local r2
+#    if(!inherits(plm_subsample, "try-error"))
+#    {
+#      CVscore <- nrow(subsample) * sum(plm_subsample$residuals^2) /
+#        (nrow(subsample) - length(varibale_name_in_equation) + 1)^2
+#    }
+#    else
+#    {
+#      CVscore <- Inf
+#    }
+#    CVscore_vector <- append(CVscore_vector, CVscore)
+
     if (huge_data_size == T)
     {
       progress_bar(loop_times = loop_times, nrow(ID_list))
       loop_times <- loop_times + 1
     }
   }
-  mean_CVscore <- mean(CVscore_vector)
-  cat("Fixed Bandwidth:", bw, "CV score:", mean_CVscore, "\n")
-  return(mean_CVscore)
+#  v0.1.1 the loss function is based on local r2
+#  mean_CVscore <- mean(CVscore_vector)
+#  cat("Fixed Bandwidth:", bw, "CV score:", mean_CVscore, "\n")
+#  return(mean_CVscore)
+  #v0.1.2
+  CVscore <- nrow(data) * sum(residualsVector^2) /
+    (nrow(data) - length(varibale_name_in_equation) + 1)^2
+  cat("Fixed Bandwidth:", bw, "CV score:", CVscore, "\n")
+  return(CVscore)
 }

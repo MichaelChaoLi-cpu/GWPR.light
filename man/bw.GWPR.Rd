@@ -53,6 +53,14 @@ boxcar: wgt=1 if dist < bw, wgt=0 otherwise}
 \item{h.upper}{The upper boundary of the potential bandwidth range.}
 
 \item{h.lower}{The lower boundary of the potential bandwidth range.}
+
+\item{GI.step}{The step length of the increcement.}
+
+\item{GI.upper}{The upper boundary of the gradient increcement selection.}
+
+\item{GI.lower}{The lower boundary of the gradient increcement selection.}
+
+\item{grandientIncrecement}{The band width selection become gradient increcement, if TRUE}
 }
 \value{
 The optimal bandwidth

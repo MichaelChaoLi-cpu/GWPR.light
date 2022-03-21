@@ -71,7 +71,7 @@ gwpr_A_phtest <- function(bw = bw, data, index, SDF, ID_list, random.method = ra
     subsample$wgt <- weight[,1]
     subsample <- subsample[(subsample$wgt > 0),]
     Psubsample <- plm::pdata.frame(subsample, index = index, drop.index = FALSE, row.names = FALSE,
-                                   stringsAsFactors = default.stringsAsFactors())
+                                   stringsAsFactors = FALSE)
     plm_subsample_fem <- plm::plm(formula=formula, model="within", data=Psubsample,
                                   effect = effect, index=index, weights = wgt)
     plm_subsample_rem <- plm::plm(formula=formula, model="random", data=Psubsample, random.method = random.method,

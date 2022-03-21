@@ -29,9 +29,13 @@
 #' @param longlat            If TRUE, great circle distances will be calculated
 #' @param doParallel         If TRUE, "cluster": multi-process technique with the parallel package would be used.
 #' @param cluster.number     The number of the clusters that user wants to use
-#' @param human.set.range    If TRUE, the range of bandwidth selection could be set by the user
-#' @param h.upper            The upper boundary of the potential bandwidth range.
-#' @param h.lower            The lower boundary of the potential bandwidth range.
+#' @param human.set.range    If TRUE, the range of bandwidth selection for golden selection could be set by the user
+#' @param h.upper            The upper boundary of the potential bandwidth range for golden selection.
+#' @param h.lower            The lower boundary of the potential bandwidth range for golden selection.
+#' @param grandientIncrecement The band width selection become gradient increment, if TRUE
+#' @param GI.step            The step length of the increment.
+#' @param GI.upper           The upper boundary of the gradient increment selection.
+#' @param GI.lower           The lower boundary of the gradient increment selection.
 #'
 #' @return The optimal bandwidth
 #'
@@ -72,10 +76,11 @@
 #'                       kernel = "bisquare", longlat = FALSE, doParallel = FALSE)
 #' bw.AIC.Fix
 #' }
-bw.GWPR <- function(formula, data, index, SDF, adaptive = FALSE, p = 2,bigdata = FALSE, upperratio = 0.25,
+bw.GWPR <- function(formula, data, index, SDF, adaptive = FALSE, p = 2, bigdata = FALSE, upperratio = 0.25,
                     effect = "individual", model = c("pooling", "within", "random"), random.method = "swar",
                     approach = c("CV","AIC"), kernel = "bisquare", longlat = FALSE, doParallel = FALSE,
-                    cluster.number = 2, human.set.range = FALSE, h.upper = NULL, h.lower = NULL)
+                    cluster.number = 2, human.set.range = FALSE, h.upper = NULL, h.lower = NULL,
+                    gradientIncrement = FALSE, GI.step = NULL, GI.upper = NULL, GI.lower = NULL)
 {
   if(length(index) != 2)
   {
@@ -141,80 +146,98 @@ bw.GWPR <- function(formula, data, index, SDF, adaptive = FALSE, p = 2,bigdata =
   colnames(coord) <- c("X", "Y", "id")
   data <- dplyr::left_join(data, coord, by = "id")
   lvl1_data <- data # data put into calculation
+  #### data have been prepared
 
-  if(human.set.range)
+  #### set range of selection
+  if (gradientIncrement)
   {
-    message("...............................................................................................\n",
-            "Now, the range of bandwidth selection is set by the user\n",
-            "We assume that the user is familiar with bandwidth selection, and uses this setting to reduce calculation time.\n",
-            "If not, please stop the current calculation, and set \"human.set.range\" as FALSE\n",
-            "...............................................................................................\n")
-    if(is.null(h.lower))
+    if (is.null(GI.upper) | is.null(GI.lower) | is.null(GI.step))
     {
-      stop("Need to set the lower boundary (h.lower)!")
+      stop("Please input upper, lower boundaries (GI.upper and GI.lower) and step length (GI.step) of GI")
     }
-    if(is.null(h.upper))
-    {
-      stop("Need to set the upper boundary (h.upper)!")
-    }
-    if(h.lower > h.upper)
-    {
-      stop("h.lower should be smaller than h.upper")
-    }
-    lower <- h.lower
-    upper <- h.upper
-  }
+    message("Since GI method is used, so the GI.upper is the real upper boundary: ",
+            GI.upper, " lower boundary: ", GI.lower," step length: ", GI.step)
+    lower <- GI.lower
+    upper <- GI.upper
+  } ### gradientIncrement selection
   else
   {
-    # decide upper and lower boundary
-    lower.freedom <- protect_model_with_enough_freedom(formula = formula, data = lvl1_data, ID_list = ID_num,
-                                                       index = index, p = p, longlat = longlat)
-    message("To make sure every subsample have enough freedom, the minimum number of individuals is ",lower.freedom, "\n")
-    if(adaptive)
+    if(human.set.range)
     {
-      upper <- nrow(ID_num)
-      lower <- lower.freedom + 1
-      if((model == "random")&(random.method == "swar"))
+      message("...............................................................................................\n",
+              "Now, the range of bandwidth selection for golden selection is set by the user\n",
+              "We assume that the user is familiar with bandwidth selection, and uses this setting to reduce calculation time.\n",
+              "If not, please stop the current calculation, and set \"human.set.range\" as FALSE\n",
+              "...............................................................................................\n")
+      if(is.null(h.lower))
       {
-        lower <- length(varibale_name_in_equation) + 1
+        stop("Need to set the lower boundary (h.lower)!")
       }
-    }
+      if(is.null(h.upper))
+      {
+        stop("Need to set the upper boundary (h.upper)!")
+      }
+      if(h.lower > h.upper)
+      {
+        stop("h.lower should be smaller than h.upper")
+      }
+      lower <- h.lower
+      upper <- h.upper
+    } ### set human range for golden selection
     else
     {
-      b.box <- sp::bbox(dp.locat)
-      upper <- sqrt((b.box[1,2]-b.box[1,1])^2+(b.box[2,2]-b.box[2,1])^2)
-      lower <- upper/5000
-      if ((model == "random")&(random.method == "swar"))
+      # decide upper and lower boundary
+      lower.freedom <- protect_model_with_enough_freedom(formula = formula, data = lvl1_data, ID_list = ID_num,
+                                                         index = index, p = p, longlat = longlat)
+      message("To make sure every subsample have enough freedom, the minimum number of individuals is ",lower.freedom, "\n")
+      if(adaptive)
       {
-        lower <- protect_model_with_least_individuals(lvl1_data, ID_num, index, kernel, p, longlat,
-                                                      bw_panel = (length(varibale_name_in_equation) + 1))
+        upper <- nrow(ID_num)
+        lower <- lower.freedom + 1
+        if((model == "random")&(random.method == "swar"))
+        {
+          lower <- length(varibale_name_in_equation) + 1
+        }
       }
       else
       {
-        lower <- protect_model_with_least_individuals(lvl1_data, ID_num, index,
-                                                      kernel, p, longlat, bw_panel = lower.freedom)
+        b.box <- sp::bbox(dp.locat)
+        upper <- sqrt((b.box[1,2]-b.box[1,1])^2+(b.box[2,2]-b.box[2,1])^2)
+        lower <- upper/5000
+        if ((model == "random")&(random.method == "swar"))
+        {
+          lower <- protect_model_with_least_individuals(lvl1_data, ID_num, index, kernel, p, longlat,
+                                                        bw_panel = (length(varibale_name_in_equation) + 1))
+        }
+        else
+        {
+          lower <- protect_model_with_least_individuals(lvl1_data, ID_num, index,
+                                                        kernel, p, longlat, bw_panel = lower.freedom)
+        }
+      }
+
+      if(bigdata)
+      {
+        upper <- upper * upperratio
+        lower <- lower
+      }
+
+      if(bigdata)
+      {
+        message("You set the \"bigdata\" is: ", bigdata, ". The ratio is: ", upperratio, "\n",
+                "Now the lower boundary of the bandwidth selection is ", lower, ", and upper boundary is ", upper,".\n",
+                "Note: if the optimal bandwidth is close to the upper boundary, you need to increase the ratio.\n",
+                "However, you should also know that the larger ratio requires more memory. Please, balance them and enjoy your research.\n")
+      }
+      if(huge_data_size)
+      {
+        message("Data Prepared! Go!............................................\n")
       }
     }
+    message("The upper boundary is ", upper,", and the lower boundary is ", lower,"\n")
+  } ### automatically golden select bandwidth
 
-    if(bigdata)
-    {
-      upper <- upper * upperratio
-      lower <- lower
-    }
-
-    if(bigdata)
-    {
-      message("You set the \"bigdata\" is: ", bigdata, ". The ratio is: ", upperratio, "\n",
-              "Now the lower boundary of the bandwidth selection is ", lower, ", and upper boundary is ", upper,".\n",
-              "Note: if the optimal bandwidth is close to the upper boundary, you need to increase the ratio.\n",
-              "However, you should also know that the larger ratio requires more memory. Please, balance them and enjoy your research.\n")
-    }
-    if(huge_data_size)
-    {
-      message("Data Prepared! Go!............................................\n")
-    }
-  }
-  message("The upper boundary is ", upper,", and the lower boundary is ", lower,"\n")
+  #### begin to select
   if(doParallel)
   {
     message("..................................................................................\n")
@@ -230,77 +253,197 @@ bw.GWPR <- function(formula, data, index, SDF, adaptive = FALSE, p = 2,bigdata =
         warning("You might use too many cluster, only one left for other task.")
       }
     }
-    if (adaptive)
+    #0.2.0
+    if (gradientIncrement)
     {
-      if(approach == "CV")
+      if (is.null(GI.upper) | is.null(GI.lower) | is.null(GI.step))
       {
-        bw <- gold(CV_A_para, xL = lower, xU = upper, adapt.bw = adaptive, data = lvl1_data, ID_list = ID_num,
-                   formula = formula, p = p, longlat = longlat, adaptive = adaptive,
-                   model = model, index = index, kernel = kernel, effect = effect,
-                   random.method = random.method,  cluster.number = cluster.number)
+        stop("Please input upper, lower boundaries (GI.upper and GI.lower) and step length (GI.step) of GI")
+      }
+      message("Since GI method is used, so the GI.upper is the real upper boundary: ",
+              GI.upper, " lower boundary: ", GI.lower," step length: ", GI.step)
+      BandwidthVector <- c()
+      ScoreVector <- c()
+      if (adaptive)
+      {
+        if(approach == "CV")
+        {
+          bw.now <- GI.lower
+          while (bw.now < GI.upper)
+          {
+            BandwidthVector <- append(BandwidthVector, bw.now)
+            Score <- CV_A_para(bw = bw.now, data = lvl1_data, ID_list = ID_num,
+                               formula = formula, p = p, longlat = longlat, adaptive = adaptive,
+                               model = model, index = index, kernel = kernel, effect = effect,
+                               random.method = random.method,  cluster.number = cluster.number)
+            ScoreVector <- append(ScoreVector, Score)
+            bw.now = bw.now + GI.step
+          }
+          BandwidthSocreTable <- cbind(BandwidthVector, ScoreVector)
+        }
+        ### else
       }
       else
       {
-        bw <- gold(AIC_A_para, xL = lower, xU = upper, adapt.bw = adaptive, data_input = lvl1_data, ID_list = ID_num,
-                   formula = formula, p = p, longlat = longlat, adaptive = adaptive,
-                   model = model, index = index, kernel = kernel, effect = effect,
-                   random.method = random.method, cluster.number = cluster.number)
+        if(approach == "CV")
+        {
+          bw.now <- GI.lower
+          while (bw.now < GI.upper)
+          {
+            BandwidthVector <- append(BandwidthVector, bw.now)
+            Score <- CV_F_para(bw = bw.now, data = lvl1_data, ID_list = ID_num,
+                               formula = formula, p = p, longlat = longlat, adaptive = adaptive,
+                               model = model, index = index, kernel = kernel, effect = effect,
+                               random.method = random.method,  cluster.number = cluster.number)
+            ScoreVector <- append(ScoreVector, Score)
+            bw.now = bw.now + GI.step
+          }
+          BandwidthSocreTable <- cbind(BandwidthVector, ScoreVector)
+        }
+        ### else
       }
+      bw <- BandwidthSocreTable
     }
     else
     {
-      if(approach == "CV")
+      if (adaptive)
       {
-        bw <- gold(CV_F_para, xL = lower, xU = upper, adapt.bw = adaptive, data = lvl1_data, ID_list = ID_num,
-                   formula = formula, p = p, longlat = longlat, adaptive = adaptive,
-                   model = model, index = index, kernel = kernel, effect = effect,
-                   random.method = random.method,  cluster.number = cluster.number)
+        if(approach == "CV")
+        {
+          bw <- gold(CV_A_para, xL = lower, xU = upper, adapt.bw = adaptive, data = lvl1_data, ID_list = ID_num,
+                     formula = formula, p = p, longlat = longlat, adaptive = adaptive,
+                     model = model, index = index, kernel = kernel, effect = effect,
+                     random.method = random.method,  cluster.number = cluster.number)
+        }
+        else
+        {
+          bw <- gold(AIC_A_para, xL = lower, xU = upper, adapt.bw = adaptive, data_input = lvl1_data, ID_list = ID_num,
+                     formula = formula, p = p, longlat = longlat, adaptive = adaptive,
+                     model = model, index = index, kernel = kernel, effect = effect,
+                     random.method = random.method, cluster.number = cluster.number)
+        }
       }
       else
       {
-        bw <- gold(AIC_F_para, xL = lower, xU = upper, adapt.bw = adaptive, data_input = lvl1_data, ID_list = ID_num,
-                   formula = formula, p = p, longlat = longlat, adaptive = adaptive,
-                   model = model, index = index, kernel = kernel, effect = effect,
-                   random.method = random.method,  cluster.number = cluster.number)
+        if(approach == "CV")
+        {
+          bw <- gold(CV_F_para, xL = lower, xU = upper, adapt.bw = adaptive, data = lvl1_data, ID_list = ID_num,
+                     formula = formula, p = p, longlat = longlat, adaptive = adaptive,
+                     model = model, index = index, kernel = kernel, effect = effect,
+                     random.method = random.method,  cluster.number = cluster.number)
+        }
+        else
+        {
+          bw <- gold(AIC_F_para, xL = lower, xU = upper, adapt.bw = adaptive, data_input = lvl1_data, ID_list = ID_num,
+                     formula = formula, p = p, longlat = longlat, adaptive = adaptive,
+                     model = model, index = index, kernel = kernel, effect = effect,
+                     random.method = random.method,  cluster.number = cluster.number)
+        }
       }
+      return(bw)
     }
-  }
+  } #### do parallel
   else
-  {
-    if (adaptive)
+  { #### not do parallel
+    #0.2.0
+    if (gradientIncrement)
     {
-      if(approach == "CV")
+      if (is.null(GI.upper) | is.null(GI.lower) | is.null(GI.step))
       {
-        bw <- gold(CV_A, xL = lower, xU = upper, adapt.bw = adaptive, data = lvl1_data, ID_list = ID_num,
-                   formula = formula, p = p, longlat = longlat, adaptive = adaptive,
-                   model = model, index = index, kernel = kernel, effect = effect,
-                   random.method = random.method, huge_data_size = huge_data_size)
+        stop("Please input upper, lower boundaries (GI.upper and GI.lower) and step length (GI.step) of GI")
+      }
+      message("Since GI method is used, so the GI.upper is the real upper boundary: ",
+              GI.upper, " lower boundary: ", GI.lower," step length: ", GI.step)
+      BandwidthVector <- c()
+      ScoreVector <- c()
+      if (adaptive)
+      {
+        if(approach == "CV")
+        {
+          bw.now <- GI.lower
+          while (bw.now < GI.upper)
+          {
+            BandwidthVector <- append(BandwidthVector, bw.now)
+            Score <- CV_A(bw = bw.now, data = lvl1_data, ID_list = ID_num,
+                          formula = formula, p = p, longlat = longlat, adaptive = adaptive,
+                          model = model, index = index, kernel = kernel, effect = effect,
+                          random.method = random.method, huge_data_size = huge_data_size)
+            ScoreVector <- append(ScoreVector, Score)
+            bw.now = bw.now + GI.step
+          }
+          BandwidthSocreTable <- cbind(BandwidthVector, ScoreVector)
+          bw <- BandwidthSocreTable
+        }
+        else
+        {
+          message("AIC is not coming")
+        }
       }
       else
       {
-        bw <- gold(AIC_A, xL = lower, xU = upper, adapt.bw = adaptive, data_input = lvl1_data, ID_list = ID_num,
-                   formula = formula, p = p, longlat = longlat, adaptive = adaptive,
-                   model = model, index = index, kernel = kernel, effect = effect,
-                   random.method = random.method, huge_data_size = huge_data_size)
+        if(approach == "CV")
+        {
+          bw.now <- GI.lower
+          while (bw.now < GI.upper)
+          {
+            BandwidthVector <- append(BandwidthVector, bw.now)
+            Score <- CV_F(bw = bw.now, data = lvl1_data, ID_list = ID_num,
+                          formula = formula, p = p, longlat = longlat, adaptive = adaptive,
+                          model = model, index = index, kernel = kernel, effect = effect,
+                          random.method = random.method, huge_data_size = huge_data_size)
+            ScoreVector <- append(ScoreVector, Score)
+            bw.now = bw.now + GI.step
+          }
+          BandwidthSocreTable <- cbind(BandwidthVector, ScoreVector)
+          bw <- BandwidthSocreTable
+        }
+        else
+        {
+          message("AIC is not coming")
+        }
       }
-    }
+      bw <- BandwidthSocreTable
+    } ### gradient increment
+
+    #0.1.2 /|\
     else
     {
-      if(approach == "CV")
+      if (adaptive)
       {
-        bw <- gold(CV_F, xL = lower, xU = upper, adapt.bw = adaptive, data = lvl1_data, ID_list = ID_num,
-                   formula = formula, p = p, longlat = longlat, adaptive = adaptive,
-                   model = model, index = index, kernel = kernel, effect = effect,
-                   random.method = random.method, huge_data_size = huge_data_size)
+        if(approach == "CV")
+        {
+          bw <- gold(CV_A, xL = lower, xU = upper, adapt.bw = adaptive, data = lvl1_data, ID_list = ID_num,
+                     formula = formula, p = p, longlat = longlat, adaptive = adaptive,
+                     model = model, index = index, kernel = kernel, effect = effect,
+                     random.method = random.method, huge_data_size = huge_data_size)
+        }
+        else
+        {
+          bw <- gold(AIC_A, xL = lower, xU = upper, adapt.bw = adaptive, data_input = lvl1_data, ID_list = ID_num,
+                     formula = formula, p = p, longlat = longlat, adaptive = adaptive,
+                     model = model, index = index, kernel = kernel, effect = effect,
+                     random.method = random.method, huge_data_size = huge_data_size)
+        }
       }
       else
       {
-        bw <- gold(AIC_F, xL = lower, xU = upper, adapt.bw = adaptive, data_input = lvl1_data, ID_list = ID_num,
-                   formula = formula, p = p, longlat = longlat, adaptive = adaptive,
-                   model = model, index = index, kernel = kernel, effect = effect,
-                   random.method = random.method, huge_data_size = huge_data_size)
+        if(approach == "CV")
+        {
+          bw <- gold(CV_F, xL = lower, xU = upper, adapt.bw = adaptive, data = lvl1_data, ID_list = ID_num,
+                     formula = formula, p = p, longlat = longlat, adaptive = adaptive,
+                     model = model, index = index, kernel = kernel, effect = effect,
+                     random.method = random.method, huge_data_size = huge_data_size)
+        }
+        else
+        {
+          bw <- gold(AIC_F, xL = lower, xU = upper, adapt.bw = adaptive, data_input = lvl1_data, ID_list = ID_num,
+                     formula = formula, p = p, longlat = longlat, adaptive = adaptive,
+                     model = model, index = index, kernel = kernel, effect = effect,
+                     random.method = random.method, huge_data_size = huge_data_size)
+        }
       }
     }
   }
+  #v0.1.1
   return(bw)
 }

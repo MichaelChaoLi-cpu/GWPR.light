@@ -54,7 +54,7 @@ AIC_F_para <- function(bw, data_input, ID_list, formula, p, longlat, adaptive, k
     subsample$wgt <- as.vector(weight)
     subsample <- subsample[(subsample$wgt > 0.01),]
     Psubsample <- plm::pdata.frame(subsample, index = index, drop.index = FALSE, row.names = FALSE,
-                                   stringsAsFactors = default.stringsAsFactors())
+                                   stringsAsFactors = FALSE)
     plm_subsample <- try(plm::plm(formula=formula, model=model, data=Psubsample,
                                   effect = effect, index=index, weights = wgt,
                                   random.method = random.method), silent=TRUE)
