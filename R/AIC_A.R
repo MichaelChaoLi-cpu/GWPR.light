@@ -29,14 +29,23 @@ AIC_A <- function(bw, data_input, ID_list, formula, p, longlat, adaptive, kernel
                   model = model, index = index, effect = effect,
                   random.method = random.method, huge_data_size)
 {
-    AICscore_vector <- c()
+    ### 0.1.1
+    #AICscore_vector <- c()
+    ### 0.1.1
     ID_list_single <- as.vector(ID_list[[1]])
     loop_times <- 1
     wgt <- 0
+    ### 0.2.0
+    residualsVector <- c()
+    tr_hatmatVector <- c()
+    ### 0.2.0
     for (ID_individual in ID_list_single)
     {
       data_input$aim[data_input$id == ID_individual] <- 1
       data_input$aim[data_input$id != ID_individual] <- 0
+      ### 0.2.0 to get the trace vector
+      aim_number <- sum(data_input$aim)
+      ### 0.2.0
       subsample <- data_input
       subsample <- subsample[order(-subsample$aim),]
       dp_locat_subsample <- dplyr::select(subsample, 'X', 'Y')
@@ -99,24 +108,52 @@ AIC_A <- function(bw, data_input, ID_list, formula, p, longlat, adaptive, kernel
       X_trans <- as.matrix(X_trans)
       W <- as.vector(Psubsample$wgt)
       P <- try(X_trans %*%  solve(t(X_trans) %*% (W * X_trans)) %*% t(X_trans) * W, silent=TRUE)
+      ### 0.2.0
       if(!inherits(P, "try-error"))
       {
-        tr_hatmat <- sum(diag(P))
-        n <- nrow(Psubsample)
-        AICscore <- 2*n*log(sd(plm_subsample$residuals)) + n*log(2*pi) +  n * (tr_hatmat + n) / (n - 2 - tr_hatmat)
+        sub_tr_hatmat <- sum(diag(P))
+        sub_tr_hatmat.aim <- sub_tr_hatmat[1:aim_number]
+        sub_resid <- plm_subsample$residuals
+        sub_resid.aim <- sub_resid[1:aim_number]
       }
       else
       {
-          AICscore <- Inf
+        sub_tr_hatmat.aim <- Inf
+        sub_resid.aim <- Inf
       }
-      AICscore_vector <- append(AICscore_vector, AICscore)
+      residualsVector <- append(residualsVector, sub_resid.aim)
+      tr_hatmatVector <- append(tr_hatmatVector, sub_tr_hatmat.aim)
+      ### 0.2.0
+
+      ### 0.1.1
+      #if(!inherits(P, "try-error"))
+      #{
+      #  tr_hatmat <- sum(diag(P))
+      #  n <- nrow(Psubsample)
+      #  AICscore <- 2*n*log(sd(plm_subsample$residuals)) + n*log(2*pi) +  n * (tr_hatmat + n) / (n - 2 - tr_hatmat)
+      #}
+      #else
+      #{
+      #    AICscore <- Inf
+      #}
+      ### 0.1.1
+
+
       if (huge_data_size == T)
       {
         progress_bar(loop_times = loop_times, nrow(ID_list))
         loop_times <- loop_times + 1
       }
     }
-    mean_AICscore <- mean(AICscore_vector)
-    cat("Adaptive Bandwidth:", bw, "AIC score:", mean_AICscore, "\n")
-    return(mean_AICscore)
+    ### 0.1.1
+    #mean_AICscore <- mean(AICscore_vector)
+    #cat("Adaptive Bandwidth:", bw, "AIC score:", mean_AICscore, "\n")
+    ### 0.1.1
+    ### 0.2.0
+    n <- nrow(data_input)
+    tr_hatmat <- sum(tr_hatmatVector)
+    AICscore <- 2*n*log(sd(residualsVector)) + n*log(2*pi) +  n * (tr_hatmat + n) / (n - 2 - tr_hatmat)
+    cat("Adaptive Bandwidth:", bw, "AIC score:", AICscore, "\n")
+    ### 0.2.0
+    return(AICscore)
 }

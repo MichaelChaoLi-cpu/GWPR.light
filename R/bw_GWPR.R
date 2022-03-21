@@ -285,7 +285,18 @@ bw.GWPR <- function(formula, data, index, SDF, adaptive = FALSE, p = 2, bigdata 
         }
         else
         {
-          message("AIC is not coming")
+          bw.now <- GI.lower
+          while (bw.now < GI.upper)
+          {
+            BandwidthVector <- append(BandwidthVector, bw.now)
+            Score <- AIC_A_para(bw = bw.now, data = lvl1_data, ID_list = ID_num,
+                               formula = formula, p = p, longlat = longlat, adaptive = adaptive,
+                               model = model, index = index, kernel = kernel, effect = effect,
+                               random.method = random.method,  cluster.number = cluster.number)
+            ScoreVector <- append(ScoreVector, Score)
+            bw.now = bw.now + GI.step
+          }
+          BandwidthSocreTable <- cbind(BandwidthVector, ScoreVector)
         }
       }
       else
@@ -307,7 +318,18 @@ bw.GWPR <- function(formula, data, index, SDF, adaptive = FALSE, p = 2, bigdata 
         }
         else
         {
-          message("AIC is not coming")
+          bw.now <- GI.lower
+          while (bw.now < GI.upper)
+          {
+            BandwidthVector <- append(BandwidthVector, bw.now)
+            Score <- AIC_F_para(bw = bw.now, data = lvl1_data, ID_list = ID_num,
+                               formula = formula, p = p, longlat = longlat, adaptive = adaptive,
+                               model = model, index = index, kernel = kernel, effect = effect,
+                               random.method = random.method,  cluster.number = cluster.number)
+            ScoreVector <- append(ScoreVector, Score)
+            bw.now = bw.now + GI.step
+          }
+          BandwidthSocreTable <- cbind(BandwidthVector, ScoreVector)
         }
       }
       bw <- BandwidthSocreTable
@@ -380,11 +402,21 @@ bw.GWPR <- function(formula, data, index, SDF, adaptive = FALSE, p = 2, bigdata 
             bw.now = bw.now + GI.step
           }
           BandwidthSocreTable <- cbind(BandwidthVector, ScoreVector)
-          bw <- BandwidthSocreTable
         }
         else
         {
-          message("AIC is not coming")
+          bw.now <- GI.lower
+          while (bw.now < GI.upper)
+          {
+            BandwidthVector <- append(BandwidthVector, bw.now)
+            Score <- AIC_A(bw = bw.now, data = lvl1_data, ID_list = ID_num,
+                          formula = formula, p = p, longlat = longlat, adaptive = adaptive,
+                          model = model, index = index, kernel = kernel, effect = effect,
+                          random.method = random.method, huge_data_size = huge_data_size)
+            ScoreVector <- append(ScoreVector, Score)
+            bw.now = bw.now + GI.step
+          }
+          BandwidthSocreTable <- cbind(BandwidthVector, ScoreVector)
         }
       }
       else
@@ -403,11 +435,21 @@ bw.GWPR <- function(formula, data, index, SDF, adaptive = FALSE, p = 2, bigdata 
             bw.now = bw.now + GI.step
           }
           BandwidthSocreTable <- cbind(BandwidthVector, ScoreVector)
-          bw <- BandwidthSocreTable
         }
         else
         {
-          message("AIC is not coming")
+          bw.now <- GI.lower
+          while (bw.now < GI.upper)
+          {
+            BandwidthVector <- append(BandwidthVector, bw.now)
+            Score <- AIC_F(bw = bw.now, data = lvl1_data, ID_list = ID_num,
+                          formula = formula, p = p, longlat = longlat, adaptive = adaptive,
+                          model = model, index = index, kernel = kernel, effect = effect,
+                          random.method = random.method, huge_data_size = huge_data_size)
+            ScoreVector <- append(ScoreVector, Score)
+            bw.now = bw.now + GI.step
+          }
+          BandwidthSocreTable <- cbind(BandwidthVector, ScoreVector)
         }
       }
       bw <- BandwidthSocreTable
