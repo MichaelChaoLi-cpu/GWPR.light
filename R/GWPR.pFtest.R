@@ -76,7 +76,9 @@ GWPR.pFtest <- function(formula, data, index, SDF, bw = NULL, adaptive = FALSE, 
 
   # Data preparation
   varibale_name_in_equation <- all.vars(formula)
-  data <- dplyr::select(data, index, varibale_name_in_equation)
+  #data <- dplyr::select(data, index, varibale_name_in_equation)
+  data <- dplyr::select(data, dplyr::all_of(index), dplyr::all_of(varibale_name_in_equation))
+  ##### 22.6.17 we change this, it is the problem on linux
   data$raw_order_data <- 1:nrow(data)
   raw_id <- index[1]
   colnames(data)[1] <- "id"
