@@ -68,7 +68,10 @@ gwpr_A_phtest <- function(bw = bw, data, index, SDF, ID_list, random.method = ra
     bw_panel$usingCount <- bw_panel$Count * bw_panel$yes
     bw_panel <- sum(bw_panel$usingCount, na.rm = T)
     weight <- GWmodel::gw.weight(as.numeric(dMat), bw=bw_panel, kernel=kernel, adaptive=adaptive)
-    subsample$wgt <- weight[,1]
+    ### the "GWmodel::gw.weight" return a vector, so in subsample$wgt <- weight[,1]
+    ### the [,1] is unnecessary 22.06.21
+    # subsample$wgt <- weight[,1]
+    subsample$wgt <- as.vector(weight)
     subsample <- subsample[(subsample$wgt > 0),]
     Psubsample <- plm::pdata.frame(subsample, index = index, drop.index = FALSE, row.names = FALSE,
                                    stringsAsFactors = FALSE)
