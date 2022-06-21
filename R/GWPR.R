@@ -54,7 +54,7 @@
 #'    pop_density + summer_tmmx + winter_tmmx + summer_rmax + winter_rmax
 #'
 #' #precomputed bandwidth
-#' bw.AIC.Fix <- 2.010529
+#' bw.AIC.Fix <- 1.5
 #'
 #' result.F.AIC <- GWPR(bw = bw.AIC.Fix, formula = formula.GWPR, data = TransAirPolCalif,
 #'                      index = c("GEOID", "year"), SDF = California, adaptive = FALSE,
