@@ -89,7 +89,7 @@ GWPR.moran.test <- function(plm_model, SDF, bw, adaptive = FALSE, p = 2, kernel 
   N <- Ti*n
   id <- as.data.frame(as.numeric(row.names(plm.resid)))
   colnames(id) <- "id"
-  SDF <- sp::merge(SDF, id, by.x = dplyr::all_of((colnames(plm::index(plm_model$model))[1])), by.y = "id" )
+  SDF <- sp::merge(SDF, id, by.x = colnames(plm::index(plm_model$model))[1], by.y = "id" )
   row.id <- as.vector(as.matrix(dplyr::select(SDF@data, dplyr::all_of((colnames(plm::index(plm_model$model))[1])))))
   dp.locat <- as.matrix(sp::coordinates(SDF))
   coord <- cbind(as.data.frame(dp.locat), dplyr::select(SDF@data, dplyr::all_of((colnames(plm::index(plm_model$model))[1]))) )
