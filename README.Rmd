@@ -9,115 +9,125 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.path = "man/figures/README-",
-  out.width = "100%"
+  out.width = "100%",
+  eval = FALSE
 )
 ```
 
 # GWPR.light
 
 <!-- badges: start -->
-[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+
+[![Project Status: Active – The project has reached a stable, usable
+state and is being actively
+developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![R-CMD-check](https://github.com/MichaelChaoLi-cpu/GWPR.light/workflows/R-CMD-check/badge.svg)](https://github.com/MichaelChaoLi-cpu/GWPR.light/actions)
-[![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/MichaelChaoLi-cpu/GWPR.light?branch=master&svg=true)](https://ci.appveyor.com/project/MichaelChaoLi-cpu/GWPR.light)
-[![CRAN status](https://www.r-pkg.org/badges/version/GWPR.light)](https://CRAN.R-project.org/package=GWPR.light)
-[![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/GWPR.light)](https://CRAN.R-project.org/package=GWPR.light)
+[![License: AGPL
+v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+[![Lifecycle:
+stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
+
 <!-- badges: end -->
 
-This package is grounded in a branch of spatial statistics. Using geographically weights, the geographically weighted panel regression is try to solve the residuals from panel regression clustering spatially. To investigate whether the residuals cluster spatially, the Moran's I test is also improved. Furthermore, three local statistic tests are contained to help the users select model.  
-This package includes the function for the optimal bandwidth selection in GWPR, the function for GWPR, the function for the local Hausman test, the function for the local F test for individual effects, the function for the local Lagrange Multiplier Breusch-Pagan test, and the function for panel Moran's I test. The functions have been optimized, which require the less memory in the calculation. 
+A modern, `sf`-first implementation of **Geographically Weighted Panel
+Regression (GWPR)** for spatial panel data. Version 1.0.0 provides a
+clean public API, three bandwidth search strategies (grid, SGD, random),
+Gaussian and binomial model families, and optional parallel execution
+via the `future` framework.
 
-## Author 
-
-Chao Li <chaoli0394@gmail.com> Shunsuke Managi <managi@doc.kyushu-u.ac.jp>
-
-## Maintainer
+## Authors
 
 Chao Li <chaoli0394@gmail.com>
-
+Shunsuke Managi <managi@doc.kyushu-u.ac.jp>
 
 ## Installation
 
-You can install the released version of GWPR.light from [CRAN](https://CRAN.R-project.org) with:
+Install the released version from [CRAN](https://CRAN.R-project.org):
 
-``` r
+```{r install-cran}
 install.packages("GWPR.light")
 ```
 
-## Detailed Introduction
-You can read our vignettes
+Or install the development version from GitHub:
 
-## Example
+```{r install-github}
+# install.packages("remotes")
+remotes::install_github("MichaelChaoLi-cpu/GWPR.light")
+```
 
-This is a basic example which shows you how to solve a common problem:
-```{r, message=FALSE}
+## Quick start (1.0.0 API)
+
+The four public functions form the complete interface:
+
+| Function | Purpose |
+|---|---|
+| `gwpr()` | Full pipeline: bandwidth search + fit + diagnostics |
+| `select_bandwidth()` | Standalone bandwidth optimisation |
+| `fit_gwpr()` | Fit with a known bandwidth |
+| `diagnose_gwpr()` | Diagnostic tests on a fitted model |
+
+```{r quick-start}
 library(GWPR.light)
-```
-```{r example}
-library(tmap)
-## basic example code
-data(TransAirPolCalif)
-data(California)
-formula.GWPR <- pm25 ~ co2_mean + Developed_Open_Space_perc + Developed_Low_Intensity_perc +
-   Developed_Medium_Intensity_perc + Developed_High_Intensity_perc +
-   Open_Water_perc + Woody_Wetlands_perc + Emergent_Herbaceous_Wetlands_perc +
-   Deciduous_Forest_perc + Evergreen_Forest_perc + Mixed_Forest_perc +
-   Shrub_perc + Grassland_perc + Pasture_perc + Cultivated_Crops_perc +
-   pop_density + summer_tmmx + winter_tmmx + summer_rmax + winter_rmax
-```
+library(sf)
 
-This is an example about GWPR.moran.test:
-```{r eg.GWPR.moran.test}
-pdata <- plm::pdata.frame(TransAirPolCalif, index = c("GEOID", "year"))
-moran.plm.model <- plm::plm(formula = formula.GWPR, data = pdata, model = "within")
-#summary(moran.plm.model)
+# --- Simulate a small spatial panel ---
+set.seed(1)
+pts <- sf::st_as_sf(
+  data.frame(id = 1:6, X = c(0,1,2,0,1,2), Y = c(0,0,0,1,1,1)),
+  coords = c("X", "Y"), crs = NA_integer_
+)
+dat <- data.frame(
+  id   = rep(1:6, each = 4),
+  time = rep(1:4, 6),
+  x1   = rnorm(24),
+  x2   = rnorm(24)
+)
+dat$y <- 1.5 * dat$x1 - 0.8 * dat$x2 + rnorm(24, sd = 0.3)
 
-bw.AIC.F <- bw.GWPR(formula = formula.GWPR, data = TransAirPolCalif, index = c("GEOID", "year"), SDF = California,
-                     adaptive = F, p = 2, bigdata = F, effect = "individual",
-                     model = "within", approach = "AIC", kernel = "bisquare", longlat = F,
-                     doParallel = T, cluster.number = 4)
-
-# moran's I test
-GWPR.moran.test(moran.plm.model, SDF = California, bw = bw.AIC.F, kernel = "bisquare",
-                 adaptive = F, p = 2, longlat=F, alternative = "greater")
-# The statistic is significantly greater than 0. Therefore, the residuals are spatially clustered.
+# --- Fit with a known bandwidth ---
+fit <- fit_gwpr(
+  y ~ x1 + x2, data = dat, spatial = pts,
+  id = "id", time = "time",
+  bandwidth = 2, model = "pooling", workers = 1
+)
+print(fit)
 ```
 
-GWPR example:
+### Automatic bandwidth search
 
-```{r eg.GWPR}
-result.F.AIC <- GWPR(bw = bw.AIC.F, formula = formula.GWPR, data = TransAirPolCalif, index = c("GEOID", "year"),
-                     SDF = California, adaptive = F, p = 2, effect = "individual", model = "within",
-                     kernel = "bisquare", longlat = F)
-summary(result.F.AIC$SDF$Local_R2)
-tm_shape(result.F.AIC$SDF) +
-  tm_polygons(col = "Local_R2", pal = "Reds",auto.palette.mapping = F,
-              style = 'cont')
+```{r bandwidth-search}
+bw <- select_bandwidth(
+  y ~ x1 + x2, data = dat, spatial = pts,
+  id = "id", time = "time",
+  method  = "grid",
+  control = list(lower = 0.5, upper = 3, step = 0.5),
+  workers = 1
+)
+cat("Optimal bandwidth:", bw$best_bandwidth, "\n")
 ```
 
-Example of F test:
-```{r eg.GWPR.pFtest}
-GWPR.pFtest.resu.F <- GWPR.pFtest(formula = formula.GWPR, data = TransAirPolCalif, index = c("GEOID", "year"),
-                                  SDF = California, bw = bw.AIC.F, adaptive = F, p = 2, effect = "individual",
-                                  kernel = "bisquare", longlat = F)
-tm_shape(GWPR.pFtest.resu.F$SDF) +
-     tm_polygons(col = "p.value", breaks = c(0, 0.05, 1))
+### Diagnostics
+
+```{r diagnostics}
+diag_result <- diagnose_gwpr(fit, diagnostics = c("f_test", "hausman"))
+print(diag_result)
 ```
 
-Example of Locally Breusch-Pagan Lagrange Multiplier Test:
-```{r eg.GWPR.plmtest}
-GWPR.plmtest.resu.F <- GWPR.plmtest(formula = formula.GWPR, data = TransAirPolCalif, index = c("GEOID", "year"),
-                                    SDF = California, bw = bw.AIC.F, adaptive = F, p = 2,
-                                    kernel = "bisquare", longlat = F)
-tm_shape(GWPR.plmtest.resu.F$SDF) +
-     tm_polygons(col = "p.value", breaks = c(0, 0.05, 1))
-```
+## Vignettes
 
-Example of Locally Hausman Test Based on GWPR
-```{r eg.GWPR.phtest}
-GWPR.phtest.resu.F <- GWPR.phtest(formula = formula.GWPR, data = TransAirPolCalif, index = c("GEOID", "year"),
-                                  SDF = California, bw = bw.AIC.F, adaptive = F, p = 2, effect = "individual",
-                                  kernel = "bisquare", longlat = F, random.method = "amemiya")
-tm_shape(GWPR.phtest.resu.F$SDF) +
-     tm_polygons(col = "p.value", breaks = c(0, 0.05, 1))
-```
+- `vignette("gwpr-introduction")` — Getting started with the 1.0.0 API
+- `vignette("introduction_of_GWPR")` — Legacy 0.2.x API reference
 
+## References
+
+- Fotheringham, A., Brunsdon, C., Charlton, M. (2002). *Geographically
+  Weighted Regression*. John Wiley & Sons. ISBN: 978-0-470-85525-6.
+- Beenstock, M., Felsenstein, D. (2019). *The Econometric Analysis of
+  Non-Stationary Spatial Panel Data*. Springer.
+  ISBN: 978-3-030-03614-0.
+
+## Bug reports
+
+<https://github.com/MichaelChaoLi-cpu/GWPR.light/issues>
