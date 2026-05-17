@@ -1,39 +1,43 @@
 Package: GWPR.light
 Type: Package
 Title: Geographically Weighted Panel Regression
-Version: 0.2.1
+Version: 1.0.0
 Authors@R: c(person("Chao", "Li", role = c("aut", "cre"),
-                     email = "chaoli0394@gmail.com", 
+                     email = "chaoli0394@gmail.com",
                      comment = c(ORCID = "0000-0002-6854-4456")),
               person("Shunsuke", "Managi", role = "aut",
                      comment = c(ORCID = "0000-0001-7883-1427")))
-Author: Chao Li [aut, cre] (<https://orcid.org/0000-0002-6854-4456>), Shunsuke Managi [aut] (<https://orcid.org/0000-0001-7883-1427>)
-Maintainer: Chao Li <chaoli0394@gmail.com>
-Description: Geographically weighted panel regression is grounded in a branch of spatial statistics. Using geographically weights, the geographically weighted panel regression is try to solve the residuals from panel regression clustering spatially. To investigate whether the residuals cluster spatially, the Moran's I test is also improved. Furthermore, three local statistic tests are contained to help the users select model. The major references are Fotheringham et al. (2003, ISBN:978-0-470-85525-6) and Beenstock and Felsenstein (2019, ISBN:978-3-030-03614-0).
+Description: A modern, sf-first implementation of Geographically Weighted Panel
+    Regression (GWPR) for spatial panel data. The package provides a unified
+    public API (gwpr(), select_bandwidth(), fit_gwpr(), diagnose_gwpr()) supporting
+    Gaussian and binomial family models, within/pooling/random panel effects,
+    three bandwidth search strategies (grid, SGD, random), five kernel functions,
+    and optional parallel execution via the future framework. Diagnostic tools
+    include spatial Moran's I, local F-test, Hausman test, and Lagrange Multiplier
+    test. The major references are Fotheringham et al. (2003,
+    ISBN:978-0-470-85525-6) and Beenstock and Felsenstein (2019,
+    ISBN:978-3-030-03614-0).
 License: AGPL (>= 3)
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.2
-Imports: 
-    data.table,
-    doParallel,
-    dplyr,
-    foreach,
-    GWmodel,
-    iterators,
+Imports:
+    fixest,
+    glmmTMB,
     lmtest,
-    methods,
-    parallel,
     plm,
-    sp,
-    stats
-Depends: 
-    R (>= 2.10)
-Suggests: 
+    sf,
+    stats,
+    utils
+Depends:
+    R (>= 3.5.0)
+Suggests:
+    future,
+    future.apply,
     rmarkdown,
     knitr,
-    rgeos,
-    tmap
+    testthat (>= 3.0.0)
 VignetteBuilder: knitr
 URL: https://github.com/MichaelChaoLi-cpu/GWPR.light
 BugReports: https://github.com/MichaelChaoLi-cpu/GWPR.light/issues
+Config/testthat/edition: 3
+Config/roxygen2/version: 8.0.0
