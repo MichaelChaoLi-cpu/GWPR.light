@@ -259,7 +259,7 @@ predict_linear_local_model <- function(local_result, local_data) {
     # Fallback: predict with pdata.frame conversion
     tryCatch({
       pd_new <- plm::pdata.frame(local_data,
-                                 index = attr(fit$model, "index") |> names(),
+                                 index = names(attr(fit$model, "index")),
                                  drop.index = FALSE, row.names = FALSE)
       suppressWarnings(as.numeric(stats::predict(fit, newdata = pd_new)))
     }, error = function(e) rep(NA_real_, nrow(local_data)))

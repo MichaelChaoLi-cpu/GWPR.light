@@ -3,11 +3,12 @@
 \docType{data}
 \name{California}
 \alias{California}
-\title{California (SpatialPolygonsDataFrame)}
+\title{California (sf)}
 \format{
-A \code{sp::SpatialPolygonsDataFrame} with 'GEOID":
+An \code{sf} object with 58 rows (one per county) and two columns:
 \describe{
 \item{GEOID}{a numeric vector, fips IDs of the counties}
+\item{geometry}{sfc_MULTIPOLYGON, county boundary polygons (CRS: NAD83 longlat)}
 }
 }
 \usage{
