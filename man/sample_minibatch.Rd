@@ -27,15 +27,7 @@ unit IDs) or `coords` (a matrix whose row count equals the number of spatial
 units).  If neither is present the function stops with an informative error.
 }
 \examples{
-\dontrun{
-ctx <- new_gwpr_context(
-  formula = y ~ x, family = "gaussian", model = "pooling",
-  effect = "individual", id = "id", time = "time",
-  kernel = "bisquare", adaptive = FALSE, threshold = 0.5,
-  workers = 1L,
-  id_map = c("A" = 1L, "B" = 2L, "C" = 3L, "D" = 4L, "E" = 5L)
-)
-sample_minibatch(ctx, batch_fraction = 0.6, seed = 42L)
-}
+ctx <- list(id_map = c("A" = 1L, "B" = 2L, "C" = 3L, "D" = 4L, "E" = 5L))
+sample_minibatch(ctx, batch_fraction = 0.6)
 
 }

@@ -56,7 +56,7 @@ pooling model) return a list with `status = "not_applicable"` and an
 explanatory `message`, rather than an error.
 }
 \examples{
-\dontrun{
+\donttest{
 fit <- fit_gwpr(y ~ x1, data = dat, spatial = pts, id = "id",
                 time = "time", bandwidth = 2, workers = 1)
 diag_result <- diagnose_gwpr(fit, diagnostics = c("f_test", "hausman"))

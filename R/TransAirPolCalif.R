@@ -33,7 +33,7 @@
 #'
 #' @author Chao Li <chaoli0394@gmail.com> Shunsuke Managi <managi.s@gmail.com>
 #'
-#' @examples \dontrun{
+#' @examples \donttest{
 #' data(TransAirPolCalif)
 #' head(TransAirPolCalif)
 #' }

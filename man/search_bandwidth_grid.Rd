@@ -36,7 +36,7 @@ scored by the user-supplied `scorer` function.  The complete history and
 the best bandwidth are returned as a `gwpr_bandwidth` object.
 }
 \examples{
-\dontrun{
+\donttest{
 result <- search_bandwidth_grid(
   context = ctx,
   control = list(lower = 1, upper = 5, step = 1),

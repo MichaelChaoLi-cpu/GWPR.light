@@ -39,7 +39,7 @@ data(TransAirPolCalif)
 Panel dataset to estimate the relationship between county-level PM2.5 concentration and on-road transporation in California.
 }
 \examples{
-\dontrun{
+\donttest{
 data(TransAirPolCalif)
 head(TransAirPolCalif)
 }

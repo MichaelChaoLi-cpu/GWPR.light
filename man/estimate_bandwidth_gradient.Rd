@@ -48,7 +48,7 @@ outside `[lower, upper]` the function falls back to a one-sided difference
 or clips the candidate to the boundary.
 }
 \examples{
-\dontrun{
+\donttest{
 grad <- estimate_bandwidth_gradient(
   context   = ctx,
   bandwidth = 10,

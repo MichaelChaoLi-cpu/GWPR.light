@@ -73,7 +73,7 @@ search algorithm: \code{\link{search_bandwidth_grid}},
 \code{\link{search_bandwidth_sgd}}, or \code{\link{search_bandwidth_random}}.
 }
 \examples{
-\dontrun{
+\donttest{
 library(sf)
 pts <- sf::st_as_sf(
   data.frame(id = 1:4, X = c(0,1,0,1), Y = c(0,0,1,1)),

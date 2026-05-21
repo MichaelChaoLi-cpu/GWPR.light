@@ -7,16 +7,7 @@ Authors@R: c(person("Chao", "Li", role = c("aut", "cre"),
                      comment = c(ORCID = "0000-0002-6854-4456")),
               person("Shunsuke", "Managi", role = "aut",
                      comment = c(ORCID = "0000-0001-7883-1427")))
-Description: A modern, sf-first implementation of Geographically Weighted Panel
-    Regression (GWPR) for spatial panel data. The package provides a unified
-    public API (gwpr(), select_bandwidth(), fit_gwpr(), diagnose_gwpr()) supporting
-    Gaussian and binomial family models, within/pooling/random panel effects,
-    three bandwidth search strategies (grid, SGD, random), five kernel functions,
-    and optional parallel execution via the future framework. Diagnostic tools
-    include spatial Moran's I, local F-test, Hausman test, and Lagrange Multiplier
-    test. The major references are Fotheringham et al. (2003,
-    ISBN:978-0-470-85525-6) and Beenstock and Felsenstein (2019,
-    ISBN:978-3-030-03614-0).
+Description: A modern, first implementation of Geographically Weighted Panel Regression (GWPR) for spatial panel data. The package provides a unified public API supporting Gaussian and binomial family models, within/pooling/random panel effects, three bandwidth search strategies (grid, Stochastic Gradient Descent, random), five kernel functions, and optional parallel execution via the 'future' framework. Diagnostic tools include spatial Moran's I, local F-test, Hausman test, and Lagrange Multiplier test. 
 License: AGPL (>= 3)
 Encoding: UTF-8
 LazyData: true

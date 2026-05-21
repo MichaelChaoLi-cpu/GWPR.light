@@ -16,8 +16,7 @@ with_reproducible_seed(seed, expr)
 The value of \code{expr}.
 }
 \description{
-Sets \code{set.seed(seed)} before evaluating \code{expr} and restores the
-previous RNG state (kind, seed, normal.kind) afterwards.
+Sets \code{set.seed(seed)} before evaluating \code{expr}.
 }
 \examples{
 r1 <- with_reproducible_seed(42, runif(3))

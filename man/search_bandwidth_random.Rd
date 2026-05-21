@@ -44,7 +44,7 @@ The `method` field is fixed to `"random"`.  The history structure is
 identical to that produced by `search_bandwidth_grid()`.
 }
 \examples{
-\dontrun{
+\donttest{
 result <- search_bandwidth_random(
   context = ctx,
   control = list(lower = 1, upper = 10, n_samples = 20L),

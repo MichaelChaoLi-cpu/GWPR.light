@@ -52,7 +52,7 @@ The complete epoch-level history is included in the returned
 `gwpr_bandwidth` object.
 }
 \examples{
-\dontrun{
+\donttest{
 result <- search_bandwidth_sgd(
   context = ctx,
   control = list(lower = 1, upper = 100, epoch = 10L,

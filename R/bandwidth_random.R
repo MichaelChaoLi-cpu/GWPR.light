@@ -129,7 +129,7 @@ sample_random_bandwidths <- function(lower, upper, n_samples,
 #' @return A `gwpr_bandwidth` object (see `new_gwpr_bandwidth()`).
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' result <- search_bandwidth_random(
 #'   context = ctx,
 #'   control = list(lower = 1, upper = 10, n_samples = 20L),

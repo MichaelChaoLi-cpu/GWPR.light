@@ -78,8 +78,7 @@ parallel_map <- function(x, fn, workers = 1, seed = NULL, ..., packages = NULL) 
 
 #' Execute an expression with a reproducible seed
 #'
-#' Sets \code{set.seed(seed)} before evaluating \code{expr} and restores the
-#' previous RNG state (kind, seed, normal.kind) afterwards.
+#' Sets \code{set.seed(seed)} before evaluating \code{expr}.
 #'
 #' @param seed Integer scalar. Seed value passed to \code{set.seed}.
 #' @param expr An R expression to evaluate (passed unevaluated; use
@@ -94,14 +93,6 @@ parallel_map <- function(x, fn, workers = 1, seed = NULL, ..., packages = NULL) 
 #'
 #' @export
 with_reproducible_seed <- function(seed, expr) {
-  # Save current RNG state
-  if (exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)) {
-    old_seed <- get(".Random.seed", envir = .GlobalEnv, inherits = FALSE)
-    on.exit(assign(".Random.seed", old_seed, envir = .GlobalEnv), add = TRUE)
-  } else {
-    on.exit(rm(".Random.seed", envir = .GlobalEnv), add = TRUE)
-  }
-
   set.seed(seed)
   expr
 }

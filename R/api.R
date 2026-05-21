@@ -89,7 +89,7 @@ NULL
 #' }
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Minimal linear GWPR with a fixed bandwidth
 #' library(sf)
 #' pts <- sf::st_as_sf(
@@ -288,7 +288,7 @@ gwpr <- function(formula,
 #' }
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' library(sf)
 #' pts <- sf::st_as_sf(
 #'   data.frame(id = 1:4, X = c(0,1,0,1), Y = c(0,0,1,1)),
@@ -419,7 +419,7 @@ select_bandwidth <- function(formula,
 #' @return A \code{gwpr_fit} object.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' library(sf)
 #' pts <- sf::st_as_sf(
 #'   data.frame(id = 1:4, X = c(0,1,0,1), Y = c(0,0,1,1)),
@@ -597,7 +597,7 @@ fit_gwpr <- function(formula,
 #' @return A \code{gwpr_diagnostics} object.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' fit <- fit_gwpr(y ~ x1, data = dat, spatial = pts, id = "id",
 #'                 time = "time", bandwidth = 2, workers = 1)
 #' diag_result <- diagnose_gwpr(fit, diagnostics = c("f_test", "hausman"))

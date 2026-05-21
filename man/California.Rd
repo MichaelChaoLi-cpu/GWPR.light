@@ -17,7 +17,7 @@ data(California)
 The counties' boundary in California
 }
 \examples{
-\dontrun{
+\donttest{
 data(California)
 plot(California)
 }

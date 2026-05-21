@@ -66,7 +66,7 @@ Geographically Weighted Panel Regression for the specified bandwidth.
 Returns a \code{gwpr_fit} object.
 }
 \examples{
-\dontrun{
+\donttest{
 library(sf)
 pts <- sf::st_as_sf(
   data.frame(id = 1:4, X = c(0,1,0,1), Y = c(0,0,1,1)),

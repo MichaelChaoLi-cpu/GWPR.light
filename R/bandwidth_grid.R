@@ -270,7 +270,7 @@ rank_grid_history <- function(history) {
 #' @return A `gwpr_bandwidth` object (see `new_gwpr_bandwidth()`).
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' result <- search_bandwidth_grid(
 #'   context = ctx,
 #'   control = list(lower = 1, upper = 5, step = 1),

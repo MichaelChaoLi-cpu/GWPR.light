@@ -105,16 +105,8 @@ initialize_bandwidth <- function(control, adaptive, seed = NULL) {
 #' @return A character vector of unit IDs in the mini-batch.
 #'
 #' @examples
-#' \dontrun{
-#' ctx <- new_gwpr_context(
-#'   formula = y ~ x, family = "gaussian", model = "pooling",
-#'   effect = "individual", id = "id", time = "time",
-#'   kernel = "bisquare", adaptive = FALSE, threshold = 0.5,
-#'   workers = 1L,
-#'   id_map = c("A" = 1L, "B" = 2L, "C" = 3L, "D" = 4L, "E" = 5L)
-#' )
-#' sample_minibatch(ctx, batch_fraction = 0.6, seed = 42L)
-#' }
+#' ctx <- list(id_map = c("A" = 1L, "B" = 2L, "C" = 3L, "D" = 4L, "E" = 5L))
+#' sample_minibatch(ctx, batch_fraction = 0.6)
 #'
 #' @export
 sample_minibatch <- function(context, batch_fraction = 1.0, seed = NULL) {
@@ -178,7 +170,7 @@ sample_minibatch <- function(context, batch_fraction = 1.0, seed = NULL) {
 #' @return A numeric scalar gradient estimate.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' grad <- estimate_bandwidth_gradient(
 #'   context   = ctx,
 #'   bandwidth = 10,
@@ -370,7 +362,7 @@ check_early_stopping <- function(history, patience) {
 #'   `elapsed_time`, plus linear / logistic metric columns.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' result <- search_bandwidth_sgd(
 #'   context = ctx,
 #'   control = list(lower = 1, upper = 100, epoch = 10L,
