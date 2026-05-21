@@ -66,7 +66,7 @@ NULL
 #' prob <- c(0.9, 0.1, 0.8, 0.2)
 #' compute_logistic_pearson_residual(y, prob)
 #'
-#' @export
+#' @noRd
 compute_logistic_pearson_residual <- function(y, prob, eps = 1e-15) {
   if (!is.numeric(y) && !is.integer(y)) {
     stop("`y` must be a numeric or integer vector of 0/1 values.", call. = FALSE)
@@ -143,7 +143,7 @@ compute_logistic_pearson_residual <- function(y, prob, eps = 1e-15) {
 #' diag(W) <- 0
 #' compute_panel_moran(resid_mat, W)
 #'
-#' @export
+#' @noRd
 compute_panel_moran <- function(residuals, spatial_weights, panel_index = NULL) {
 
   # ---- reshape vector -> matrix if panel_index provided -------------------
@@ -318,19 +318,24 @@ compute_panel_moran <- function(residuals, spatial_weights, panel_index = NULL) 
 #' is exploratory; the asymptotic distribution differs from the linear case.
 #'
 #' @examples
-#' fit <- new_gwpr_fit(
-#'   family    = "gaussian",
-#'   model     = "within",
-#'   effect    = "individual",
-#'   bandwidth = 1,
-#'   residuals = c(0.1, -0.2, 0.3, -0.1, 0.2, -0.3),
-#'   metadata  = list(response = NULL, prob = NULL)
+#' \donttest{
+#' library(sf)
+#' pts <- sf::st_as_sf(
+#'   data.frame(id = 1:4, X = c(0,1,0,1), Y = c(0,0,1,1)),
+#'   coords = c("X", "Y"), crs = NA_integer_
 #' )
-#' W <- matrix(c(0, 0.5, 0.5,
-#'               0.5, 0, 0.5,
-#'               0.5, 0.5, 0), nrow = 3, byrow = TRUE)
-#' idx <- data.frame(id = c(1,1,2,2,3,3), time = c(1,2,1,2,1,2))
+#' dat <- data.frame(
+#'   id   = rep(1:4, each = 5),
+#'   time = rep(1:5, 4),
+#'   y    = rnorm(20),
+#'   x1   = rnorm(20)
+#' )
+#' fit <- fit_gwpr(y ~ x1, data = dat, spatial = pts, id = "id",
+#'                 time = "time", bandwidth = 2, workers = 1)
+#' W <- matrix(1/3, nrow = 4, ncol = 4); diag(W) <- 0
+#' idx <- dat[, c("id", "time")]
 #' diagnose_moran(fit, W, idx)
+#' }
 #'
 #' @export
 diagnose_moran <- function(object, spatial_weights, panel_index, ...) {
@@ -402,24 +407,22 @@ diagnose_moran <- function(object, spatial_weights, panel_index, ...) {
 #' **Logistic interpretation limit**: Not applicable; see above.
 #'
 #' @examples
-#' local_res <- list(
-#'   "1" = list(
-#'     within_rss  = 2.0, within_df  = 5L,
-#'     pooling_rss = 5.0, pooling_df = 8L,
-#'     status = "ok"
-#'   ),
-#'   "2" = list(
-#'     within_rss  = 1.5, within_df  = 5L,
-#'     pooling_rss = 4.0, pooling_df = 8L,
-#'     status = "ok"
-#'   )
+#' \donttest{
+#' library(sf)
+#' pts <- sf::st_as_sf(
+#'   data.frame(id = 1:4, X = c(0,1,0,1), Y = c(0,0,1,1)),
+#'   coords = c("X", "Y"), crs = NA_integer_
 #' )
-#' fit <- new_gwpr_fit(
-#'   family       = "gaussian",
-#'   model        = "within",
-#'   local_results = local_res
+#' dat <- data.frame(
+#'   id   = rep(1:4, each = 5),
+#'   time = rep(1:5, 4),
+#'   y    = rnorm(20),
+#'   x1   = rnorm(20)
 #' )
+#' fit <- fit_gwpr(y ~ x1, data = dat, spatial = pts, id = "id",
+#'                 time = "time", bandwidth = 2, workers = 1)
 #' diagnose_local_f(fit)
+#' }
 #'
 #' @export
 diagnose_local_f <- function(object, ...) {
@@ -564,18 +567,22 @@ diagnose_local_f <- function(object, ...) {
 #' **Logistic interpretation limit**: Not applicable.
 #'
 #' @examples
-#' local_res <- list(
-#'   "1" = list(hausman_statistic = 3.2, hausman_p_value = 0.07,
-#'              hausman_df = 2L, status = "ok"),
-#'   "2" = list(hausman_statistic = 6.1, hausman_p_value = 0.01,
-#'              hausman_df = 2L, status = "ok")
+#' \donttest{
+#' library(sf)
+#' pts <- sf::st_as_sf(
+#'   data.frame(id = 1:4, X = c(0,1,0,1), Y = c(0,0,1,1)),
+#'   coords = c("X", "Y"), crs = NA_integer_
 #' )
-#' fit <- new_gwpr_fit(
-#'   family        = "gaussian",
-#'   model         = "random",
-#'   local_results = local_res
+#' dat <- data.frame(
+#'   id   = rep(1:4, each = 5),
+#'   time = rep(1:5, 4),
+#'   y    = rnorm(20),
+#'   x1   = rnorm(20)
 #' )
+#' fit <- fit_gwpr(y ~ x1, data = dat, spatial = pts, id = "id",
+#'                 time = "time", bandwidth = 2, workers = 1)
 #' diagnose_hausman(fit)
+#' }
 #'
 #' @export
 diagnose_hausman <- function(object, ...) {
@@ -707,18 +714,22 @@ diagnose_hausman <- function(object, ...) {
 #' **Logistic interpretation limit**: Not applicable.
 #'
 #' @examples
-#' local_res <- list(
-#'   "1" = list(lm_statistic = 4.1, lm_p_value = 0.04,
-#'              lm_df = 1L, status = "ok"),
-#'   "2" = list(lm_statistic = 1.2, lm_p_value = 0.27,
-#'              lm_df = 1L, status = "ok")
+#' \donttest{
+#' library(sf)
+#' pts <- sf::st_as_sf(
+#'   data.frame(id = 1:4, X = c(0,1,0,1), Y = c(0,0,1,1)),
+#'   coords = c("X", "Y"), crs = NA_integer_
 #' )
-#' fit <- new_gwpr_fit(
-#'   family        = "gaussian",
-#'   model         = "pooling",
-#'   local_results = local_res
+#' dat <- data.frame(
+#'   id   = rep(1:4, each = 5),
+#'   time = rep(1:5, 4),
+#'   y    = rnorm(20),
+#'   x1   = rnorm(20)
 #' )
+#' fit <- fit_gwpr(y ~ x1, data = dat, spatial = pts, id = "id",
+#'                 time = "time", bandwidth = 2, workers = 1)
 #' diagnose_lm(fit)
+#' }
 #'
 #' @export
 diagnose_lm <- function(object, ...) {
@@ -843,14 +854,23 @@ diagnose_lm <- function(object, ...) {
 #' explanatory `message`, rather than an error.
 #'
 #' @examples
-#' fit <- new_gwpr_fit(
-#'   family    = "gaussian",
-#'   model     = "pooling",
-#'   effect    = "individual",
-#'   bandwidth = 1,
-#'   residuals = c(0.1, -0.1, 0.2, -0.2, 0.3, -0.3)
+#' \donttest{
+#' library(sf)
+#' pts <- sf::st_as_sf(
+#'   data.frame(id = 1:4, X = c(0,1,0,1), Y = c(0,0,1,1)),
+#'   coords = c("X", "Y"), crs = NA_integer_
 #' )
-#' diagnose_gwpr(fit, diagnostics = c("f_test", "hausman", "lm_test"))
+#' dat <- data.frame(
+#'   id   = rep(1:4, each = 5),
+#'   time = rep(1:5, 4),
+#'   y    = rnorm(20),
+#'   x1   = rnorm(20)
+#' )
+#' fit <- fit_gwpr(y ~ x1, data = dat, spatial = pts, id = "id",
+#'                 time = "time", bandwidth = 2, workers = 1)
+#' diag_result <- diagnose_gwpr(fit, diagnostics = c("f_test", "hausman"))
+#' print(diag_result)
+#' }
 #'
 #' @export
 diagnose_gwpr <- function(

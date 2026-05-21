@@ -39,23 +39,21 @@ failed with an informative `status`.
 **Logistic interpretation limit**: Not applicable; see above.
 }
 \examples{
-local_res <- list(
-  "1" = list(
-    within_rss  = 2.0, within_df  = 5L,
-    pooling_rss = 5.0, pooling_df = 8L,
-    status = "ok"
-  ),
-  "2" = list(
-    within_rss  = 1.5, within_df  = 5L,
-    pooling_rss = 4.0, pooling_df = 8L,
-    status = "ok"
-  )
+\donttest{
+library(sf)
+pts <- sf::st_as_sf(
+  data.frame(id = 1:4, X = c(0,1,0,1), Y = c(0,0,1,1)),
+  coords = c("X", "Y"), crs = NA_integer_
 )
-fit <- new_gwpr_fit(
-  family       = "gaussian",
-  model        = "within",
-  local_results = local_res
+dat <- data.frame(
+  id   = rep(1:4, each = 5),
+  time = rep(1:5, 4),
+  y    = rnorm(20),
+  x1   = rnorm(20)
 )
+fit <- fit_gwpr(y ~ x1, data = dat, spatial = pts, id = "id",
+                time = "time", bandwidth = 2, workers = 1)
 diagnose_local_f(fit)
+}
 
 }

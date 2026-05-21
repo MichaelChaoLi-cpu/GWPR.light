@@ -33,7 +33,7 @@ NULL
 #' make_grid_candidates(lower = 1, upper = 5, step = 1, adaptive = FALSE)
 #' make_grid_candidates(lower = 2, upper = 10, step = 2.5, adaptive = TRUE)
 #'
-#' @export
+#' @noRd
 make_grid_candidates <- function(lower, upper, step, adaptive) {
   if (missing(lower) || is.null(lower)) {
     stop(
@@ -214,7 +214,7 @@ score_bandwidth_candidate <- function(context, bandwidth, scorer) {
 #' )
 #' rank_grid_history(h)
 #'
-#' @export
+#' @noRd
 rank_grid_history <- function(history) {
   if (!is.data.frame(history) || nrow(history) == 0L) {
     return(history)
@@ -280,7 +280,7 @@ rank_grid_history <- function(history) {
 #' result$best_bandwidth
 #' }
 #'
-#' @export
+#' @noRd
 search_bandwidth_grid <- function(context, control, scorer,
                                   workers = 1L, seed = NULL) {
 

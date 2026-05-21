@@ -17,10 +17,8 @@ data(California)
 The counties' boundary in California
 }
 \examples{
-\donttest{
 data(California)
-plot(California)
-}
+class(California)
 }
 \author{
 Chao Li <chaoli0394@gmail.com> Shunsuke Managi <managi.s@gmail.com>

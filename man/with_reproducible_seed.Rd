@@ -9,14 +9,14 @@ with_reproducible_seed(seed, expr)
 \arguments{
 \item{seed}{Integer scalar. Seed value passed to \code{set.seed}.}
 
-\item{expr}{An R expression to evaluate (passed unevaluated; use
-\code{quote()} or wrap in \code{with_reproducible_seed(seed, { ... })}).}
+\item{expr}{An R expression to evaluate.}
 }
 \value{
 The value of \code{expr}.
 }
 \description{
-Sets \code{set.seed(seed)} before evaluating \code{expr}.
+Sets \code{set.seed(seed)} before evaluating \code{expr}, then restores the
+prior RNG state so the caller's random stream is unaffected.
 }
 \examples{
 r1 <- with_reproducible_seed(42, runif(3))

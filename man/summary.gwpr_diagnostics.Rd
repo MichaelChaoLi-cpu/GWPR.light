@@ -19,12 +19,18 @@ Prints each diagnostic test result with statistic and p-value where
 available.
 }
 \examples{
-diag_obj <- new_gwpr_diagnostics(
-  diagnostics   = list(moran = list(statistic = 0.12, p_value = 0.03)),
-  model_type    = "gaussian",
-  panel_balance = TRUE,
-  warnings      = character()
+\donttest{
+library(sf)
+pts <- sf::st_as_sf(
+  data.frame(id = 1:4, X = c(0,1,0,1), Y = c(0,0,1,1)),
+  coords = c("X", "Y"), crs = NA_integer_
 )
+dat <- data.frame(id = rep(1:4, each = 5), time = rep(1:5, 4),
+                  y = rnorm(20), x1 = rnorm(20))
+fit <- fit_gwpr(y ~ x1, data = dat, spatial = pts, id = "id",
+                time = "time", bandwidth = 2, workers = 1)
+diag_obj <- diagnose_gwpr(fit, diagnostics = c("f_test", "hausman"))
 summary(diag_obj)
+}
 
 }

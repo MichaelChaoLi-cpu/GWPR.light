@@ -48,7 +48,7 @@ NULL
 #' sample_random_bandwidths(lower = 2, upper = 10, n_samples = 20,
 #'                          adaptive = TRUE, seed = 1L)
 #'
-#' @export
+#' @noRd
 sample_random_bandwidths <- function(lower, upper, n_samples,
                                      adaptive = FALSE, seed = NULL) {
 
@@ -140,7 +140,7 @@ sample_random_bandwidths <- function(lower, upper, n_samples,
 #' result$best_bandwidth
 #' }
 #'
-#' @export
+#' @noRd
 search_bandwidth_random <- function(context, control, scorer,
                                     workers = 1L, seed = NULL) {
 

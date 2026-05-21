@@ -40,7 +40,7 @@ NULL
 #' initialize_bandwidth(list(lower = 3, upper = 20), adaptive = TRUE,
 #'                      seed = 1L)
 #'
-#' @export
+#' @noRd
 initialize_bandwidth <- function(control, adaptive, seed = NULL) {
   lower <- control$lower
   upper <- control$upper
@@ -108,7 +108,7 @@ initialize_bandwidth <- function(control, adaptive, seed = NULL) {
 #' ctx <- list(id_map = c("A" = 1L, "B" = 2L, "C" = 3L, "D" = 4L, "E" = 5L))
 #' sample_minibatch(ctx, batch_fraction = 0.6)
 #'
-#' @export
+#' @noRd
 sample_minibatch <- function(context, batch_fraction = 1.0, seed = NULL) {
   if (!is.numeric(batch_fraction) || length(batch_fraction) != 1L ||
       !is.finite(batch_fraction) || batch_fraction <= 0 || batch_fraction > 1) {
@@ -180,7 +180,7 @@ sample_minibatch <- function(context, batch_fraction = 1.0, seed = NULL) {
 #' )
 #' }
 #'
-#' @export
+#' @noRd
 estimate_bandwidth_gradient <- function(context, bandwidth, delta, minibatch,
                                         scorer, lower = NULL, upper = NULL) {
   if (!is.numeric(delta) || length(delta) != 1L ||
@@ -256,7 +256,7 @@ estimate_bandwidth_gradient <- function(context, bandwidth, delta, minibatch,
 #' update_bandwidth_sgd(8L, gradient = -3, learning_rate = 1,
 #'                      adaptive = TRUE, lower = 3, upper = 20)
 #'
-#' @export
+#' @noRd
 update_bandwidth_sgd <- function(bandwidth, gradient, learning_rate,
                                  adaptive = FALSE, lower = NULL, upper = NULL) {
   if (adaptive) {
@@ -299,7 +299,7 @@ update_bandwidth_sgd <- function(bandwidth, gradient, learning_rate,
 #' check_early_stopping(h, patience = 2L)  # TRUE
 #' check_early_stopping(h, patience = 0L)  # FALSE
 #'
-#' @export
+#' @noRd
 check_early_stopping <- function(history, patience) {
   patience <- as.integer(patience)
   if (patience == 0L) return(FALSE)
@@ -374,7 +374,7 @@ check_early_stopping <- function(history, patience) {
 #' result$best_bandwidth
 #' }
 #'
-#' @export
+#' @noRd
 search_bandwidth_sgd <- function(context, control, scorer,
                                  workers = 1L, seed = NULL) {
 

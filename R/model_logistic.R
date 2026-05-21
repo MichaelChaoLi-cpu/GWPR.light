@@ -538,7 +538,7 @@ extract_logistic_local_result <- function(local_result, local_data, formula,
 #'   \item{\code{metadata}}{A list with fitting metadata and any per-focus
 #'     warnings.}
 #' }
-#' @export
+#' @noRd
 fit_logistic_gwpr <- function(context, bandwidth, weights_context = NULL,
                                family = "binomial") {
   if (!identical(family, "binomial")) {

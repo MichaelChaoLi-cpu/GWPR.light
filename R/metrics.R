@@ -21,7 +21,7 @@ NULL
 #' y_hat <- c(1, 2, 3, 4, 5)
 #' compute_linear_metrics(y, y_hat)
 #'
-#' @export
+#' @noRd
 compute_linear_metrics <- function(y, y_hat) {
   keep <- !is.na(y_hat) & !is.na(y)
   y     <- y[keep]
@@ -59,7 +59,7 @@ compute_linear_metrics <- function(y, y_hat) {
 #' prob <- c(0.9, 0.1, 0.8, 0.2)
 #' compute_logistic_metrics(y, prob)
 #'
-#' @export
+#' @noRd
 compute_logistic_metrics <- function(y, prob, threshold = 0.5) {
   ll         <- safe_log_loss(y, prob)
   class_pred <- as.integer(prob >= threshold)
@@ -105,7 +105,7 @@ compute_logistic_metrics <- function(y, prob, threshold = 0.5) {
 #' @examples
 #' safe_log_loss(c(1, 0, 1), c(0.99, 0.01, 0.5))
 #'
-#' @export
+#' @noRd
 safe_log_loss <- function(y, prob, eps = 1e-15) {
   prob <- pmax(pmin(prob, 1 - eps), eps)
   -mean(y * log(prob) + (1 - y) * log(1 - prob))
@@ -126,7 +126,7 @@ safe_log_loss <- function(y, prob, eps = 1e-15) {
 #' @examples
 #' safe_confusion_counts(c(1, 0, 1, 0), c(1, 1, 0, 0))
 #'
-#' @export
+#' @noRd
 safe_confusion_counts <- function(y, class_pred) {
   TP <- sum(y == 1L & class_pred == 1L)
   FP <- sum(y == 0L & class_pred == 1L)

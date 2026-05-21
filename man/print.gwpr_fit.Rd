@@ -19,13 +19,17 @@ Displays a concise summary of a fitted GWPR model: family, panel model
 type, effect, bandwidth, and top-level goodness-of-fit metrics.
 }
 \examples{
-fit <- new_gwpr_fit(
-  family    = "gaussian",
-  model     = "within",
-  effect    = "individual",
-  bandwidth = 100,
-  metrics   = list(R2 = 0.8, MSE = 0.1, RMSE = 0.316, MAE = 0.25)
+\donttest{
+library(sf)
+pts <- sf::st_as_sf(
+  data.frame(id = 1:4, X = c(0,1,0,1), Y = c(0,0,1,1)),
+  coords = c("X", "Y"), crs = NA_integer_
 )
+dat <- data.frame(id = rep(1:4, each = 5), time = rep(1:5, 4),
+                  y = rnorm(20), x1 = rnorm(20))
+fit <- fit_gwpr(y ~ x1, data = dat, spatial = pts, id = "id",
+                time = "time", bandwidth = 2, workers = 1)
 print(fit)
+}
 
 }

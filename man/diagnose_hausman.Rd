@@ -41,17 +41,21 @@ unit where the required statistics are absent from `local_results`.
 **Logistic interpretation limit**: Not applicable.
 }
 \examples{
-local_res <- list(
-  "1" = list(hausman_statistic = 3.2, hausman_p_value = 0.07,
-             hausman_df = 2L, status = "ok"),
-  "2" = list(hausman_statistic = 6.1, hausman_p_value = 0.01,
-             hausman_df = 2L, status = "ok")
+\donttest{
+library(sf)
+pts <- sf::st_as_sf(
+  data.frame(id = 1:4, X = c(0,1,0,1), Y = c(0,0,1,1)),
+  coords = c("X", "Y"), crs = NA_integer_
 )
-fit <- new_gwpr_fit(
-  family        = "gaussian",
-  model         = "random",
-  local_results = local_res
+dat <- data.frame(
+  id   = rep(1:4, each = 5),
+  time = rep(1:5, 4),
+  y    = rnorm(20),
+  x1   = rnorm(20)
 )
+fit <- fit_gwpr(y ~ x1, data = dat, spatial = pts, id = "id",
+                time = "time", bandwidth = 2, workers = 1)
 diagnose_hausman(fit)
+}
 
 }

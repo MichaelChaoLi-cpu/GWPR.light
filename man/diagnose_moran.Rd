@@ -41,18 +41,23 @@ match the number of individuals.
 is exploratory; the asymptotic distribution differs from the linear case.
 }
 \examples{
-fit <- new_gwpr_fit(
-  family    = "gaussian",
-  model     = "within",
-  effect    = "individual",
-  bandwidth = 1,
-  residuals = c(0.1, -0.2, 0.3, -0.1, 0.2, -0.3),
-  metadata  = list(response = NULL, prob = NULL)
+\donttest{
+library(sf)
+pts <- sf::st_as_sf(
+  data.frame(id = 1:4, X = c(0,1,0,1), Y = c(0,0,1,1)),
+  coords = c("X", "Y"), crs = NA_integer_
 )
-W <- matrix(c(0, 0.5, 0.5,
-              0.5, 0, 0.5,
-              0.5, 0.5, 0), nrow = 3, byrow = TRUE)
-idx <- data.frame(id = c(1,1,2,2,3,3), time = c(1,2,1,2,1,2))
+dat <- data.frame(
+  id   = rep(1:4, each = 5),
+  time = rep(1:5, 4),
+  y    = rnorm(20),
+  x1   = rnorm(20)
+)
+fit <- fit_gwpr(y ~ x1, data = dat, spatial = pts, id = "id",
+                time = "time", bandwidth = 2, workers = 1)
+W <- matrix(1/3, nrow = 4, ncol = 4); diag(W) <- 0
+idx <- dat[, c("id", "time")]
 diagnose_moran(fit, W, idx)
+}
 
 }

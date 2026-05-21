@@ -6,11 +6,11 @@
 #' all internal complexity is hidden behind them.
 #'
 #' \itemize{
-#'   \item \code{\link{gwpr}} — full pipeline (bandwidth search + fitting +
+#'   \item \code{\link{gwpr}} -- full pipeline (bandwidth search + fitting +
 #'     optional diagnostics).
-#'   \item \code{\link{select_bandwidth}} — standalone bandwidth search.
-#'   \item \code{\link{fit_gwpr}} — fit with a known bandwidth.
-#'   \item \code{\link{diagnose_gwpr}} — run diagnostics on a fitted model.
+#'   \item \code{\link{select_bandwidth}} -- standalone bandwidth search.
+#'   \item \code{\link{fit_gwpr}} -- fit with a known bandwidth.
+#'   \item \code{\link{diagnose_gwpr}} -- run diagnostics on a fitted model.
 #' }
 #'
 #' @name api
@@ -53,9 +53,9 @@ NULL
 #'   search: \code{"sgd"} (default), \code{"grid"}, or \code{"random"}.
 #'   Ignored when \code{bandwidth} is supplied.
 #' @param bandwidth_control Named list of control parameters passed to the
-#'   bandwidth search function.  See \code{search_bandwidth_grid()},
-#'   \code{search_bandwidth_sgd()}, or \code{search_bandwidth_random()} for
-#'   accepted fields.
+#'   bandwidth search function.  For \code{"grid"}: \code{lower}, \code{upper},
+#'   \code{step}.  For \code{"sgd"}: \code{lower}, \code{upper}, learning rate
+#'   etc.  For \code{"random"}: \code{lower}, \code{upper}, \code{n_samples}.
 #' @param kernel Character scalar.  Kernel function: \code{"bisquare"}
 #'   (default), \code{"gaussian"}, \code{"exponential"}, \code{"tricube"}, or
 #'   \code{"boxcar"}.
@@ -257,8 +257,8 @@ gwpr <- function(formula,
 #' Select an optimal bandwidth for GWPR
 #'
 #' Validates inputs, prepares data, and dispatches to the appropriate bandwidth
-#' search algorithm: \code{\link{search_bandwidth_grid}},
-#' \code{\link{search_bandwidth_sgd}}, or \code{\link{search_bandwidth_random}}.
+#' search algorithm: grid search, stochastic gradient descent (sgd), or random
+#' search, depending on the \code{method} argument.
 #'
 #' @param formula  A \code{formula} object.
 #' @param data     A \code{data.frame} with panel data.
@@ -573,103 +573,6 @@ fit_gwpr <- function(formula,
   }
 
   fit
-}
-
-# ---------------------------------------------------------------------------
-# diagnose_gwpr
-# ---------------------------------------------------------------------------
-
-#' Run diagnostics on a fitted GWPR model
-#'
-#' Wraps the individual diagnostic functions
-#' (\code{\link{diagnose_moran}}, \code{\link{diagnose_local_f}},
-#' \code{\link{diagnose_hausman}}, \code{\link{diagnose_lm}}) and collects
-#' their results into a \code{gwpr_diagnostics} object.
-#'
-#' @param object      A \code{gwpr_fit} object returned by \code{\link{fit_gwpr}}
-#'   or \code{\link{gwpr}}.
-#' @param diagnostics Character vector of diagnostic tests to run.  One or
-#'   more of \code{"moran"}, \code{"f_test"}, \code{"hausman"},
-#'   \code{"lm_test"}.  Defaults to all four.
-#' @param ...         Additional arguments forwarded to individual diagnostic
-#'   functions (e.g. \code{spatial_weights}, \code{panel_index} for Moran's I).
-#'
-#' @return A \code{gwpr_diagnostics} object.
-#'
-#' @examples
-#' \donttest{
-#' fit <- fit_gwpr(y ~ x1, data = dat, spatial = pts, id = "id",
-#'                 time = "time", bandwidth = 2, workers = 1)
-#' diag_result <- diagnose_gwpr(fit, diagnostics = c("f_test", "hausman"))
-#' print(diag_result)
-#' }
-#'
-#' @export
-diagnose_gwpr <- function(object,
-                           diagnostics = c("moran", "f_test", "hausman",
-                                           "lm_test"),
-                           ...) {
-  if (!inherits(object, "gwpr_fit")) {
-    stop("`object` must be a `gwpr_fit` object.", call. = FALSE)
-  }
-
-  diagnostics <- match.arg(diagnostics, several.ok = TRUE)
-
-  dots <- list(...)
-  results  <- list()
-  warnings_acc <- character()
-
-  family        <- `.api_null_coalesce`(object$family, "gaussian")
-  panel_balance <- `.api_null_coalesce`(object$metadata$panel_balanced, TRUE)
-
-  for (test in diagnostics) {
-    res <- switch(
-      test,
-
-      moran = tryCatch({
-        sw <- dots$spatial_weights
-        pi <- dots$panel_index
-        if (is.null(sw) || is.null(pi)) {
-          list(status  = "skipped",
-               message = paste(
-                 "Moran's I requires `spatial_weights` and `panel_index`.",
-                 "Pass them via `...` to `diagnose_gwpr()`."
-               ))
-        } else {
-          diagnose_moran(object, spatial_weights = sw, panel_index = pi, ...)
-        }
-      }, error = function(e) {
-        list(status = "error", message = conditionMessage(e))
-      }),
-
-      f_test = tryCatch(
-        diagnose_local_f(object, ...),
-        error = function(e) list(status = "error", message = conditionMessage(e))
-      ),
-
-      hausman = tryCatch(
-        diagnose_hausman(object, ...),
-        error = function(e) list(status = "error", message = conditionMessage(e))
-      ),
-
-      lm_test = tryCatch(
-        diagnose_lm(object, ...),
-        error = function(e) list(status = "error", message = conditionMessage(e))
-      ),
-
-      # default: unknown test name
-      list(status = "unknown_test", message = paste("Unknown diagnostic:", test))
-    )
-
-    results[[test]] <- res
-  }
-
-  new_gwpr_diagnostics(
-    diagnostics   = results,
-    model_type    = object$family,
-    panel_balance = panel_balance,
-    warnings      = warnings_acc
-  )
 }
 
 # ---------------------------------------------------------------------------

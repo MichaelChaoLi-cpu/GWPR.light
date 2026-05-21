@@ -302,7 +302,7 @@ predict_linear_local_model <- function(local_result, local_data) {
 #'   \item{`metadata`}{A list with fitting metadata and any per-focus
 #'     warnings.}
 #' }
-#' @export
+#' @noRd
 fit_linear_gwpr <- function(context, bandwidth, weights_context = NULL) {
 
   formula  <- context$formula

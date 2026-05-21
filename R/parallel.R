@@ -78,11 +78,11 @@ parallel_map <- function(x, fn, workers = 1, seed = NULL, ..., packages = NULL) 
 
 #' Execute an expression with a reproducible seed
 #'
-#' Sets \code{set.seed(seed)} before evaluating \code{expr}.
+#' Sets \code{set.seed(seed)} before evaluating \code{expr}, then restores the
+#' prior RNG state so the caller's random stream is unaffected.
 #'
 #' @param seed Integer scalar. Seed value passed to \code{set.seed}.
-#' @param expr An R expression to evaluate (passed unevaluated; use
-#'   \code{quote()} or wrap in \code{with_reproducible_seed(seed, { ... })}).
+#' @param expr An R expression to evaluate.
 #'
 #' @return The value of \code{expr}.
 #'
@@ -93,6 +93,14 @@ parallel_map <- function(x, fn, workers = 1, seed = NULL, ..., packages = NULL) 
 #'
 #' @export
 with_reproducible_seed <- function(seed, expr) {
+  old_seed <- get0(".Random.seed", envir = globalenv(), inherits = FALSE)
+  on.exit({
+    if (is.null(old_seed)) {
+      suppressWarnings(rm(".Random.seed", envir = globalenv(), inherits = FALSE))
+    } else {
+      assign(".Random.seed", old_seed, envir = globalenv(), inherits = FALSE)
+    }
+  }, add = TRUE)
   set.seed(seed)
   expr
 }
@@ -117,7 +125,7 @@ with_reproducible_seed <- function(seed, expr) {
 #' # In real usage parallel_result would use workers > 1; here we reuse sr.
 #' validate_parallel_result(sr, sr)
 #'
-#' @export
+#' @noRd
 validate_parallel_result <- function(serial_result, parallel_result) {
   if (!is.list(serial_result))   stop("`serial_result` must be a list.")
   if (!is.list(parallel_result)) stop("`parallel_result` must be a list.")

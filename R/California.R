@@ -11,8 +11,7 @@
 #'
 #' @author Chao Li <chaoli0394@gmail.com> Shunsuke Managi <managi.s@gmail.com>
 #'
-#' @examples \donttest{
+#' @examples
 #' data(California)
-#' plot(California)
-#' }
+#' class(California)
 "California"

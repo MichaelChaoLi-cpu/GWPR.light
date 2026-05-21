@@ -69,8 +69,8 @@ A \code{gwpr_bandwidth} object with fields:
 }
 \description{
 Validates inputs, prepares data, and dispatches to the appropriate bandwidth
-search algorithm: \code{\link{search_bandwidth_grid}},
-\code{\link{search_bandwidth_sgd}}, or \code{\link{search_bandwidth_random}}.
+search algorithm: grid search, stochastic gradient descent (sgd), or random
+search, depending on the \code{method} argument.
 }
 \examples{
 \donttest{

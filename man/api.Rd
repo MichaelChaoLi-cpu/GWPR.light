@@ -9,10 +9,10 @@ Regression.  These four functions form the complete public interface;
 all internal complexity is hidden behind them.
 
 \itemize{
-  \item \code{\link{gwpr}} — full pipeline (bandwidth search + fitting +
+  \item \code{\link{gwpr}} -- full pipeline (bandwidth search + fitting +
     optional diagnostics).
-  \item \code{\link{select_bandwidth}} — standalone bandwidth search.
-  \item \code{\link{fit_gwpr}} — fit with a known bandwidth.
-  \item \code{\link{diagnose_gwpr}} — run diagnostics on a fitted model.
+  \item \code{\link{select_bandwidth}} -- standalone bandwidth search.
+  \item \code{\link{fit_gwpr}} -- fit with a known bandwidth.
+  \item \code{\link{diagnose_gwpr}} -- run diagnostics on a fitted model.
 }
 }

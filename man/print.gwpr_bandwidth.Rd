@@ -19,15 +19,18 @@ Displays the search method, best bandwidth, criterion score, and number of
 iterations explored.
 }
 \examples{
-bw <- new_gwpr_bandwidth(
-  method         = "grid",
-  best_bandwidth = 150,
-  best_score     = 0.42,
-  criterion      = "MSE",
-  history        = data.frame(bandwidth = c(100, 150, 200),
-                              score     = c(0.5, 0.42, 0.48)),
-  elapsed_time   = 1.2
+\donttest{
+library(sf)
+pts <- sf::st_as_sf(
+  data.frame(id = 1:4, X = c(0,1,0,1), Y = c(0,0,1,1)),
+  coords = c("X", "Y"), crs = NA_integer_
 )
+dat <- data.frame(id = rep(1:4, each = 5), time = rep(1:5, 4),
+                  y = rnorm(20), x1 = rnorm(20))
+bw <- select_bandwidth(y ~ x1, data = dat, spatial = pts, id = "id",
+  time = "time", method = "grid",
+  control = list(lower = 1, upper = 3, step = 1), workers = 1)
 print(bw)
+}
 
 }

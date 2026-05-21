@@ -55,7 +55,7 @@ NULL
 #' )
 #' print(fit)
 #'
-#' @export
+#' @noRd
 new_gwpr_fit <- function(
     call           = NULL,
     family         = NULL,
@@ -111,14 +111,18 @@ new_gwpr_fit <- function(
 #' @return Invisibly returns `x`.
 #'
 #' @examples
-#' fit <- new_gwpr_fit(
-#'   family    = "gaussian",
-#'   model     = "within",
-#'   effect    = "individual",
-#'   bandwidth = 100,
-#'   metrics   = list(R2 = 0.8, MSE = 0.1, RMSE = 0.316, MAE = 0.25)
+#' \donttest{
+#' library(sf)
+#' pts <- sf::st_as_sf(
+#'   data.frame(id = 1:4, X = c(0,1,0,1), Y = c(0,0,1,1)),
+#'   coords = c("X", "Y"), crs = NA_integer_
 #' )
+#' dat <- data.frame(id = rep(1:4, each = 5), time = rep(1:5, 4),
+#'                   y = rnorm(20), x1 = rnorm(20))
+#' fit <- fit_gwpr(y ~ x1, data = dat, spatial = pts, id = "id",
+#'                 time = "time", bandwidth = 2, workers = 1)
 #' print(fit)
+#' }
 #'
 #' @export
 print.gwpr_fit <- function(x, ...) {
@@ -157,14 +161,18 @@ print.gwpr_fit <- function(x, ...) {
 #' @return Invisibly returns `object`.
 #'
 #' @examples
-#' fit <- new_gwpr_fit(
-#'   family    = "gaussian",
-#'   model     = "within",
-#'   effect    = "individual",
-#'   bandwidth = 100,
-#'   metrics   = list(R2 = 0.8, MSE = 0.1, RMSE = 0.316, MAE = 0.25)
+#' \donttest{
+#' library(sf)
+#' pts <- sf::st_as_sf(
+#'   data.frame(id = 1:4, X = c(0,1,0,1), Y = c(0,0,1,1)),
+#'   coords = c("X", "Y"), crs = NA_integer_
 #' )
+#' dat <- data.frame(id = rep(1:4, each = 5), time = rep(1:5, 4),
+#'                   y = rnorm(20), x1 = rnorm(20))
+#' fit <- fit_gwpr(y ~ x1, data = dat, spatial = pts, id = "id",
+#'                 time = "time", bandwidth = 2, workers = 1)
 #' summary(fit)
+#' }
 #'
 #' @exportS3Method summary gwpr_fit
 summary.gwpr_fit <- function(object, ...) {
@@ -255,7 +263,7 @@ summary.gwpr_fit <- function(object, ...) {
 #' )
 #' print(bw)
 #'
-#' @export
+#' @noRd
 new_gwpr_bandwidth <- function(
     method           = NULL,
     best_bandwidth   = NULL,
@@ -301,16 +309,19 @@ new_gwpr_bandwidth <- function(
 #' @return Invisibly returns `x`.
 #'
 #' @examples
-#' bw <- new_gwpr_bandwidth(
-#'   method         = "grid",
-#'   best_bandwidth = 150,
-#'   best_score     = 0.42,
-#'   criterion      = "MSE",
-#'   history        = data.frame(bandwidth = c(100, 150, 200),
-#'                               score     = c(0.5, 0.42, 0.48)),
-#'   elapsed_time   = 1.2
+#' \donttest{
+#' library(sf)
+#' pts <- sf::st_as_sf(
+#'   data.frame(id = 1:4, X = c(0,1,0,1), Y = c(0,0,1,1)),
+#'   coords = c("X", "Y"), crs = NA_integer_
 #' )
+#' dat <- data.frame(id = rep(1:4, each = 5), time = rep(1:5, 4),
+#'                   y = rnorm(20), x1 = rnorm(20))
+#' bw <- select_bandwidth(y ~ x1, data = dat, spatial = pts, id = "id",
+#'   time = "time", method = "grid",
+#'   control = list(lower = 1, upper = 3, step = 1), workers = 1)
 #' print(bw)
+#' }
 #'
 #' @export
 print.gwpr_bandwidth <- function(x, ...) {
@@ -346,16 +357,19 @@ print.gwpr_bandwidth <- function(x, ...) {
 #' @return Invisibly returns `object`.
 #'
 #' @examples
-#' bw <- new_gwpr_bandwidth(
-#'   method         = "grid",
-#'   best_bandwidth = 150,
-#'   best_score     = 0.42,
-#'   criterion      = "MSE",
-#'   history        = data.frame(bandwidth = c(100, 150, 200),
-#'                               score     = c(0.5, 0.42, 0.48)),
-#'   elapsed_time   = 1.2
+#' \donttest{
+#' library(sf)
+#' pts <- sf::st_as_sf(
+#'   data.frame(id = 1:4, X = c(0,1,0,1), Y = c(0,0,1,1)),
+#'   coords = c("X", "Y"), crs = NA_integer_
 #' )
+#' dat <- data.frame(id = rep(1:4, each = 5), time = rep(1:5, 4),
+#'                   y = rnorm(20), x1 = rnorm(20))
+#' bw <- select_bandwidth(y ~ x1, data = dat, spatial = pts, id = "id",
+#'   time = "time", method = "grid",
+#'   control = list(lower = 1, upper = 3, step = 1), workers = 1)
 #' summary(bw)
+#' }
 #'
 #' @exportS3Method summary gwpr_bandwidth
 summary.gwpr_bandwidth <- function(object, ...) {
@@ -424,7 +438,7 @@ summary.gwpr_bandwidth <- function(object, ...) {
 #' )
 #' print(diag_obj)
 #'
-#' @export
+#' @noRd
 new_gwpr_diagnostics <- function(
     diagnostics     = list(),
     model_type      = NULL,
@@ -462,13 +476,19 @@ new_gwpr_diagnostics <- function(
 #' @return Invisibly returns `x`.
 #'
 #' @examples
-#' diag_obj <- new_gwpr_diagnostics(
-#'   diagnostics   = list(moran = list(statistic = 0.12, p_value = 0.03)),
-#'   model_type    = "gaussian",
-#'   panel_balance = TRUE,
-#'   warnings      = character()
+#' \donttest{
+#' library(sf)
+#' pts <- sf::st_as_sf(
+#'   data.frame(id = 1:4, X = c(0,1,0,1), Y = c(0,0,1,1)),
+#'   coords = c("X", "Y"), crs = NA_integer_
 #' )
+#' dat <- data.frame(id = rep(1:4, each = 5), time = rep(1:5, 4),
+#'                   y = rnorm(20), x1 = rnorm(20))
+#' fit <- fit_gwpr(y ~ x1, data = dat, spatial = pts, id = "id",
+#'                 time = "time", bandwidth = 2, workers = 1)
+#' diag_obj <- diagnose_gwpr(fit, diagnostics = c("f_test", "hausman"))
 #' print(diag_obj)
+#' }
 #'
 #' @export
 print.gwpr_diagnostics <- function(x, ...) {
@@ -501,13 +521,19 @@ print.gwpr_diagnostics <- function(x, ...) {
 #' @return Invisibly returns `object`.
 #'
 #' @examples
-#' diag_obj <- new_gwpr_diagnostics(
-#'   diagnostics   = list(moran = list(statistic = 0.12, p_value = 0.03)),
-#'   model_type    = "gaussian",
-#'   panel_balance = TRUE,
-#'   warnings      = character()
+#' \donttest{
+#' library(sf)
+#' pts <- sf::st_as_sf(
+#'   data.frame(id = 1:4, X = c(0,1,0,1), Y = c(0,0,1,1)),
+#'   coords = c("X", "Y"), crs = NA_integer_
 #' )
+#' dat <- data.frame(id = rep(1:4, each = 5), time = rep(1:5, 4),
+#'                   y = rnorm(20), x1 = rnorm(20))
+#' fit <- fit_gwpr(y ~ x1, data = dat, spatial = pts, id = "id",
+#'                 time = "time", bandwidth = 2, workers = 1)
+#' diag_obj <- diagnose_gwpr(fit, diagnostics = c("f_test", "hausman"))
 #' summary(diag_obj)
+#' }
 #'
 #' @exportS3Method summary gwpr_diagnostics
 summary.gwpr_diagnostics <- function(object, ...) {
@@ -596,7 +622,7 @@ summary.gwpr_diagnostics <- function(object, ...) {
 #' )
 #' build_spatial_results(local_res)
 #'
-#' @export
+#' @noRd
 build_spatial_results <- function(local_results, id_map = NULL,
                                   geometry = NULL) {
   if (!is.list(local_results) || length(local_results) == 0L) {
