@@ -33,7 +33,7 @@ As we have mentioned that, sometimes, the residuals cluster spatially, but the w
 [Ordinary least squares (OLS)](https://en.wikipedia.org/wiki/Ordinary_least_squares), assume that the residuals distribute randomly, even on the maps. We give an cross-sectional example using the data in the package "GWPR.light", since the cross-sectional example is easy to read.
 ```{r example_GWmodel, message=FALSE}
 library(GWPR.light)
-library(sp)
+library(sf)
 library(tmap)
 data("California")
 data("TransAirPolCalif")
@@ -53,7 +53,7 @@ colnames(resid.lm) <- c("resid", "GEOID")
 head(resid.lm)
 ```
 ```{r cross_sectional_residual, fig.align='center', out.height= '80%', out.width='80%'}
-to_show <- sp::merge(California, resid.lm, by = "GEOID")
+to_show <- merge(California, resid.lm, by = "GEOID")
 tm_shape(to_show) + tm_polygons(col = 'resid')
 ```
 

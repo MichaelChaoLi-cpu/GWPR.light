@@ -7,7 +7,7 @@ knitr::opts_chunk$set(
 
 ## ----example_GWmodel, message=FALSE-------------------------------------------
 library(GWPR.light)
-library(sp)
+library(sf)
 library(tmap)
 data("California")
 data("TransAirPolCalif")
@@ -27,7 +27,7 @@ colnames(resid.lm) <- c("resid", "GEOID")
 head(resid.lm)
 
 ## ----cross_sectional_residual, fig.align='center', out.height= '80%', out.width='80%'----
-to_show <- sp::merge(California, resid.lm, by = "GEOID")
+to_show <- merge(California, resid.lm, by = "GEOID")
 tm_shape(to_show) + tm_polygons(col = 'resid')
 
 ## ----setup, message=FALSE-----------------------------------------------------
@@ -101,4 +101,3 @@ summary(result.F.AIC$SDF$Local_R2)
 tm_shape(result.F.AIC$SDF) +
   tm_polygons(col = "Local_R2", pal = "Reds",auto.palette.mapping = F,
               style = 'cont')
-
