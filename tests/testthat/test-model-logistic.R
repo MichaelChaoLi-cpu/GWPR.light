@@ -11,15 +11,28 @@
 
 # 4 spatial units, 5 time periods each => 20 rows
 make_bin_panel_data <- function(seed = 42L) {
-  set.seed(seed)
   n_units <- 4L
   n_times <- 5L
   id   <- rep(as.character(1:n_units), each = n_times)
   time <- rep(1:n_times, times = n_units)
-  x1   <- rnorm(n_units * n_times)
-  x2   <- rnorm(n_units * n_times)
-  lp   <- 0.5 * x1 - 0.3 * x2
-  y    <- as.integer(rbinom(n_units * n_times, 1L, plogis(lp)))
+
+  # Deterministic, non-separable binary pattern.  The local GWPR tests can
+  # give one spatial unit all the effective weight, so each unit must contain
+  # both classes without being linearly separable by x1/x2.
+  base_x1 <- c(-1, -1,  1, 1, 0)
+  base_x2 <- c(-1,  1, -1, 1, 0)
+  y_by_unit <- rbind(
+    c(0, 1, 1, 0, 1),
+    c(1, 0, 0, 1, 0),
+    c(0, 1, 1, 0, 0),
+    c(1, 0, 0, 1, 1)
+  )
+
+  unit_offset <- rep(seq(-0.15, 0.15, length.out = n_units), each = n_times)
+  x1 <- rep(base_x1, times = n_units) + unit_offset
+  x2 <- rep(base_x2, times = n_units) - unit_offset
+  y  <- as.integer(t(y_by_unit))
+
   data.frame(id = id, time = time, y = y, x1 = x1, x2 = x2,
              stringsAsFactors = FALSE)
 }
