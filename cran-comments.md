@@ -21,11 +21,12 @@ This is a complete rewrite as version 1.0.0 with a new, modern API.
 ## R CMD check results
 
 ```
-Status: 0 ERRORs, 0 WARNINGs, 2 NOTEs (on CRAN servers)
+R CMD check --as-cran --no-manual:
+Status: 0 ERRORs, 0 WARNINGs, 2 NOTEs
 ```
 
-**Local check shows 1 ERROR + 1 WARNING** because `pdflatex` is not installed
-on the local test machine. The errors are:
+**Full local check shows 1 ERROR + 1 WARNING** because `pdflatex` is not
+installed on the local test machine. The errors are:
 
 ```
 * checking PDF version of manual ... WARNING
@@ -36,8 +37,8 @@ pdflatex is not available
 
 These are local environment issues only and will not occur on CRAN servers.
 
-**NOTEs (expected on CRAN):**
+**NOTEs:**
 
 1. `Maintainer: 'Chao Li <chaoli0394@gmail.com>'` — informational
 2. `New submission / Package was archived on CRAN` — expected for re-submission
-3. `unable to verify current time` — network issue in check environment
+3. `unable to verify current time` — local check environment issue
